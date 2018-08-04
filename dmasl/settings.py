@@ -54,10 +54,10 @@ WSGI_APPLICATION = 'dmasl.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dmasl$final',
-        'USER': 'dmasl',
+        'NAME': 'dmasl',
+        'USER': 'root',
         'PASSWORD': 'nstu12345678',
-        'HOST': 'dmasl.mysql.pythonanywhere-services.com',
+        'HOST': 'localhost',
     }
 }
 
