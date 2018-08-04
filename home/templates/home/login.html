@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Enrolment Application | DMASL{% endblock %}
+
+{% block current_page %}Login{% endblock %}
+
+{% block body %}
+    <div class="col l12 white" style="padding: 20px;">
+        <h5 class="col s12 m12 l12 center-align" style="margin-top: 20px; padding: 0px;">Enrolment application</h5>
+
+        <h5 class="col s12 m12 l12 center-align" style="margin-top: 20px; padding: 0px;">
+            {{ org_found.org_short_name | upper }}
+        </h5>
+
+        <p class="col s12 m12 l12 divider" style="margin-top: 30px;"></p>
+
+        <form class="col l8 offset-l2" method="post" style="margin-top: 50px; margin-bottom: 50px;">
+            {% csrf_token %}
+
+            <div class="input-field col s12 m12 l12">
+                <i class="material-icons prefix">account_circle</i>
+                {{ form.username }}
+                <label for="id_username">User ID</label>
+            </div>
+
+            <div class="input-field col s12 m12 l12">
+                <i class="material-icons prefix">lock</i>
+                {{ form.password }}
+                <label for="id_password">Password</label>
+            </div>
+
+            {% if err_msg %}
+                <div class="col l12 valign-wrapper" style="margin-top: 20px;">
+                    <p class="red-text" style="font-size: 16px;">
+                        ** {{ err_msg }}
+                    </p>
+                    </div>
+            {% endif %}
+
+
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                    <div class="col l12 valign-wrapper" style="margin-top: 20px;">
+                        <p class="red-text" style="font-size: 16px;">
+                            ** {{ error }}
+                        </p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="col l12" style="margin-bottom: 20px; margin-top: 20px;">
+                <button class="btn waves-effect waves-light black" type="submit" style="">Login
+                    <i class="material-icons right">send</i>
+                </button>
+            </div>
+        </form>
+
+
+
+    </div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

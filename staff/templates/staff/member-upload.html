@@ -1,0 +1,80 @@
+{% extends 'staff_base.html' %}
+
+{% block title %}MEMBER UPLOAD | STAFF DMASL{% endblock %}
+
+{% block left_menu %}
+
+    <div id="left-sidebar-menu" class="collection col s12 m12 l12" style="margin-top: 200px; padding: 0px;">
+        <a href="{% url 'staff:staff-home' %}" class="collection-item">Home</a>
+        <a href="{% url 'staff:org' %}" class="collection-item">Organization</a>
+        <a href="{% url 'staff:member' %}" class="collection-item active">Member</a>
+        <a href="#!" class="collection-item">About us</a>
+    </div>
+{% endblock %}
+
+
+{% block admin_content %}
+
+<h4 class="col l10 offset-l1" style="margin-top: 10px; text-decoration: underline;">Member Upload</h4>
+
+
+
+<form class="col l10 offset-l1" method="post" enctype="multipart/form-data" style="margin-top: 10px; margin-bottom: 30px;">
+    {% csrf_token %}
+
+    <div class="col s12 m12 l12 file-field input-field">
+        <div class="btn">
+            <span>Member file in csv</span>
+            {{ form.member_file }}
+        </div>
+
+        <div class="file-path-wrapper">
+            <input class="file-path validate" type="text">
+        </div>
+    </div>
+
+    {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+            <div class="col s12 m10 offset-m1 l10 offset-l1 valign-wrapper" style="margin-top: 20px; background-color: red; height: 40px;">
+                <p style="color: white; font-size: 16px;">
+                    {{ error }}
+                </p>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="col s12 m12 l12" style="margin-bottom: 20px; margin-top: 20px;">
+        <button class="btn waves-effect waves-light black" type="submit" style="">upload
+        </button>
+    </div>
+</form>
+
+
+<div class="row">
+    <div class="col l12" style="margin-top: 50px;">
+        {% if err_msg %}
+            {% for err in err_msg %}
+                <div class="col l12 valign-wrapper">
+                    <p style="color: black; font-size: 16px;">
+                        {{ err }}
+                    </p>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+
+        {% if success_msg %}
+            {% for scc in success_msg %}
+                <div class="col l12 valign-wrapper">
+                    <p style="color: black; font-size: 16px;">
+                        {{ scc }}
+                    </p>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends 'staff_base.html' %}
+
+{% block title %}VIEW ORGANIZATION | STAFF DMASL{% endblock %}
+
+{% block left_menu %}
+
+    <div id="left-sidebar-menu" class="collection col s12 m12 l12" style="margin-top: 200px; padding: 0px;">
+        <a href="{% url 'staff:staff-home' %}" class="collection-item">Home</a>
+        <a href="{% url 'staff:org' %}" class="collection-item active">Organization</a>
+        <a href="{% url 'staff:member' %}" class="collection-item">Member</a>
+        <a href="#!" class="collection-item">About us</a>
+    </div>
+{% endblock %}
+
+
+{% block admin_content %}
+
+<div class="col s12 m12 l12">
+    <h5 class="col s12 m12 l12" style="text-decoration: underline;">Total {{ orgs_count }} Organization found: </h5>
+
+
+
+
+
+
+
+
+
+
+    <form class="col m12 l12 center-align" method="post" style="margin-bottom: 40px; border: 2px solid #333; padding: 20px;">
+        <h5 class=" orange-text">Search Organization</h5>
+
+        {% csrf_token %}
+        <div class="input-field col s12 m12 l8 offset-l2">
+            {{ form.org_name }}
+            <label for="id_org_name">Organization short name</label>
+        </div>
+
+        <div class="col l12 center-align">
+            <button class="btn waves-effect waves-light orange white-text" type="submit" style="">
+                Search
+            </button>
+        </div>
+
+
+
+
+
+
+
+        {% if s_orgs %}
+        <div class="col s12 m12 l12" style="margin-top: 30px; margin-bottom: 30px;">
+            <h5 style="text-decoration: underline;">Search Results </h5>
+            {% if s_orgs %}
+                <div class="col s12 m12 l12">
+                    <table class="centered responsive-table striped" style="margin-bottom: 20px;">
+                        <thead>
+                            <tr class="red">
+                                <th>S/N</th>
+                                <th>ORG SHORT NAME</th>
+                                <th>Operation</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for s_org in s_orgs %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ s_org.org_short_name | upper }}</td>
+                                    <td>
+                                        <a class="btn red" href="{% url 'staff:delete-org' org_id=s_org.id %}" style="margin-right: 20px;">Delete</a>
+                                        <a class="btn" href="{% url 'staff:detail-org' org_id=s_org.id %}">View</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+
+
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p>Organization not found!</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+    </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <table class="col s12 m12 l12 centered responsive-table striped" style="margin-bottom: 20px; margin-top: 20px;">
+        <thead class="red white-text">
+            <tr>
+                <th>S/N</th>
+                <th>ORG SHORT NAME</th>
+                <th>Operation</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for org in orgs %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ org.org_short_name | upper }}</td>
+                    <td>
+                        <a class="btn red" href="{% url 'staff:delete-org' org_id=org.id %}" style="margin-right: 20px;">Delete</a>
+                        <a class="btn" href="{% url 'staff:detail-org' org_id=org.id %}">View</a>
+                    </td>
+                </tr>
+            {% endfor %}
+
+
+        </tbody>
+    </table>
+</div>
+
+
+
+{% endblock %}

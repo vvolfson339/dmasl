@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+
+{% block title %}Enrolment Application | DMASL{% endblock %}
+
+{% block style %}
+    {% load staticfiles %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'home/style/pdf_css.css' %}">
+{% endblock %}
+
+{% block current_page %}Print{% endblock %}
+
+{% block body %}
+    <div class="col l12 white" style="padding: 20px;">
+        <h4 class="col s12 m12 l12 center-align enrl-txt" style="margin-top: 20px; padding: 0px;">Enrolment application</h4>
+
+        <p class="col s12 m12 l12 divider" style="margin-top: 30px;"></p>
+
+        <div class="col l12" style="border: 2px solid #333; margin-bottom: 20px; margin-top: 40px; padding: 20px;">
+
+            <div class="col s12 m12 l12" style="padding: 0px;">
+                <p class="col s4 m4 l4"></p>
+                <p class="col s4 m4 l4 center-align">{{ request.user.first_name | title }} {{ request.user.last_name | title }}</p>
+                <p class="col s4 m4 l4 right-align">{{ request.user.org.enrolment_period }}</p>
+            </div>
+
+            <div class="col s12 m12 l12" style="padding: 0px; margin-top: 10px;">
+                <p class="col s4 m4 l4"></p>
+                <p class="col s4 m4 l4 center-align" style="font-size: 20px;"><b>Benefits Confirmation</b></p>
+                <p class="col s4 m4 l4"></p>
+            </div>
+
+
+            <div class="col s12 m12 l12" style="padding: 0px; margin-top: 20px;">
+                <p>
+                    This statement confirms your compensation and benefits arrangements for
+                    the period April 1, 2018 through March 31, 2019. All other terms of your
+                    employment will be in accordance with policies and practices applicable to your
+                    employment agreement.
+                </p>
+            </div>
+
+            <div class="col s12 m12 l12" style="padding: 0px; margin-top: 50px;">
+                <p style="font-size: 20px; font-weight: bold;">MEMBER DETAILS</p>
+            </div>
+
+
+            <div class="col s12 m12 l12" style="padding: 0px; margin-top: 20px;">
+                <p class="col s4 m4 l4" style="padding: 0px;"><b>Contract Number</b></p>
+                <p class="col s4 m4 l4">{{ request.user.org.policy_num }}</p>
+                <p class="col s4 m4 l4"></p>
+            </div>
+
+            <div class="col s12 m12 l12" style="padding: 0px; margin-top: 5px;">
+                <p class="col s4 m4 l4" style="padding: 0px;"><b>Contract Holder Name</b></p>
+                <p class="col s4 m4 l4">{{ request.user.org.contract_holder }}</p>
+                <p class="col s4 m4 l4"></p>
+            </div>
+
+            <div class="col s12 m12 l12" style="padding: 0px; margin-top: 5px;">
+                <p class="col s4 m4 l4" style="padding: 0px;"><b>Class</b></p>
+                <p class="col s4 m4 l4">{{ request.user.org.class_type }}</p>
+                <p class="col s4 m4 l4"></p>
+            </div>
+
+
+            <div class="col s12 m12 l12" style="padding: 0px; margin-top: 20px;">
+                <p class="col s4 m4 l4" style="padding: 0px;"><b>Member Name</b></p>
+                <p class="col s4 m4 l4">{{ request.user.first_name | title }} {{ request.user.last_name | title }}</p>
+                <p class="col s4 m4 l4"></p>
+            </div>
+
+
+            <div class="col s12 m12 l12" style="padding: 0px; margin-top: 5px;">
+                <p class="col s4 m4 l4" style="padding: 0px;"><b>ID Number</b></p>
+                <p class="col s4 m4 l4">{{ request.user.username }}</p>
+                <p class="col s4 m4 l4"></p>
+            </div>
+
+            <div class="col s12 m12 l12" style="padding: 0px; margin-top: 5px;">
+                <p class="col s4 m4 l4" style="padding: 0px;"><b>Birthdate</b></p>
+                <p class="col s4 m4 l4">{{ request.user.birthdate }}</p>
+                <p class="col s4 m4 l4"></p>
+            </div>
+
+
+            <div class="col s12 m12 l12" style="padding: 0px; margin-top: 50px;">
+                <p style="font-size: 20px; font-weight: bold;">BENEFITS SUMMARY</p>
+            </div>
+
+            <div class="col s12 m12 l12" style="padding: 0px; margin-top: 20px;">
+                <p class="col s4 m4 l4" style="padding: 0px;">Health Spending Account</p>
+                <p class="col s4 m4 l4">${{ request.user.hsa_optional }}</p>
+                <p class="col s4 m4 l4"></p>
+            </div>
+
+            <p class="col s12 m12 l12 divider grey" style="margin-top: 10px;"></p>
+
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="input-field col s12 m12 l12 additional_info" style="margin-top: 50px;">
+                    {{ form.additional_info }}
+                    <label for="id_additional_info">Additional information / Comments</label>
+                </div>
+
+                <div class="col s12 m12 l12 add_info_display" style="padding: 0px; margin-top: 20px;">
+                    <p style="font-size: 20px; font-weight: bold;">Additional Information / Comments</p>
+
+                    <div class="col s12 m12 l12" style="margin-top: 10px; padding: 0px;">
+                        {% if request.user.additional_info %}
+                            {{ request.user.additional_info | safe }}
+                        {% else %}
+                            None
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col s12 m12 l12" style="padding: 0px; margin-top: 20px;">
+                    <p style="font-weight: bold;">
+                        It is important to update your Human Resource department
+                        of any changes to your spouse and / or dependant information.
+                        By updating your Human Resource department they can ensure that
+                        the insurance company's records are changed; this will prevent
+                        potential claim and coverage issues.
+                    </p>
+                </div>
+
+
+                <div class="col s12 m12 l12" style="padding: 0px; margin-top: 50px;">
+                    <div class="col s6 m6 l6" style="padding: 0px;">
+                        <p class="left" style="width: 150px; font-weight: bold;">Employee Signature: </p>
+                        <p class="left" style="width: 200px; height: 20px; border-bottom: 2px solid #333;"> </p>
+                    </div>
+
+                    <div class="col s6 m6 l6 right-align" style="padding: 0px;">
+                        <p class="right" style="width: 200px; height: 20px; border-bottom: 2px solid #333;"> </p>
+                        <p class="right" style="width: 140px; font-weight: bold;">Date: </p>
+                    </div>
+                </div>
+
+                <div class="col s12 m12 l12" style="padding: 0px; margin-top: 5px;">
+                    <p style="font-weight: bold;">{{ request.user.first_name | title }} {{ request.user.last_name | title }}</p>
+                </div>
+
+
+                <div class="col s12 m12 l12 p_btn" style="margin-bottom: 20px; margin-top: 50px; padding: 0px;">
+                    <button id="print" class="btn waves-effect waves-light black" type="submit" style="">Print
+                    </button>
+
+                    <a href="{% url 'home:logout' %}" class="btn waves-effect waves-light red" style="">Logout
+                    </a>
+                </div>
+
+
+            </form>
+
+        </div>
+
+
+    </div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+
+
+    var getUrlParameter = function getUrlParameter(sParam) {
+        var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+            sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
+
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
+
+            if (sParameterName[0] === sParam) {
+                return sParameterName[1] === undefined ? true : sParameterName[1];
+            }
+        }
+    };
+
+
+    $("document").ready(function(){
+
+        var print = getUrlParameter('print');
+
+        if (print == 'yes')
+        {
+            window.print();
+        }
+    });
+</script>
+{% endblock %}
+
+
+
+
+

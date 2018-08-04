@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+
+    {% load staticfiles %}
+    <link rel="shortcut icon" type="image/png" href="{% static 'home/style/images/logo/favicon.png' %}" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://fonts.googleapis.com/css?family=Changa" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
+
+
+    <style>
+        .container{
+            min-width: 100%;
+        }
+
+        .container > .row {
+            margin: 0;
+        }
+
+
+        .container > .row > .col {
+            padding: 0;
+        }
+
+        *{
+            padding: 0px;
+            margin: 0px;
+        }
+
+        .left_main_menu a{
+
+        }
+
+        .left_main_menu a:hover{
+            color: white;
+            text-decoration: underline;
+        }
+
+        nav ul li a{
+            color: #D3D3D3;
+        }
+
+        nav ul li a:hover{
+            color: grey;
+        }
+
+        #left-sidebar-menu .active{
+            background-color: blue;
+        }
+    </style>
+
+    {% block add-css %}
+    {% endblock %}
+
+</head>
+<body class="#eceff1 blue-grey lighten-5">
+    <div class="container">
+        <div class="row">
+            <!--left side bar-->
+            <div class="col l2 white-text" style="min-height: 1200px; background-color: #283851;">
+
+
+                {% block left_menu %}
+
+                {% endblock %}
+
+
+
+
+            </div>
+            <!--end left side bar-->
+
+
+            <!--main body-->
+            <div class="col l10" style="min-height: 700px;">
+
+                <!--nav bar-->
+                <nav class="z-depth-0" style="background-color: #283851;">
+                    <div class="nav-wrapper">
+                        <a href="" style="font-size: 20px;" class="brand-logo white-text">DMASL admin</a>
+                            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                                <li><a class="" href="">{{ request.user.username | title }}</a></li>
+                                <li><a class="" href="{% url 'home:logout' %}?from=staff">Logout</a></li>
+                            </ul>
+                    </div>
+                </nav>
+                <!--nav bar-->
+
+
+                <!--main content area -->
+
+
+                <div class="col s12 m12 l12" style="min-height: 700px; padding: 20px;">
+
+                    {% block admin_content %}
+
+                    {% endblock %}
+
+                </div>
+
+
+
+                <!--end main content area -->
+
+            </div>
+            <!--end main body-->
+        </div>
+    </div>
+
+<!--js-->
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+</body>
+</html>
+{% block script %}
+{% endblock %}

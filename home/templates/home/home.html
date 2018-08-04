@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Home | DMASL{% endblock %}
+
+{% block current_page %}Home{% endblock %}
+
+{% block body %}
+    <div class="col l12 white" style="padding: 20px;">
+
+        {% if request.user.is_authenticated %}
+
+            <p>
+                Logged in USER ID: {{ request.user.username }}
+            </p>
+
+            <br>
+
+            <p>
+                <a class="btn white-text" href="{% url 'home:enrolment-form1' %}">Enrolment Application</a>
+            </p>
+
+            <br>
+
+            <p>
+                <a class="btn white-text red" href="{% url 'home:logout' %}">Logout</a>
+            </p>
+        {% endif %}
+    </div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

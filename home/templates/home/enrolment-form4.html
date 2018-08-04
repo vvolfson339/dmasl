@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}Enrolment Application | DMASL{% endblock %}
+
+{% block current_page %}Form 4 of 4{% endblock %}
+
+{% block body %}
+    <div class="col l12 white" style="padding: 20px;">
+        <h4 class="col s12 m12 l12 center-align" style="margin-top: 20px; padding: 0px;">Enrolment application</h4>
+
+        <p class="col s12 m12 l12 divider" style="margin-top: 30px;"></p>
+
+        <div class="col l12 grey white-text" style="margin-top: 40px; padding: 20px;">
+            <h5>Enrolment Guide</h5>
+
+            <p>
+                Please review your benefit selections.
+            </p>
+
+            <p>
+                If you wish to make changes to your information or benefit selections, please
+                use the Back button to return to the applicable screen.
+            </p>
+
+            <p>
+                Once you have reviewed your selections are satisfied that all your
+                information is correct.
+            </p>
+
+            <p>
+                1. Click on the submit button.
+            </p>
+
+            <p>
+                2. Please exit the application by clicking on the "Print and Logout" button at the bottom left hand corner of your screen.
+            </p>
+
+            <p>
+                3. Please sign and date the enrolment form.
+            </p>
+
+            <p>
+                4. Please give your signed form to your Benefits Administrator.
+            </p>
+
+        </div>
+
+
+        <div class="col l10 offset-l1" style="border: 2px solid #333; margin-bottom: 20px; margin-top: 40px; padding: 20px;">
+
+            <form method="post">
+                {% csrf_token %}
+
+                <h5 class="col l12 center-align" style="text-decoration: underline;">Information Summery</h5>
+                <h5 class="col l12 center-align" style="">{{ org.org_short_name | upper }} - {{ org.org_full_name | title }}</h5>
+                <h5 class="col l12 center-align" style="">Employee Information</h5>
+
+                <p class="col l12" style="margin-bottom: 5px; margin-top: 30px;">
+                    Employee Name : {{ request.user.first_name | title }} {{ request.user.middle_name | title }} {{ request.user.last_name | title }}
+                </p>
+
+
+
+                <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
+                    ID Number : {{ request.user.username }}
+                </p>
+
+                <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
+                    Birthdate : {{ request.user.birthdate }}
+                </p>
+
+                {% if request.user.opt_out_bool %}
+                    <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
+                        Current Plan Year HSA Selection : OPT OUT BOOL = TRUE
+                    </p>
+                {% else %}
+                    <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
+                        Current Plan Year HSA Selection : {{ request.user.hsa_optional }}
+                    </p>
+                {% endif %}
+
+
+                <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
+                    When you click submit, please sign and submit the form to your plan administrator.
+                     Changes to your benefits selections may not be reflected with the insurer if the plan
+                     administrator is not provided with your benefits confirmation printout.
+                </p>
+
+
+
+
+                <div class="col l12" style="padding: 0px; margin-top: 30px;">
+                    <a href="{% url 'home:enrolment-form3' %}" class="btn waves-effect waves-light" style="">Back
+                    </a>
+
+                    <button type="submit" name="next" value="next" class="btn waves-effect waves-light black" style="">Submit
+                    </button>
+
+                    <a href="{% url 'home:logout' %}" class="btn waves-effect waves-light red" style="">Logout
+                    </a>
+                </div>
+            </form>
+        </div>
+
+
+    </div>
+{% endblock %}
+
+
+
+{% block script %}
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+

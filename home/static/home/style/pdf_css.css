@@ -1,0 +1,17 @@
+.add_info_display{
+    display: none;
+}
+
+
+@media print{
+    .top-nav, .enrl-txt, .additional_info, .p_btn{
+        display: none;
+    }
+
+    .add_info_display{
+        display: block;
+    }
+
+
+}
+

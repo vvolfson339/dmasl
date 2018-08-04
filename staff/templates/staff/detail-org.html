@@ -1,0 +1,47 @@
+{% extends 'staff_base.html' %}
+
+{% block title %}DETAIL ORGANIZATION | STAFF DMASL{% endblock %}
+
+{% block left_menu %}
+
+    <div id="left-sidebar-menu" class="collection col s12 m12 l12" style="margin-top: 200px; padding: 0px;">
+        <a href="{% url 'staff:staff-home' %}" class="collection-item">Home</a>
+        <a href="{% url 'staff:org' %}" class="collection-item active">Organization</a>
+        <a href="{% url 'staff:member' %}" class="collection-item">Member</a>
+        <a href="#!" class="collection-item">About us</a>
+    </div>
+{% endblock %}
+
+
+{% block admin_content %}
+
+
+<h4 class="col l10 offset-l1" style="margin-top: 10px; text-decoration: underline;">Detail Organization</h4>
+
+<div class="col l10 offset-l1">
+    <p>Org URL: {{ org.org_url | safe }}</p>
+    <p>Org short name: {{ org.org_short_name | upper }}</p>
+    <p>Org full name: {{ org.org_full_name | title }}</p>
+    <p>Contract holder: {{ org.contract_holder }}</p>
+    <p>Class type: {{ org.class_type }}</p>
+    <p>Policy number: {{ org.policy_num }}</p>
+    <p>Policy agency: {{ org.policy_agency }}</p>
+    <p>Date fiscal start: {{ org.date_fiscal_start }}</p>
+    <p>Date fiscal end: {{ org.date_fiscal_end }}</p>
+    <p>Number pay periods: {{ org.num_pay_periods }}</p>
+    <p>Logo path: {{ org.logo_path }}</p>
+    <p>Enrolment period: {{ org.enrolment_period }}</p>
+    <p>Misc: {{ org.misc_1 }}</p>
+    <p>Total member: {{ total_member }}</p>
+
+    <p>
+        Click to add member for this organization:
+        <a class="btn red" href="{% url 'staff:add-member' org_id=org.id %}">Add member for this org</a>
+    </p>
+
+    <p class="col l12" style="margin-top: 30px; padding: 0px;">
+        <a class="btn blue" href="{% url 'staff:edit-org' org_id=org.id %}">Edit this Organization</a>
+    </p>
+</div>
+
+{% endblock %}
