@@ -162,7 +162,7 @@ class LoginForm(forms.Form):
                 if not user:
                     raise forms.ValidationError("**Invalid User ID and/or password. Please try again!")
                 else:
-                    if user.is_active:
+                    if not user.is_active:
                         raise forms.ValidationError("** This account is no longer active, please contact your plan administrator!")
 
 
