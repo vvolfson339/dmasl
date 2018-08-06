@@ -159,9 +159,11 @@ class LoginForm(forms.Form):
                 raise forms.ValidationError("Password is too short!")
             else:
                 user = authenticate(username=username, password=password)
-                if not user or not user.is_active:
-                    raise forms.ValidationError("This account is no longer active, please contact your plan administrator")
-
+                if not user:
+                    raise forms.ValidationError("**Invalid User ID and/or password. Please try again!")
+                else:
+                    if user.is_active:
+                        raise forms.ValidationError("** This account is no longer active, please contact your plan administrator!")
 
 
     def login_request(self):
