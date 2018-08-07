@@ -32,7 +32,7 @@
     <p>Logo path: {{ org.logo_path }}</p>
     <p>Enrolment period: {{ org.enrolment_period }}</p>
     <p>Misc: {{ org.misc_1 }}</p>
-    <p>Total member: {{ total_member }}</p>
+    <p>Total member: {{ total_member }} <span style="margin-left: 20px;"><a href="{% url 'staff:org-member' org_id=org.id %}">View all member</a></span></p>
 
     <p>
         Click to add member for this organization:

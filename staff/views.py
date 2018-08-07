@@ -3,6 +3,8 @@ from django.views import View
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import login, logout
 import csv
+import os
+from django.http.response import StreamingHttpResponse
 from datetime import datetime
 
 from account import models as account_model
@@ -250,6 +252,82 @@ class EditOrganization(StaffPermission, View):
 
 
 
+
+
+#edit Organization
+class OrganizationMember(StaffPermission, View):
+    template_name = 'staff/org-member.html'
+
+    def get(self, request, org_id):
+
+        org = get_object_or_404(account_model.Organization, id=org_id)
+
+        members = account_model.UserProfile.objects.filter(org=org).order_by('-join_date')
+        members_count = account_model.UserProfile.objects.filter(org=org).count()
+
+
+        variables = {
+            'org': org,
+
+            'members': members,
+            'members_count': members_count,
+        }
+
+        return render(request, self.template_name, variables)
+
+
+    def get_uuid(self):
+        uuid = os.urandom(10).hex()
+
+        return uuid
+
+
+    def  csv_export(self, file_name, members):
+        with open('media/csv_output/{}.csv'.format(file_name), 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile, delimiter=',')
+            row_first_line = ['User ID', 'First Name', 'Middle Name', 'Last Name', 'Gender', 'Organiztaion', 'Birthdate', 'Salary Base', 'HSA Annual Credits', 'HSA Optional', 'HSA Remaining']
+            writer.writerow(row_first_line)
+
+            for member in members:
+                row = [member.username, member.first_name, member.middle_name, member.last_name, member.gender, member.org.org_short_name, member.birthdate, member.salary_base, member.hsa_annual_credits, member.hsa_optional, member.hsa_remaining]
+                writer.writerow(row)
+
+            csvfile.close()
+
+
+
+    def post(self, request, org_id):
+
+        org = get_object_or_404(account_model.Organization, id=org_id)
+
+        members = account_model.UserProfile.objects.filter(org=org).order_by('-join_date')
+        members_count = account_model.UserProfile.objects.filter(org=org).count()
+
+
+        if request.POST.get('export_csv') == 'export_csv':
+            uuid = self.get_uuid()
+            file_name = str(org.org_short_name) + '-' + str(uuid)
+            self.csv_export(file_name, members)
+
+            return redirect('staff:save_file', file_name=file_name)
+
+
+        variables = {
+            'org': org,
+
+            'members': members,
+            'members_count': members_count,
+        }
+
+        return render(request, self.template_name, variables)
+
+
+
+def some_streaming_csv_view(request, file_name):
+    path = 'media/csv_output/{}.csv'.format(file_name)
+    response = StreamingHttpResponse(open(path), content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=' + '{}.csv'.format(file_name)
+    return response
 
 
 

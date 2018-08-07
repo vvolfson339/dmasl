@@ -1,0 +1,60 @@
+{% extends 'staff_base.html' %}
+
+{% block title %}ORGANIZATION MEMBER | STAFF DMASL{% endblock %}
+
+{% block left_menu %}
+
+    <div id="left-sidebar-menu" class="collection col s12 m12 l12" style="margin-top: 200px; padding: 0px;">
+        <a href="{% url 'staff:staff-home' %}" class="collection-item">Home</a>
+        <a href="{% url 'staff:org' %}" class="collection-item active">Organization</a>
+        <a href="{% url 'staff:member' %}" class="collection-item">Member</a>
+        <a href="#!" class="collection-item">About us</a>
+    </div>
+{% endblock %}
+
+
+{% block admin_content %}
+
+
+<div class="col s12 m12 l12">
+    <h5 class="col s12 m12 l12" style="text-decoration: underline; padding: 0px;">Total {{ members_count }} Member found in {{ org.org_short_name | upper }}: </h5>
+
+    <div class="col l12 m12 l12" style="padding: 0px; margin-top: 10px; margin-bottom: 10px;">
+        <form method="post">
+            {% csrf_token %}
+            <button name="export_csv" value="export_csv" type="submit" class="btn red" href="#">Export to csv</button>
+        </form>
+    </div>
+
+
+    <table class="col s12 m12 l12 centered responsive-table striped" style="margin-bottom: 20px; margin-top: 20px;">
+        <thead class="red white-text">
+            <tr>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>ORG</th>
+                <th>HSA Optional</th>
+                <th>Is Active</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for member in members %}
+                <tr>
+                    <td>{{ member.username }}</td>
+                    <td>{{ member.first_name | title }} {{ member.last_name| title }}</td>
+                    <td>{{ member.org.org_short_name | upper }}</td>
+                    <td>{{ member.hsa_optional }}</td>
+                    <td>{{ member.is_active }}</td>
+                </tr>
+            {% endfor %}
+
+
+        </tbody>
+    </table>
+</div>
+
+
+
+{% endblock %}

@@ -14,6 +14,10 @@ urlpatterns = [
     url(r'^org/(?P<org_id>[0-9]+)/delete/$', views.DeleteOrganization.as_view(), name='delete-org'),
     url(r'^org/(?P<org_id>[0-9]+)/detail/$', views.DetailOrganization.as_view(), name='detail-org'),
     url(r'^org/(?P<org_id>[0-9]+)/edit/$', views.EditOrganization.as_view(), name='edit-org'),
+    url(r'^org/(?P<org_id>[0-9]+)/member/$', views.OrganizationMember.as_view(), name='org-member'),
+
+    url(r'^save/(?P<file_name>[a-zA-Z0-9_-]+)/$', views.some_streaming_csv_view, name='save_file'),
+
 
     url(r'^member/$', views.Member.as_view(), name='member'),
     url(r'^member/(?P<org_id>[0-9]+)/add/$', views.AddMember.as_view(), name='add-member'),
