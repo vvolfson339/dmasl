@@ -1,14 +1,13 @@
-{% extends 'staff_base.html' %}
+{% extends 'org_admin_base.html' %}
 
-{% block title %}ORGANIZATION MEMBER | STAFF DMASL{% endblock %}
+{% block title %}ORGANIZATION MEMBER | Admin DMASL{% endblock %}
 
 {% block left_menu %}
 
     <div id="left-sidebar-menu" class="collection col s12 m12 l12" style="margin-top: 200px; padding: 0px;">
-        <a href="{% url 'staff:staff-home' %}" class="collection-item">Home</a>
-        <a href="{% url 'staff:org' %}" class="collection-item active">Organization</a>
-        <a href="{% url 'staff:member' %}" class="collection-item">Member</a>
-        <a href="#!" class="collection-item">About us</a>
+        <a href="{% url 'home:org-admin-home' org_short_name=org_found.org_short_name %}" class="collection-item">Home</a>
+        <a href="{% url 'home:org-member-add' org_short_name=org_found.org_short_name %}" class="collection-item">Add member</a>
+        <a href="{% url 'home:org-member-view' org_short_name=org_found.org_short_name %}" class="collection-item active">View member</a>
     </div>
 {% endblock %}
 
@@ -17,16 +16,16 @@
 
 
 <div class="col s12 m12 l12">
-    <h5 class="col s12 m12 l12" style="text-decoration: underline; padding: 0px;">Total {{ members_count }} Member found in {{ org.org_short_name | upper }}: </h5>
+    <h5 class="col s12 m12 l12" style="text-decoration: underline; padding: 0px;">Total {{ members_count }} Member found in {{ org_found.org_short_name | upper }}: </h5>
 
-    <div class="col l12 m12 l12" style="padding: 0px; margin-top: 10px; margin-bottom: 10px;">
+    <!--<div class="col l12 m12 l12" style="padding: 0px; margin-top: 10px; margin-bottom: 10px;">
         <form method="post">
             {% csrf_token %}
             <button name="export_csv" value="export_csv" type="submit" class="btn red">Export to csv</button>
         </form>
-    </div>
+    </div>-->
 
-
+    {% if members %}
     <table class="col s12 m12 l12 centered responsive-table striped" style="margin-bottom: 20px; margin-top: 20px;">
         <thead class="red white-text">
             <tr>
@@ -49,7 +48,7 @@
                     <td>{{ member.hsa_optional }}</td>
                     <td>{{ member.is_active }}</td>
                     <td>
-                        <a href="{% url 'staff:detail-member' user_id=member.id %}" class="btn">Detail</a>
+                        <a href="{% url 'home:org-member-detail' org_short_name=member.org.org_short_name user_id=member.username %}" class="btn">Detail</a>
                     </td>
                 </tr>
             {% endfor %}
@@ -57,6 +56,9 @@
 
         </tbody>
     </table>
+    {% else %}
+        <p>No member found!</p>
+    {% endif %}
 </div>
 
 

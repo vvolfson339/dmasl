@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password
+import re
 
 from . import models
 
@@ -19,7 +20,9 @@ class EditOrgForm(forms.ModelForm):
     num_pay_periods     = forms.FloatField(required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
     enrolment_period    = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
 
-    logo_path           = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
+    #logo_path           = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
+    logo                = forms.ImageField(required=False, widget=forms.FileInput)
+    admin_email         = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
     misc_1              = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
 
 
@@ -44,13 +47,15 @@ class EditOrgForm(forms.ModelForm):
         date_fiscal_end         = self.cleaned_data.get('date_fiscal_end')
         num_pay_periods         = self.cleaned_data.get('num_pay_periods')
         enrolment_period        = self.cleaned_data.get('enrolment_period')
-        logo_path               = self.cleaned_data.get('logo_path')
+        #logo_path               = self.cleaned_data.get('logo_path')
+        logo                    = self.cleaned_data.get('logo')
+        admin_email             = self.cleaned_data.get('admin_email')
         misc_1                  = self.cleaned_data.get('misc_1')
 
 
     class Meta:
         model = models.Organization
-        fields = ('org_url', 'org_full_name', 'contract_holder', 'class_type', 'policy_num', 'policy_agency', 'date_fiscal_start', 'date_fiscal_end', 'num_pay_periods', 'enrolment_period', 'logo_path', 'misc_1')
+        fields = ('org_url', 'org_full_name', 'contract_holder', 'class_type', 'policy_num', 'policy_agency', 'date_fiscal_start', 'date_fiscal_end', 'num_pay_periods', 'enrolment_period', 'logo', 'admin_email', 'misc_1')
 
 
 
@@ -70,7 +75,9 @@ class AddOrganization(forms.Form):
     num_pay_periods     = forms.FloatField(required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
     enrolment_period    = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
 
-    logo_path           = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
+    #logo_path           = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
+    logo = forms.ImageField(required=False)
+    admin_email       = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
     misc_1              = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
 
 
@@ -94,7 +101,9 @@ class AddOrganization(forms.Form):
         date_fiscal_end         = self.cleaned_data.get('date_fiscal_end')
         num_pay_periods         = self.cleaned_data.get('num_pay_periods')
         enrolment_period        = self.cleaned_data.get('enrolment_period')
-        logo_path               = self.cleaned_data.get('logo_path')
+        #logo_path               = self.cleaned_data.get('logo_path')
+        logo                    = self.cleaned_data.get('logo')
+        admin_email             = self.cleaned_data.get('admin_email')
         misc_1                  = self.cleaned_data.get('misc_1')
 
         if len(org_short_name) < 1:
@@ -109,6 +118,12 @@ class AddOrganization(forms.Form):
 
                 if org_exists:
                     raise forms.ValidationError('Organization has allready exists!')
+                else:
+                    email_correction = re.match('^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,4})$', admin_email)
+
+                    if not email_correction:
+                        raise forms.ValidationError('Admin Email not correct!')
+
 
 
 
@@ -124,7 +139,9 @@ class AddOrganization(forms.Form):
         date_fiscal_end         = self.cleaned_data.get('date_fiscal_end')
         num_pay_periods         = self.cleaned_data.get('num_pay_periods')
         enrolment_period        = self.cleaned_data.get('enrolment_period')
-        logo_path               = self.cleaned_data.get('logo_path')
+        #logo_path               = self.cleaned_data.get('logo_path')
+        logo                    = self.cleaned_data.get('logo')
+        admin_email             = self.cleaned_data.get('admin_email')
         misc_1                  = self.cleaned_data.get('misc_1')
 
 
@@ -133,7 +150,7 @@ class AddOrganization(forms.Form):
                                      contract_holder=contract_holder, class_type=class_type, policy_num=policy_num,
                                      policy_agency=policy_agency, date_fiscal_start=date_fiscal_start,
                                      date_fiscal_end=date_fiscal_end, num_pay_periods=num_pay_periods,
-                                     logo_path=logo_path, enrolment_period=enrolment_period, misc_1=misc_1)
+                                     logo=logo, admin_email=admin_email, enrolment_period=enrolment_period, misc_1=misc_1)
 
         deploy.save()
 
@@ -175,6 +192,48 @@ class LoginForm(forms.Form):
 
 
 
+# org admin login form
+class OrgAdminLoginForm(forms.Form):
+
+    def __init__(self,*args,**kwargs):
+        self.org = kwargs.pop('org')
+        super(OrgAdminLoginForm, self).__init__(*args,**kwargs)
+
+
+    username = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
+    password = forms.CharField(max_length=20, required=False, widget=forms.PasswordInput(attrs={'class': 'validate', }))
+
+    def clean(self):
+        username = self.cleaned_data.get('username')
+        password = self.cleaned_data.get('password')
+
+
+        if len(username) < 1:
+            raise forms.ValidationError('Enter user id!')
+        else:
+            if len(password) < 8:
+                raise forms.ValidationError("Password is too short!")
+            else:
+                user = authenticate(username=username, password=password)
+                if not user:
+                    raise forms.ValidationError("**Invalid User ID and/or password. Please try again!")
+                else:
+                    if not user.is_active:
+                        raise forms.ValidationError("** This account is no longer active, please contact your plan administrator!")
+                    else:
+                        if user.email != self.org.admin_email:
+                            raise forms.ValidationError('You are not admin for this organization!')
+
+
+
+    def login_request(self):
+        username = self.cleaned_data.get('username')
+        password = self.cleaned_data.get('password')
+        user = authenticate(username=username, password=password)
+        return user
+
+
+
 
 
 
@@ -185,14 +244,13 @@ gender_list = (
 )
 class AddUserForm(forms.Form):
     username = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
+    email = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
     password1 = forms.CharField(max_length=20, required=False, widget=forms.PasswordInput(attrs={'class': 'validate', 'id': 'password1'}))
     password2 = forms.CharField(max_length=20, required=False, widget=forms.PasswordInput(attrs={'class': 'validate', 'id': 'password2'}))
 
     first_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
     last_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
     middle_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
-    birthdate   = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate datepicker'}))
-    gender = forms.ChoiceField(choices=gender_list, required=False, widget=forms.Select(attrs={'class': 'validate'}))
 
     salary_base = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
     salary_adjusted = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
@@ -205,14 +263,13 @@ class AddUserForm(forms.Form):
 
     def clean(self):
         username = self.cleaned_data.get('username')
+        email = self.cleaned_data.get('email')
         password1 = self.cleaned_data.get('password1')
         password2 = self.cleaned_data.get('password2')
 
         first_name = self.cleaned_data.get('first_name')
         last_name = self.cleaned_data.get('last_name')
         middle_name = self.cleaned_data.get('middle_name')
-        birthdate = self.cleaned_data.get('birthdate')
-        gender = self.cleaned_data.get('gender')
 
         salary_base = self.cleaned_data.get('salary_base')
         salary_adjusted = self.cleaned_data.get('salary_adjusted')
@@ -231,53 +288,61 @@ class AddUserForm(forms.Form):
             if username_exists:
                 raise forms.ValidationError('With this user id is already exists!')
             else:
-                if len(password1) < 8:
-                    raise forms.ValidationError("Password is too short!")
+                email_correction = re.match('^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,4})$', email)
+                if not email_correction:
+                    raise forms.ValidationError('Email not correct!')
                 else:
-                    if password1 != password2:
-                        raise forms.ValidationError("Password not matched!")
+                    email_exists = models.UserProfile.objects.filter(email=email).exists()
+                    if email_exists:
+                        raise forms.ValidationError('This email already exists!')
                     else:
-                        check_number = isinstance(salary_base, (int, float))
-
-                        if not check_number:
-                            raise forms.ValidationError('Salary base cant be text!')
+                        if len(password1) < 8:
+                            raise forms.ValidationError("Password is too short!")
                         else:
-                            if salary_base < 0:
-                                raise forms.ValidationError('Salary base cant be negative')
+                            if password1 != password2:
+                                raise forms.ValidationError("Password not matched!")
                             else:
-                                check_number = isinstance(salary_adjusted, (int, float))
+                                check_number = isinstance(salary_base, (int, float))
 
                                 if not check_number:
-                                    raise forms.ValidationError('Salary adjusted cant be text!')
+                                    raise forms.ValidationError('Salary base cant be text!')
                                 else:
-                                    if salary_adjusted < 0:
-                                        raise forms.ValidationError('Salary adjusted cant be negative')
-
+                                    if salary_base < 0:
+                                        raise forms.ValidationError('Salary base cant be negative')
                                     else:
-                                        check_number = isinstance(hsa_annual_credits, (int, float))
+                                        check_number = isinstance(salary_adjusted, (int, float))
 
                                         if not check_number:
-                                            raise forms.ValidationError('HSA annual credit cant be text!')
+                                            raise forms.ValidationError('Salary adjusted cant be text!')
                                         else:
-                                            if hsa_annual_credits < 0:
-                                                raise forms.ValidationError('HSA annual credit cant be negative')
+                                            if salary_adjusted < 0:
+                                                raise forms.ValidationError('Salary adjusted cant be negative')
 
                                             else:
-                                                check_number = isinstance(hsa_optional, (int, float))
+                                                check_number = isinstance(hsa_annual_credits, (int, float))
 
                                                 if not check_number:
-                                                    raise forms.ValidationError('HSA optional cant be text!')
+                                                    raise forms.ValidationError('HSA annual credit cant be text!')
                                                 else:
-                                                    if hsa_optional < 0:
-                                                        raise forms.ValidationError('HSA optional cant be negative')
+                                                    if hsa_annual_credits < 0:
+                                                        raise forms.ValidationError('HSA annual credit cant be negative')
+
                                                     else:
-                                                        check_number = isinstance(hsa_remaining, (int, float))
+                                                        check_number = isinstance(hsa_optional, (int, float))
 
                                                         if not check_number:
-                                                            raise forms.ValidationError('HSA remaining cant be text!')
+                                                            raise forms.ValidationError('HSA optional cant be text!')
                                                         else:
-                                                            if hsa_remaining < 0:
-                                                                raise forms.ValidationError('HSA remaining cant be negative')
+                                                            if hsa_optional < 0:
+                                                                raise forms.ValidationError('HSA optional cant be negative')
+                                                            else:
+                                                                check_number = isinstance(hsa_remaining, (int, float))
+
+                                                                if not check_number:
+                                                                    raise forms.ValidationError('HSA remaining cant be text!')
+                                                                else:
+                                                                    if hsa_remaining < 0:
+                                                                        raise forms.ValidationError('HSA remaining cant be negative')
 
 
 
@@ -291,18 +356,14 @@ class AddUserForm(forms.Form):
 
     def deploy(self, org):
         username = self.cleaned_data.get('username')
+        email = self.cleaned_data.get('email')
         password1 = self.cleaned_data.get('password1')
         password2 = self.cleaned_data.get('password2')
 
         first_name = self.cleaned_data.get('first_name')
         last_name = self.cleaned_data.get('last_name')
         middle_name = self.cleaned_data.get('middle_name')
-        birthdate = self.cleaned_data.get('birthdate')
 
-        if len(birthdate) == 0:
-            birthdate = None
-
-        gender = self.cleaned_data.get('gender')
         salary_base = self.cleaned_data.get('salary_base')
         salary_adjusted = self.cleaned_data.get('salary_adjusted')
         hsa_annual_credits = self.cleaned_data.get('hsa_annual_credits')
@@ -311,13 +372,15 @@ class AddUserForm(forms.Form):
         additional_info = self.cleaned_data.get('additional_info')
 
 
-        user = models.UserProfile(username=username, org=org, first_name=first_name, last_name=last_name,
-                                    middle_name=middle_name, birthdate=birthdate, gender=gender, salary_base=salary_base,
+        user = models.UserProfile(username=username, email=email, org=org, first_name=first_name, last_name=last_name,
+                                    middle_name=middle_name, salary_base=salary_base,
                                     salary_adjusted=salary_adjusted, hsa_annual_credits=hsa_annual_credits, hsa_optional=hsa_optional,
                                     hsa_remaining=hsa_remaining, additional_info=additional_info)
         user.set_password(password1)
 
         user.save()
+
+        return user
 
 
 
@@ -332,13 +395,10 @@ class EnrolmentForm2(forms.ModelForm):
     first_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
     last_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
     middle_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
-    birthdate   = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate datepicker'}))
-    gender = forms.ChoiceField(choices=gender_list, required=False, widget=forms.Select(attrs={'class': 'validate'}))
-
 
     class Meta:
         model = models.UserProfile
-        fields = ('first_name', 'last_name', 'middle_name', 'birthdate', 'gender')
+        fields = ('first_name', 'last_name', 'middle_name')
 
 
 
@@ -427,11 +487,12 @@ class ChageUserProfile(forms.ModelForm):
         #self.fields['catagory'].queryset = office_model.ExpenseCatagory.objects.filter(Q(school=self.request.user.school))
 
     org = forms.ModelChoiceField(queryset=models.Organization.objects.all(), required=False,widget=forms.Select(attrs={'class':'validate'}))
+
+    email = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
+
     first_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
     last_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
     middle_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
-    birthdate   = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate datepicker'}))
-    gender = forms.ChoiceField(choices=gender_list, required=False, widget=forms.Select(attrs={'class': 'validate'}))
 
     salary_base = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
     salary_adjusted = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
@@ -444,11 +505,10 @@ class ChageUserProfile(forms.ModelForm):
 
     def clean(self):
         org = self.cleaned_data.get('org')
+        email = self.cleaned_data.get('email')
         first_name = self.cleaned_data.get('first_name')
         last_name = self.cleaned_data.get('last_name')
         middle_name = self.cleaned_data.get('middle_name')
-        birthdate = self.cleaned_data.get('birthdate')
-        gender = self.cleaned_data.get('gender')
 
         salary_base = self.cleaned_data.get('salary_base')
         salary_adjusted = self.cleaned_data.get('salary_adjusted')
@@ -462,45 +522,50 @@ class ChageUserProfile(forms.ModelForm):
 
         check_number = isinstance(salary_base, (int, float))
 
-        if not check_number:
-            raise forms.ValidationError('Salary base cant be text!')
+        email_correction = re.match('^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,4})$', email)
+
+        if not email_correction:
+            raise forms.ValidationError('Email not correct!')
         else:
-            if salary_base < 0:
-                raise forms.ValidationError('Salary base cant be negative')
+            if not check_number:
+                raise forms.ValidationError('Salary base cant be text!')
             else:
-                check_number = isinstance(salary_adjusted, (int, float))
-
-                if not check_number:
-                    raise forms.ValidationError('Salary adjusted cant be text!')
+                if salary_base < 0:
+                    raise forms.ValidationError('Salary base cant be negative')
                 else:
-                    if salary_adjusted < 0:
-                        raise forms.ValidationError('Salary adjusted cant be negative')
+                    check_number = isinstance(salary_adjusted, (int, float))
 
+                    if not check_number:
+                        raise forms.ValidationError('Salary adjusted cant be text!')
                     else:
-                        check_number = isinstance(hsa_annual_credits, (int, float))
+                        if salary_adjusted < 0:
+                            raise forms.ValidationError('Salary adjusted cant be negative')
 
-                        if not check_number:
-                            raise forms.ValidationError('HSA annual credit cant be text!')
                         else:
-                            if hsa_annual_credits < 0:
-                                raise forms.ValidationError('HSA annual credit cant be negative')
+                            check_number = isinstance(hsa_annual_credits, (int, float))
 
+                            if not check_number:
+                                raise forms.ValidationError('HSA annual credit cant be text!')
                             else:
-                                check_number = isinstance(hsa_optional, (int, float))
+                                if hsa_annual_credits < 0:
+                                    raise forms.ValidationError('HSA annual credit cant be negative')
 
-                                if not check_number:
-                                    raise forms.ValidationError('HSA optional cant be text!')
                                 else:
-                                    if hsa_optional < 0:
-                                        raise forms.ValidationError('HSA optional cant be negative')
-                                    else:
-                                        check_number = isinstance(hsa_remaining, (int, float))
+                                    check_number = isinstance(hsa_optional, (int, float))
 
-                                        if not check_number:
-                                            raise forms.ValidationError('HSA remaining cant be text!')
+                                    if not check_number:
+                                        raise forms.ValidationError('HSA optional cant be text!')
+                                    else:
+                                        if hsa_optional < 0:
+                                            raise forms.ValidationError('HSA optional cant be negative')
                                         else:
-                                            if hsa_remaining < 0:
-                                                raise forms.ValidationError('HSA remaining cant be negative')
+                                            check_number = isinstance(hsa_remaining, (int, float))
+
+                                            if not check_number:
+                                                raise forms.ValidationError('HSA remaining cant be text!')
+                                            else:
+                                                if hsa_remaining < 0:
+                                                    raise forms.ValidationError('HSA remaining cant be negative')
 
 
 
@@ -510,7 +575,7 @@ class ChageUserProfile(forms.ModelForm):
 
     class Meta:
         model = models.UserProfile
-        fields = ('org', 'first_name', 'last_name', 'middle_name', 'birthdate', 'gender', 'salary_base', 'salary_adjusted', 'hsa_annual_credits', 'hsa_optional', 'hsa_remaining', 'additional_info')
+        fields = ('email', 'org', 'first_name', 'last_name', 'middle_name', 'salary_base', 'salary_adjusted', 'hsa_annual_credits', 'hsa_optional', 'hsa_remaining', 'additional_info')
 
 
 

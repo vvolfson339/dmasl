@@ -16,7 +16,9 @@ class Organization(models.Model):
     date_fiscal_start   = models.DateField(null=True, blank=True)
     date_fiscal_end     = models.DateField(null=True, blank=True)
     num_pay_periods     = models.FloatField(null=True, blank=True)
-    logo_path           = models.CharField(max_length=255, null=True, blank=True)
+    #logo_path          = models.CharField(max_length=255, null=True, blank=True)
+    logo                = models.ImageField(upload_to='org/image/%Y/%m/%d/', null=True, blank=True)
+    admin_email         = models.EmailField(max_length=255, null=True, blank=True)
     enrolment_period    = models.CharField(max_length=255, null=True, blank=True)
     misc_1              = models.CharField(max_length=255, null=True, blank=True)
 
@@ -66,15 +68,13 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
 
     username = models.CharField(max_length=50, unique=True)
 
+    email = models.EmailField(max_length=255, null=True, blank=True)
+
     org = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True, blank=True)
 
     first_name = models.CharField(max_length=50, null=True, blank=True)
     last_name = models.CharField(max_length=50, null=True, blank=True)
     middle_name = models.CharField(max_length=50, null=True, blank=True)
-
-    birthdate = models.DateField(null=True, blank=True)
-
-    gender = models.CharField(max_length=20, null=True, blank=True)
 
     salary_base = models.FloatField(null=True, blank=True)
     salary_adjusted = models.FloatField(null=True, blank=True)
@@ -123,6 +123,15 @@ class MemberUpload(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+
+
+
+
+
+
+
+
 
 
 

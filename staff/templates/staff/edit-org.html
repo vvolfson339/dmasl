@@ -16,7 +16,7 @@
 {% block admin_content %}
     <h4 class="col l10 offset-l1" style="margin-top: 40px; text-decoration: underline;">Edit Organization: {{ org.org_short_name | upper }}</h4>
 
-    <form class="col l10 offset-l1" method="post" style="margin-top: 10px; margin-bottom: 30px;">
+    <form class="col l10 offset-l1" method="post" enctype="multipart/form-data" style="margin-top: 10px; margin-bottom: 30px;">
         {% csrf_token %}
 
         <div class="input-field col l12">
@@ -79,10 +79,21 @@
             <label for="id_enrolment_period">Enrolment period (2017-2018)</label>
         </div>
 
-        <div class="input-field col l12">
-            <i class="material-icons prefix">insert_link</i>
-            {{ form.logo_path }}
-            <label for="id_logo_path">Organization logo path</label>
+        <div class="file-field input-field col l6">
+            <div class="btn">
+                <span>Logo</span>
+                {{ form.logo }}
+            </div>
+
+            <div class="file-path-wrapper">
+                <input class="file-path validate" type="text">
+            </div>
+        </div>
+
+        <div class="input-field col l6">
+            <i class="material-icons prefix">email</i>
+            {{ form.admin_email }}
+            <label for="id_admin_email">Admin Email</label>
         </div>
 
         <div class="input-field col l12">

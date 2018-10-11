@@ -2,7 +2,7 @@
 
 {% block title %}Enrolment Application | DMASL{% endblock %}
 
-{% block current_page %}Form 2 of 4{% endblock %}
+{% block current_page %}Form 2 of 3{% endblock %}
 
 {% block body %}
     <div class="col l12 white" style="padding: 20px;">
@@ -18,8 +18,9 @@
             </p>
 
             <p>
-                <span style="font-weight: bold;">ID Number: </span> This is the identification number you will use on your claim forms.
+                <span style="font-weight: bold;">ID Number </span>: This is the identification number you will use on your claim forms.
             </p>
+
         </div>
 
 
@@ -33,11 +34,26 @@
                     Covered Class : {{ org.org_short_name | upper }} - {{ org.org_full_name | title }}
                 </p>
 
-                <p class="col l12" style="margin-bottom: 20px; margin-top: 5px;">
+                <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
                     ID Number : {{ request.user.username }}
                 </p>
 
-                <div class="input-field col l12">
+                <p class="col l12" style="margin-bottom: 20px; margin-top: 5px;">
+                    Name :
+                    {% if request.user.last_name %}
+                        {{ request.user.last_name | title }}
+                    {% endif %}
+
+                    {% if request.user.first_name %}
+                        {{ request.user.first_name | title }}
+                    {% endif %}
+
+                    {% if request.user.middle_name %}
+                        {{ request.user.middle_name | title }}
+                    {% endif %}
+                </p>
+
+                <!--<div class="input-field col l12">
                     {{ form.first_name }}
                     <label for="id_first_name">First name</label>
                 </div>
@@ -50,17 +66,66 @@
                 <div class="input-field col l6">
                     {{ form.last_name }}
                     <label for="id_last_name">Last name</label>
-                </div>
+                </div>-->
+
+                <h5 class="col l12 center-align" style="text-decoration: underline;">Health Spending Account</h5>
+
+                <p class="col l12" style="margin-bottom: 5px; margin-top: 20px;">
+                    Base salary : {{ request.user.salary_base }}
+                </p>
+
+                <p class="col l12" style="margin-top: 5px; margin-bottom: 20px;">
+                    Total benefit credits : {{ request.user.hsa_annual_credits }}
+                </p>
+
 
                 <div class="input-field col l12">
-                    {{ form.birthdate }}
-                    <label for="id_birthdate">Birthdate</label>
+                    {{ form.hsa_optional }}
+                    <label for="id_hsa_optional">Current Health Spending Account selection</label>
                 </div>
 
-                <div class="input-field col l12" style="margin-top: 40px;">
-                    {{ form.gender }}
-                    <label>Select Gender</label>
+                <div class="col s12 m112 l4">
+                    <p class="" style="margin-top: 5px; margin-bottom: 20px;">
+                        HSA selected : {{ request.user.hsa_optional }}
+                    </p>
                 </div>
+
+                <div class="col s12 m112 l4">
+                    <p class="" style="margin-top: 5px; margin-bottom: 20px;">
+                        Benefit credits remaining : {{ request.user.hsa_remaining }}
+                    </p>
+                </div>
+
+                <div class="col s12 m112 l4">
+                    <p class="" style="margin-top: 5px; margin-bottom: 20px;">
+                        Adjusted base salary : {{ request.user.salary_adjusted }}
+                    </p>
+                </div>
+
+                <p class="col l12">
+                  <label>
+                      {% if request.user.opt_out_bool %}
+                        <input name="chk" checked type="checkbox" />
+                      {% else %}
+                        <input name="chk" type="checkbox" />
+                      {% endif %}
+                      <span>Select the checkbox if benefit credits provided are insufficient to fund medical/dental expenses that are not covered by the base plan. Human Resources will contact you regarding your HSA selection.</span>
+                  </label>
+                </p>
+
+                {% if form.non_field_errors %}
+                    {% for error in form.non_field_errors %}
+                        <div class="col l12 valign-wrapper" style="margin-top: 20px;">
+                            <p class="red-text" style="font-size: 16px;">
+                                ** {{ error }}
+                            </p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                {% if err_msg %}
+                    <p class="col l12 red-text" style="margin-top: 20px">** {{ err_msg }}</p>
+                {% endif %}
 
 
                 <div class="col l12" style="padding: 0px; margin-top: 30px;">
@@ -74,7 +139,28 @@
                     </a>
                 </div>
             </form>
+
         </div>
+
+
+        <div class="col l12 grey white-text" style="margin-top: 40px; padding: 20px;">
+            <h5>When selecting your HSA please remember the following:</h5>
+
+
+            <p>
+                1. Funds not claimed by March 31, 2019 will be forfeited.
+            </p>
+
+            <p>
+                2. As long as $50 is deposited, claims for which you are not fully reimbursed can be carried forward to the following plan year.
+            </p>
+
+            <p>
+                3. Benefit credits not allocated to a HSA will be received in the form of taxable income.
+            </p>
+        </div>
+
+
     </div>
 {% endblock %}
 
@@ -93,6 +179,62 @@
 
         $(document).ready(function(){
             $('select').formSelect();
+         });
+
+    </script>
+
+
+    <script>
+        $(document).ready(function(){
+
+            $('.datepicker').datepicker({
+                selectMonths: true, // Creates a dropdown to control month
+                selectYears: 15, // Creates a dropdown of 15 years to control year,
+                today: 'Today',
+                format: 'yyyy-mm-dd',
+                clear: 'Clear',
+                close: 'Ok',
+                closeOnSelect: false // Close upon selecting a date,
+            });
+        });
+
+
+        $(document).ready(function(){
+            $('select').formSelect();
+         });
+
+
+
+         $('input[name="chk"]').change(function(){
+            if($('input[name="chk"]').is(':checked'))
+            {
+                $('input[name=hsa_optional]').prop('disabled', true);
+            }else
+            {
+                $('input[name=hsa_optional]').prop('disabled', false);
+            }
+
+         });
+
+
+         $(document).ready(function(){
+            if($('input[name="chk"]').is(':checked'))
+            {
+                $('input[name=hsa_optional]').prop('disabled', true);
+            }else
+            {
+                $('input[name=hsa_optional]').prop('disabled', false);
+            }
+
+         });
+
+
+         $('input[name="hsa_optional"]').change(function(){
+            var hsa_optional = $('input[name="hsa_optional"]').val();
+
+
+            $('#hsa_optional_input').html(hsa_optional);
+
          });
 
     </script>

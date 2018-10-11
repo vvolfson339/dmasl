@@ -1,14 +1,13 @@
-{% extends 'staff_base.html' %}
+{% extends 'org_admin_base.html' %}
 
-{% block title %}DETAIL MEMBER | STAFF DMASL{% endblock %}
+{% block title %}DETAIL MEMBER | Admin DMASL{% endblock %}
 
 {% block left_menu %}
 
     <div id="left-sidebar-menu" class="collection col s12 m12 l12" style="margin-top: 200px; padding: 0px;">
-        <a href="{% url 'staff:staff-home' %}" class="collection-item">Home</a>
-        <a href="{% url 'staff:org' %}" class="collection-item">Organization</a>
-        <a href="{% url 'staff:member' %}" class="collection-item active">Member</a>
-        <a href="#!" class="collection-item">About us</a>
+        <a href="{% url 'home:org-admin-home' org_short_name=org_found.org_short_name %}" class="collection-item">Home</a>
+        <a href="{% url 'home:org-member-add' org_short_name=org_found.org_short_name %}" class="collection-item">Add member</a>
+        <a href="{% url 'home:org-member-view' org_short_name=org_found.org_short_name %}" class="collection-item active">View member</a>
     </div>
 {% endblock %}
 
@@ -27,16 +26,16 @@
         Is Active: {{ member.is_active }}
         <span style="margin-left: 10px;">
             {% if member.is_active %}
-                <a href="{% url 'staff:activate-deactivate-account' user_id=member.id %}">Deactivate this account</a>
+                <a href="{% url 'home:org-member-activate-deactivate' org_short_name=member.org.org_short_name user_id=member.username %}">Deactivate this account</a>
             {% else %}
-                <a href="{% url 'staff:activate-deactivate-account' user_id=member.id %}">Activate this account</a>
+                <a href="{% url 'home:org-member-activate-deactivate' org_short_name=member.org.org_short_name user_id=member.username %}">Activate this account</a>
             {% endif %}
         </span>
     </p>
 
     <p>Organization:
         {% if member.org %}
-            <a href="{% url 'staff:detail-org' org_id=member.org.id %}">{{ member.org.org_short_name | upper }}</a>
+            {{ member.org.org_short_name | upper }}
         {% else %}
             None
         {% endif %}
@@ -58,7 +57,7 @@
 
     <p class="col l12" style="margin-top: 30px; padding: 0px;">
         <a class="btn" href="{% url 'staff:edit-member' user_id=member.id %}">Edit This profile</a>
-        <a style="margin-left: 20px;" class="btn red" href="{% url 'staff:delete-member' user_id=member.id %}">Delete This User</a>
+        <a style="margin-left: 20px;" class="btn red" href="{% url 'home:org-member-delete' org_short_name=member.org.org_short_name user_id=member.username %}">Delete This User</a>
     </p>
 </div>
 

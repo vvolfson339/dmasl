@@ -7,6 +7,7 @@ import os
 from django.http.response import StreamingHttpResponse
 from datetime import datetime
 
+
 from account import models as account_model
 from account import forms as account_form
 
@@ -114,7 +115,7 @@ class AddOrganization(StaffPermission, View):
 
     def post(self, request):
 
-        form = account_form.AddOrganization(request.POST or None)
+        form = account_form.AddOrganization(request.POST or None, request.FILES or None)
 
         if form.is_valid():
             form.deploy()
@@ -235,11 +236,13 @@ class EditOrganization(StaffPermission, View):
 
         org = get_object_or_404(account_model.Organization, id=org_id)
 
-        form = account_form.EditOrgForm(request.POST or None, instance=org)
+        form = account_form.EditOrgForm(request.POST or None, request.FILES or None, instance=org)
 
 
         if form.is_valid():
             form.save()
+        else:
+            print(form.errors)
 
 
         variables = {

@@ -20,7 +20,19 @@
 
             <div class="col s12 m12 l12" style="padding: 0px;">
                 <p class="col s4 m4 l4"></p>
-                <p class="col s4 m4 l4 center-align">{{ request.user.first_name | title }} {{ request.user.last_name | title }}</p>
+                <p class="col s4 m4 l4 center-align">
+                    {% if request.user.last_name %}
+                        {{ request.user.last_name | title }}
+                    {% endif %}
+
+                    {% if request.user.first_name %}
+                        {{ request.user.first_name | title }}
+                    {% endif %}
+
+                    {% if request.user.middle_name %}
+                        {{ request.user.middle_name | title }}
+                    {% endif %}
+                </p>
                 <p class="col s4 m4 l4 right-align">{{ request.user.org.enrolment_period }}</p>
             </div>
 
@@ -66,7 +78,19 @@
 
             <div class="col s12 m12 l12" style="padding: 0px; margin-top: 20px;">
                 <p class="col s4 m4 l4" style="padding: 0px;"><b>Member Name</b></p>
-                <p class="col s4 m4 l4">{{ request.user.first_name | title }} {{ request.user.last_name | title }}</p>
+                <p class="col s4 m4 l4">
+                    {% if request.user.last_name %}
+                        {{ request.user.last_name | title }}
+                    {% endif %}
+
+                    {% if request.user.first_name %}
+                        {{ request.user.first_name | title }}
+                    {% endif %}
+
+                    {% if request.user.middle_name %}
+                        {{ request.user.middle_name | title }}
+                    {% endif %}
+                </p>
                 <p class="col s4 m4 l4"></p>
             </div>
 
@@ -74,12 +98,6 @@
             <div class="col s12 m12 l12" style="padding: 0px; margin-top: 5px;">
                 <p class="col s4 m4 l4" style="padding: 0px;"><b>ID Number</b></p>
                 <p class="col s4 m4 l4">{{ request.user.username }}</p>
-                <p class="col s4 m4 l4"></p>
-            </div>
-
-            <div class="col s12 m12 l12" style="padding: 0px; margin-top: 5px;">
-                <p class="col s4 m4 l4" style="padding: 0px;"><b>Birthdate</b></p>
-                <p class="col s4 m4 l4">{{ request.user.birthdate }}</p>
                 <p class="col s4 m4 l4"></p>
             </div>
 
@@ -131,7 +149,7 @@
                 <div class="col s12 m12 l12" style="padding: 0px; margin-top: 50px;">
                     <div class="col s6 m6 l6" style="padding: 0px;">
                         <p class="left" style="width: 150px; font-weight: bold;">Employee Signature: </p>
-                        <p class="left" style="width: 200px; height: 20px; border-bottom: 2px solid #333;"> </p>
+                        <p class="left" style="width: 200px; height: 20px; border-bottom: 2px solid #333;"></p>
                     </div>
 
                     <div class="col s6 m6 l6 right-align" style="padding: 0px;">
@@ -141,7 +159,19 @@
                 </div>
 
                 <div class="col s12 m12 l12" style="padding: 0px; margin-top: 5px;">
-                    <p style="font-weight: bold;">{{ request.user.first_name | title }} {{ request.user.last_name | title }}</p>
+                    <p style="font-weight: bold;">
+                        {% if request.user.last_name %}
+                            {{ request.user.last_name | title }}
+                        {% endif %}
+
+                        {% if request.user.first_name %}
+                            {{ request.user.first_name | title }}
+                        {% endif %}
+
+                        {% if request.user.middle_name %}
+                            {{ request.user.middle_name | title }}
+                        {% endif %}
+                    </p>
                 </div>
 
 

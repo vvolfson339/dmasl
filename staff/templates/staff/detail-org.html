@@ -20,6 +20,7 @@
 
 <div class="col l10 offset-l1">
     <p>Org URL: {{ org.org_url | safe }}</p>
+    <p>Org Admin: {{ org.admin_email | safe }}</p>
     <p>Org short name: {{ org.org_short_name | upper }}</p>
     <p>Org full name: {{ org.org_full_name | title }}</p>
     <p>Contract holder: {{ org.contract_holder }}</p>
@@ -29,7 +30,13 @@
     <p>Date fiscal start: {{ org.date_fiscal_start }}</p>
     <p>Date fiscal end: {{ org.date_fiscal_end }}</p>
     <p>Number pay periods: {{ org.num_pay_periods }}</p>
-    <p>Logo path: {{ org.logo_path }}</p>
+
+    {% if org.logo %}
+        <p>Logo: <a target="_blank" href="{{ org.logo.url }}">Logo path</a></p>
+    {% else %}
+        <p>Logo: Not upload</p>
+    {% endif %}
+
     <p>Enrolment period: {{ org.enrolment_period }}</p>
     <p>Misc: {{ org.misc_1 }}</p>
     <p>Total member: {{ total_member }} <span style="margin-left: 20px;"><a href="{% url 'staff:org-member' org_id=org.id %}">View all member</a></span></p>

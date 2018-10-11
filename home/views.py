@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.views import View
 from django.contrib.auth.views import login, logout
+from django.http import Http404
 
 from account import models as account_model
 from account import forms as account_form
@@ -128,7 +129,10 @@ class EnrolmentForm2(LoginRequiredMixin, View):
     def get(self, request):
         org = request.user.org
 
-        form = account_form.EnrolmentForm2(instance=request.user)
+        usr = request.user
+
+        #form = account_form.EnrolmentForm2(instance=request.user)
+        form = account_form.EnrolmentForm3(instance=request.user, current_user=usr)
 
         variables = {
             'org': org,
@@ -141,11 +145,39 @@ class EnrolmentForm2(LoginRequiredMixin, View):
     def post(self, request):
         org = request.user.org
 
-        form = account_form.EnrolmentForm2(request.POST or None, instance=request.user)
+        usr = request.user
 
-        if form.is_valid():
-            form.save()
-            return redirect('home:enrolment-form3')
+        form = account_form.EnrolmentForm3(request.POST or None, instance=request.user, current_user=usr)
+
+        err_msg = None
+
+        if request.POST.get('next') == 'next':
+            if request.POST.get('chk') == None:
+                if form.is_valid():
+                    hsa_optional = float(request.POST.get('hsa_optional'))
+
+                    form.save()
+
+                    request.session['hsa_optional_var'] = hsa_optional
+
+                    usr.opt_out_bool = False
+                    usr.save()
+
+                    return redirect('home:enrolment-form4')
+            else:
+                usr.opt_out_bool = True
+                usr.hsa_optional = 0
+                usr.save()
+
+                del request.session['hsa_optional_var']
+
+                return redirect('home:enrolment-form4')
+
+        #form = account_form.EnrolmentForm2(request.POST or None, instance=request.user)
+
+        #if form.is_valid():
+         #   form.save()
+          #  return redirect('home:enrolment-form3')
 
 
 
@@ -153,6 +185,7 @@ class EnrolmentForm2(LoginRequiredMixin, View):
             'org': org,
 
             'form': form,
+            'err_msg': err_msg,
         }
 
         return render(request, self.template_name, variables)
@@ -211,9 +244,6 @@ class EnrolmentForm3(LoginRequiredMixin, View):
                 del request.session['hsa_optional_var']
 
                 return redirect('home:enrolment-form4')
-
-
-
 
 
         variables = {
@@ -321,6 +351,235 @@ class EnrolmentPrint(LoginRequiredMixin, View):
 
         return render(request, self.template_name, variables)
 
+
+
+
+
+
+
+#=======================================================================================================================
+#=======================================================================================================================
+#                                           organization admin login
+#=======================================================================================================================
+#=======================================================================================================================
+
+
+
+class OrgAdminPermissionMixin(object):
+    def has_permissions(self, request):
+
+        return request.user.email == request.user.org.admin_email
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            if not self.has_permissions(request):
+                return redirect('home:org-admin-login', request.user.org.org_short_name)
+            return super(OrgAdminPermissionMixin, self).dispatch(
+                request, *args, **kwargs)
+        else:
+            return redirect('home:org-admin-login', request.user.org.org_short_name)
+
+
+
+
+#org admin login
+class OrgAdminLogin(View):
+    template_name = 'home/org-admin/admin-login.html'
+
+    def get(self, request, org_short_name):
+
+        org_found = get_object_or_404(account_model.Organization, org_short_name=org_short_name)
+
+        form = account_form.OrgAdminLoginForm(org=org_found)
+
+        variables = {
+            'org_found': org_found,
+            'form': form,
+        }
+
+        return render(request, self.template_name, variables)
+
+
+    def post(self, request, org_short_name):
+
+        org_found = get_object_or_404(account_model.Organization, org_short_name=org_short_name)
+
+        form = account_form.OrgAdminLoginForm(request.POST or None, org=org_found)
+
+        err_msg = None
+        if form.is_valid():
+            user = form.login_request()
+
+            user_org = user.org
+
+            if user_org == org_found:
+                if user:
+                    login(request, user)
+                    return redirect('home:org-admin-home', org_short_name=org_short_name)
+            else:
+                err_msg = "You are not associated to {}".format(org_short_name)
+
+        variables = {
+            'org_found': org_found,
+            'form': form,
+
+            'err_msg': err_msg,
+        }
+
+        return render(request, self.template_name, variables)
+
+
+#org admin home
+class OrgAdminHome(OrgAdminPermissionMixin, View):
+    template_name = 'home/org-admin/home.html'
+
+    def get(self, request, org_short_name):
+
+        org_found = get_object_or_404(account_model.Organization, org_short_name=org_short_name)
+
+        form = account_form.OrgAdminLoginForm(org=org_found)
+
+        variables = {
+            'org_found': org_found,
+            'form': form,
+        }
+
+        return render(request, self.template_name, variables)
+
+
+
+
+#org admin member view
+class OrgMemberView(OrgAdminPermissionMixin, View):
+    template_name = 'home/org-admin/org-member-view.html'
+
+    def get(self, request, org_short_name):
+        org_found = get_object_or_404(account_model.Organization, org_short_name=org_short_name)
+
+        members = account_model.UserProfile.objects.filter(org=org_found).order_by('-join_date')
+        members_count = account_model.UserProfile.objects.filter(org=org_found).count()
+
+        variables = {
+            'org_found': org_found,
+
+            'members': members,
+            'members_count': members_count,
+        }
+
+        return render(request, self.template_name, variables)
+
+
+
+#org admin member view
+class OrgMemberDetail(OrgAdminPermissionMixin, View):
+    template_name = 'home/org-admin/org-member-detail.html'
+
+    def get(self, request, org_short_name, user_id):
+        org_found = get_object_or_404(account_model.Organization, org_short_name=org_short_name)
+        member = get_object_or_404(account_model.UserProfile, username=user_id)
+
+        if member.org != org_found:
+            raise Http404()
+
+        variables = {
+            'org_found': org_found,
+
+            'member': member,
+        }
+
+        return render(request, self.template_name, variables)
+
+
+
+
+#activate deactivate member
+class ActivateDeactivateAccount(OrgAdminPermissionMixin, View):
+
+    def get(self, request, org_short_name, user_id):
+
+        org_found = get_object_or_404(account_model.Organization, org_short_name=org_short_name)
+        member = get_object_or_404(account_model.UserProfile, username=user_id)
+
+        if member.org != org_found:
+            raise Http404()
+
+        usr_is_active = member.is_active
+
+        if usr_is_active:
+            member.is_active = False
+            member.save()
+        else:
+            member.is_active = True
+            member.save()
+
+        return redirect('home:org-member-detail', org_short_name=org_short_name, user_id=user_id)
+
+
+
+
+#delete member
+class OrgMemberDelete(OrgAdminPermissionMixin, View):
+
+    def get(self, request, org_short_name, user_id):
+
+        org_found = get_object_or_404(account_model.Organization, org_short_name=org_short_name)
+        member = get_object_or_404(account_model.UserProfile, username=user_id)
+
+        if member.org != org_found:
+            raise Http404()
+
+        member.delete()
+
+        return redirect('home:org-member-view', org_short_name=org_short_name)
+
+
+
+
+#org admin member view
+class OrgMemberAdd(OrgAdminPermissionMixin, View):
+    template_name = 'home/org-admin/org-member-add.html'
+
+    def get(self, request, org_short_name):
+        org_found = get_object_or_404(account_model.Organization, org_short_name=org_short_name)
+
+        form = account_form.AddUserForm()
+
+        variables = {
+            'org_found': org_found,
+
+            'form': form,
+        }
+
+        return render(request, self.template_name, variables)
+
+
+    def post(self, request, org_short_name):
+        org_found = get_object_or_404(account_model.Organization, org_short_name=org_short_name)
+
+        form = account_form.AddUserForm(request.POST or None)
+
+        if form.is_valid():
+            u = form.deploy(org_found)
+
+            return redirect('home:org-member-detail', org_short_name=org_short_name, user_id=u.username)
+
+        variables = {
+            'org_found': org_found,
+
+            'form': form,
+        }
+
+        return render(request, self.template_name, variables)
+
+
+
+
+
+#=======================================================================================================================
+#=======================================================================================================================
+#                                           organization admin login
+#=======================================================================================================================
+#=======================================================================================================================
 
 
 

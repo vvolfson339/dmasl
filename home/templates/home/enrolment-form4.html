@@ -56,7 +56,18 @@
                 <h5 class="col l12 center-align" style="">Employee Information</h5>
 
                 <p class="col l12" style="margin-bottom: 5px; margin-top: 30px;">
-                    Employee Name : {{ request.user.first_name | title }} {{ request.user.middle_name | title }} {{ request.user.last_name | title }}
+                    Name :
+                    {% if request.user.last_name %}
+                        {{ request.user.last_name | title }}
+                    {% endif %}
+
+                    {% if request.user.first_name %}
+                        {{ request.user.first_name | title }}
+                    {% endif %}
+
+                    {% if request.user.middle_name %}
+                        {{ request.user.middle_name | title }}
+                    {% endif %}
                 </p>
 
 
@@ -65,9 +76,6 @@
                     ID Number : {{ request.user.username }}
                 </p>
 
-                <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
-                    Birthdate : {{ request.user.birthdate }}
-                </p>
 
                 {% if request.user.opt_out_bool %}
                     <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
@@ -90,7 +98,7 @@
 
 
                 <div class="col l12" style="padding: 0px; margin-top: 30px;">
-                    <a href="{% url 'home:enrolment-form3' %}" class="btn waves-effect waves-light" style="">Back
+                    <a href="{% url 'home:enrolment-form2' %}" class="btn waves-effect waves-light" style="">Back
                     </a>
 
                     <button type="submit" name="next" value="next" class="btn waves-effect waves-light black" style="">Submit
