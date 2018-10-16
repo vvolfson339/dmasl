@@ -1,0 +1,127 @@
+{% extends 'org_admin_base.html' %}
+
+{% block title %}ADD MEMBER | Admin DMASL{% endblock %}
+
+{% block left_menu %}
+    <div id="left-sidebar-menu" class="collection col s12 m12 l12" style="margin-top: 200px; padding: 0px;">
+        <a href="{% url 'home:org-admin-home' org_short_name=org_found.org_short_name %}" class="collection-item">Home</a>
+        <a href="{% url 'home:org-member-add' org_short_name=org_found.org_short_name %}" class="collection-item active">Add member</a>
+        <a href="{% url 'home:org-member-view' org_short_name=org_found.org_short_name %}" class="collection-item">View member</a>
+    </div>
+{% endblock %}
+
+
+{% block admin_content %}
+
+    <h4 class="col l10 offset-l1" style="margin-top: 10px; text-decoration: underline;">
+        Edit member : {{ user_found.username }}
+    </h4>
+
+
+    <p class="col l10 offset-l1">
+        User ID: {{ user_found.username }}
+    </p>
+
+
+    <form class="col l10 offset-l1" method="post" style="margin-top: 10px; margin-bottom: 30px;">
+        {% csrf_token %}
+
+        <div class="input-field col l6" style="margin-top: 40px;">
+            <input type="text" disabled value="{{ user_found.org.org_short_name }}">
+            <label>Select ORG</label>
+        </div>
+
+        <div class="input-field col l12">
+            {{ form.email }}
+            <label for="id_email">Email</label>
+        </div>
+
+
+        <div class="input-field col l4">
+            {{ form.first_name }}
+            <label for="id_first_name">First name</label>
+        </div>
+
+        <div class="input-field col l4">
+            {{ form.middle_name }}
+            <label for="id_middle_name">Middle name</label>
+        </div>
+
+        <div class="input-field col l4">
+            {{ form.last_name }}
+            <label for="id_last_name">Last name</label>
+        </div>
+
+        <div class="input-field col l6">
+            {{ form.salary_base }}
+            <label for="id_salary_base">Salary base</label>
+        </div>
+
+        <div class="input-field col l6">
+            {{ form.salary_adjusted }}
+            <label for="id_salary_adjusted">Salary adjusted</label>
+        </div>
+
+
+        <div class="input-field col l4">
+            {{ form.hsa_annual_credits }}
+            <label for="id_hsa_annual_credits">HSA annual credits</label>
+        </div>
+
+        <div class="input-field col l4">
+            {{ form.hsa_optional }}
+            <label for="id_hsa_optional">HSA optional</label>
+        </div>
+
+        <div class="input-field col l4">
+            {{ form.hsa_remaining }}
+            <label for="id_hsa_remaining">HSA remaining</label>
+        </div>
+
+
+        <div class="input-field col s12">
+            {{ form.additional_info }}
+            <label for="id_additional_info">Additional info</label>
+        </div>
+
+
+
+
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <div class="col s12 m10 offset-m1 l10 offset-l1 valign-wrapper" style="margin-top: 20px; background-color: red; height: 40px;">
+                    <p style="color: white; font-size: 16px;">
+                        {{ error }}
+                    </p>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="col s12 m12 l12" style="margin-bottom: 20px; margin-top: 20px;">
+            <button class="btn waves-effect waves-light black" type="submit" style="">change
+            </button>
+        </div>
+    </form>
+
+
+{% endblock %}
+
+
+{% block script %}
+    <script>
+        $(document).ready(function(){
+            $('.datepicker').datepicker({
+                format: 'yyyy-mm-dd',
+                yearRange: 100,
+            });
+        });
+
+
+        $(document).ready(function(){
+            $('select').formSelect();
+         });
+
+    </script>
+{% endblock %}
+
+

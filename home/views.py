@@ -535,7 +535,7 @@ class OrgMemberDelete(OrgAdminPermissionMixin, View):
 
 
 
-#org admin member view
+#org admin member add
 class OrgMemberAdd(OrgAdminPermissionMixin, View):
     template_name = 'home/org-admin/org-member-add.html'
 
@@ -572,6 +572,46 @@ class OrgMemberAdd(OrgAdminPermissionMixin, View):
         return render(request, self.template_name, variables)
 
 
+
+
+#org admin member edit
+class OrgMemberEdit(OrgAdminPermissionMixin, View):
+    template_name = 'home/org-admin/org-member-edit.html'
+
+    def get(self, request, org_short_name, user_id):
+        org_found = get_object_or_404(account_model.Organization, org_short_name=org_short_name)
+        user_found = get_object_or_404(account_model.UserProfile, username=user_id, org=org_found)
+
+        form = account_form.ChageUserProfileFromOrgAdmin(instance=user_found)
+
+        variables = {
+            'org_found': org_found,
+            'user_found': user_found,
+
+            'form': form,
+        }
+
+        return render(request, self.template_name, variables)
+
+
+    def post(self, request, org_short_name, user_id):
+        org_found = get_object_or_404(account_model.Organization, org_short_name=org_short_name)
+        user_found = get_object_or_404(account_model.UserProfile, username=user_id, org=org_found)
+
+        form = account_form.ChageUserProfileFromOrgAdmin(request.POST or None, instance=user_found)
+
+        if form.is_valid():
+            form.save()
+            return redirect('home:org-member-detail', org_short_name=org_short_name, user_id=user_id)
+
+        variables = {
+            'org_found': org_found,
+            'user_found': user_found,
+
+            'form': form,
+        }
+
+        return render(request, self.template_name, variables)
 
 
 

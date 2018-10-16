@@ -582,6 +582,107 @@ class ChageUserProfile(forms.ModelForm):
 
 
 
+
+#change user profile from org admin
+class ChageUserProfileFromOrgAdmin(forms.ModelForm):
+
+    #def __init__(self,*args,**kwargs):
+     #   self.org = kwargs.pop('org')
+      #  super(ChageUserProfile, self).__init__(*args,**kwargs)
+
+        #self.fields['catagory'].queryset = office_model.ExpenseCatagory.objects.filter(Q(school=self.request.user.school))
+
+    email = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
+
+    first_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
+    last_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
+    middle_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
+
+    salary_base = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
+    salary_adjusted = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
+    hsa_annual_credits = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
+    hsa_optional = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
+    hsa_remaining = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
+
+    additional_info = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
+
+
+    def clean(self):
+        email = self.cleaned_data.get('email')
+        first_name = self.cleaned_data.get('first_name')
+        last_name = self.cleaned_data.get('last_name')
+        middle_name = self.cleaned_data.get('middle_name')
+
+        salary_base = self.cleaned_data.get('salary_base')
+        salary_adjusted = self.cleaned_data.get('salary_adjusted')
+        hsa_annual_credits = self.cleaned_data.get('hsa_annual_credits')
+        hsa_optional = self.cleaned_data.get('hsa_optional')
+        hsa_remaining = self.cleaned_data.get('hsa_remaining')
+
+        additional_info = self.cleaned_data.get('additional_info')
+
+
+
+        check_number = isinstance(salary_base, (int, float))
+
+        email_correction = re.match('^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,4})$', email)
+
+        if not email_correction:
+            raise forms.ValidationError('Email not correct!')
+        else:
+            if not check_number:
+                raise forms.ValidationError('Salary base cant be text!')
+            else:
+                if salary_base < 0:
+                    raise forms.ValidationError('Salary base cant be negative')
+                else:
+                    check_number = isinstance(salary_adjusted, (int, float))
+
+                    if not check_number:
+                        raise forms.ValidationError('Salary adjusted cant be text!')
+                    else:
+                        if salary_adjusted < 0:
+                            raise forms.ValidationError('Salary adjusted cant be negative')
+
+                        else:
+                            check_number = isinstance(hsa_annual_credits, (int, float))
+
+                            if not check_number:
+                                raise forms.ValidationError('HSA annual credit cant be text!')
+                            else:
+                                if hsa_annual_credits < 0:
+                                    raise forms.ValidationError('HSA annual credit cant be negative')
+
+                                else:
+                                    check_number = isinstance(hsa_optional, (int, float))
+
+                                    if not check_number:
+                                        raise forms.ValidationError('HSA optional cant be text!')
+                                    else:
+                                        if hsa_optional < 0:
+                                            raise forms.ValidationError('HSA optional cant be negative')
+                                        else:
+                                            check_number = isinstance(hsa_remaining, (int, float))
+
+                                            if not check_number:
+                                                raise forms.ValidationError('HSA remaining cant be text!')
+                                            else:
+                                                if hsa_remaining < 0:
+                                                    raise forms.ValidationError('HSA remaining cant be negative')
+
+
+
+
+
+
+
+    class Meta:
+        model = models.UserProfile
+        fields = ('email', 'first_name', 'last_name', 'middle_name', 'salary_base', 'salary_adjusted', 'hsa_annual_credits', 'hsa_optional', 'hsa_remaining', 'additional_info')
+
+
+
+
 #org search form
 class OrgSearchForm(forms.Form):
     org_name = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))

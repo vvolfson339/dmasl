@@ -56,7 +56,7 @@
 
 
     <p class="col l12" style="margin-top: 30px; padding: 0px;">
-        <a class="btn" href="{% url 'staff:edit-member' user_id=member.id %}">Edit This profile</a>
+        <a class="btn" href="{% url 'home:org-member-edit' org_short_name=org_found.org_short_name user_id=member.username %}">Edit This profile</a>
         <a style="margin-left: 20px;" class="btn red" href="{% url 'home:org-member-delete' org_short_name=member.org.org_short_name user_id=member.username %}">Delete This User</a>
     </p>
 </div>
