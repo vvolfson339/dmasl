@@ -53,6 +53,11 @@
                     {% endif %}
                 </p>
 
+                <div class="input-field col l12">
+                    {{ form.email }}
+                    <label for="id_email">Email</label>
+                </div>
+
                 <!--<div class="input-field col l12">
                     {{ form.first_name }}
                     <label for="id_first_name">First name</label>
@@ -70,38 +75,68 @@
 
                 <h5 class="col l12 center-align" style="text-decoration: underline;">Health Spending Account</h5>
 
-                <p class="col l12" style="margin-bottom: 5px; margin-top: 20px;">
-                    Base salary : {{ request.user.salary_base }}
-                </p>
+                {% if request.user.org.salary_adjustment %}
+                    <p class="col l12" style="margin-bottom: 5px; margin-top: 20px;">
+                        Base salary : {{ request.user.salary_base }}
+                    </p>
+                {% endif %}
 
-                <p class="col l12" style="margin-top: 5px; margin-bottom: 20px;">
-                    Total benefit credits : {{ request.user.hsa_annual_credits }}
-                </p>
+                {% if not request.user.org.salary_adjustment and not request.user.org.insufficient_benefit_credits  %}
+                    <p class="col l12" style="margin-bottom: 5px; margin-top: 20px;">
+                        Base salary : {{ request.user.salary_base }}
+                    </p>
 
+                    <p class="col l12" style="margin-top: 5px; margin-bottom: 20px;">
+                        Total benefit credits : {{ request.user.hsa_annual_credits }}
+                    </p>
+                {% endif %}
 
                 <div class="input-field col l12">
                     {{ form.hsa_optional }}
                     <label for="id_hsa_optional">Current Health Spending Account selection</label>
                 </div>
 
-                <div class="col s12 m112 l4">
-                    <p class="" style="margin-top: 5px; margin-bottom: 20px;">
-                        HSA selected : {{ request.user.hsa_optional }}
-                    </p>
-                </div>
 
-                <div class="col s12 m112 l4">
-                    <p class="" style="margin-top: 5px; margin-bottom: 20px;">
-                        Benefit credits remaining : {{ request.user.hsa_remaining }}
-                    </p>
-                </div>
+                {% if not request.user.org.salary_adjustment and not request.user.org.insufficient_benefit_credits  %}
+                    <div class="col s12 m112 l4">
+                        <p class="" style="margin-top: 5px; margin-bottom: 20px;">
+                            HSA selected : {{ request.user.hsa_optional }}
+                        </p>
+                    </div>
 
-                <div class="col s12 m112 l4">
-                    <p class="" style="margin-top: 5px; margin-bottom: 20px;">
-                        Adjusted base salary : {{ request.user.salary_adjusted }}
-                    </p>
-                </div>
+                    <div class="col s12 m112 l4">
+                        <p class="" style="margin-top: 5px; margin-bottom: 20px;">
+                            Benefit credits remaining : {{ request.user.hsa_remaining }}
+                        </p>
+                    </div>
 
+                    <div class="col s12 m112 l4">
+                        <p class="" style="margin-top: 5px; margin-bottom: 20px;">
+                            Adjusted base salary : {{ request.user.salary_adjusted }}
+                        </p>
+                    </div>
+
+                    <p class="col l12">
+                      <label>
+                          {% if request.user.opt_out_bool %}
+                            <input name="chk" checked type="checkbox" />
+                          {% else %}
+                            <input name="chk" type="checkbox" />
+                          {% endif %}
+                          <span>Select the checkbox if benefit credits provided are insufficient to fund medical/dental expenses that are not covered by the base plan. Human Resources will contact you regarding your HSA selection.</span>
+                      </label>
+                    </p>
+                {% endif %}
+
+                {% if request.user.org.salary_adjustment %}
+                    <div class="col s12 m112 l4">
+                        <p class="" style="margin-top: 5px; margin-bottom: 20px;">
+                            Adjusted base salary : {{ request.user.salary_adjusted }}
+                        </p>
+                    </div>
+                {% endif %}
+
+                {% if request.user.org.insufficient_benefit_credits %}
                 <p class="col l12">
                   <label>
                       {% if request.user.opt_out_bool %}
@@ -112,6 +147,7 @@
                       <span>Select the checkbox if benefit credits provided are insufficient to fund medical/dental expenses that are not covered by the base plan. Human Resources will contact you regarding your HSA selection.</span>
                   </label>
                 </p>
+                {% endif %}
 
                 {% if form.non_field_errors %}
                     {% for error in form.non_field_errors %}

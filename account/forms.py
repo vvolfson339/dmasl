@@ -410,29 +410,36 @@ class EnrolmentForm3(forms.ModelForm):
         self.current_user = kwargs.pop('current_user')
         super(EnrolmentForm3, self).__init__(*args,**kwargs)
 
+    email = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
     hsa_optional = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
 
 
     def clean(self):
+        email = self.cleaned_data.get('email')
         hsa_optional = self.cleaned_data.get('hsa_optional')
 
         check_number = isinstance(hsa_optional, (int, float))
 
-        if not check_number:
-            raise forms.ValidationError('Enter number not text!')
-        else:
-            if hsa_optional < 0:
-                raise forms.ValidationError('Can not be negative!')
-            else:
-                hsa_remaining_db = float(self.current_user.hsa_remaining)
+        email_correction = re.match('^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,4})$', email)
 
-                if hsa_optional > hsa_remaining_db:
-                        raise forms.ValidationError('Your remaining credit is less than {}'.format(hsa_optional))
+        if not email_correction:
+            raise forms.ValidationError('Email not correct!')
+        else:
+            if not check_number:
+                raise forms.ValidationError('Enter number not text!')
+            else:
+                if hsa_optional < 0:
+                    raise forms.ValidationError('Can not be negative!')
+                else:
+                    hsa_remaining_db = float(self.current_user.hsa_remaining)
+
+                    if hsa_optional > hsa_remaining_db:
+                            raise forms.ValidationError('Your remaining credit is less than {}'.format(hsa_optional))
 
 
     class Meta:
         model = models.UserProfile
-        fields = ('hsa_optional', )
+        fields = ('email', 'hsa_optional', )
 
 
 
