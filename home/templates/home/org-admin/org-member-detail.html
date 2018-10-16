@@ -20,7 +20,7 @@
 <div class="col l10 offset-l1">
     <p>User ID: {{ member.username }}</p>
     <p>Email: {{ member.email }}</p>
-    <p>Password: <a href="{% url 'staff:change-password' user_id=member.id %}">Change Password</a> </p>
+    <p>Password: <a href="{% url 'home:org-member-change-password' org_short_name=org_found.org_short_name user_id=member.username %}">Change Password</a> </p>
 
     <p>
         Is Active: {{ member.is_active }}

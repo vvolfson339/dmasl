@@ -30,6 +30,8 @@ urlpatterns = [
 
 
     url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/add/$', views.OrgMemberAdd.as_view(), name='org-member-add'),
+
     url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/(?P<user_id>[0-9a-zA-Z-_.]+)/edit/$', views.OrgMemberEdit.as_view(), name='org-member-edit'),
+    url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/(?P<user_id>[0-9a-zA-Z-_.]+)/change-password/$', views.OrgMemberChangePassword.as_view(), name='org-member-change-password'),
     #end org admin url
 ]

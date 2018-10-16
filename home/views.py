@@ -616,6 +616,49 @@ class OrgMemberEdit(OrgAdminPermissionMixin, View):
 
 
 
+#org admin member change password
+class OrgMemberChangePassword(OrgAdminPermissionMixin, View):
+    template_name = 'home/org-admin/org-member-change-password.html'
+
+    def get(self, request, org_short_name, user_id):
+        org_found = get_object_or_404(account_model.Organization, org_short_name=org_short_name)
+        user_found = get_object_or_404(account_model.UserProfile, username=user_id, org=org_found)
+
+        form = account_form.ChangeUserPasswordForm()
+
+        variables = {
+            'org_found': org_found,
+            'user_found': user_found,
+
+            'form': form,
+        }
+
+        return render(request, self.template_name, variables)
+
+    def post(self, request, org_short_name, user_id):
+        org_found = get_object_or_404(account_model.Organization, org_short_name=org_short_name)
+        user_found = get_object_or_404(account_model.UserProfile, username=user_id, org=org_found)
+
+        form = account_form.ChangeUserPasswordForm(request.POST or None)
+
+        if form.is_valid():
+            form.deploy(user_found.id)
+
+            return redirect('home:org-member-detail', org_short_name=org_short_name, user_id=user_id)
+
+        variables = {
+            'org_found': org_found,
+            'user_found': user_found,
+
+            'form': form,
+        }
+
+        return render(request, self.template_name, variables)
+
+
+
+
+
 #=======================================================================================================================
 #=======================================================================================================================
 #                                           organization admin login
