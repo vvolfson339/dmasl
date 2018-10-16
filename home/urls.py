@@ -22,6 +22,7 @@ urlpatterns = [
     #org admin url
     url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/login/$', views.OrgAdminLogin.as_view(), name='org-admin-login'),
     url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/$', views.OrgAdminHome.as_view(), name='org-admin-home'),
+
     url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/view/$', views.OrgMemberView.as_view(), name='org-member-view'),
     url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/(?P<user_id>[0-9a-zA-Z-_.]+)/detail/$', views.OrgMemberDetail.as_view(), name='org-member-detail'),
     url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/(?P<user_id>[0-9a-zA-Z-_.]+)/activate-deactivate/$', views.ActivateDeactivateAccount.as_view(), name='org-member-activate-deactivate'),
