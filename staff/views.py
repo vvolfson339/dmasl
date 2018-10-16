@@ -118,7 +118,22 @@ class AddOrganization(StaffPermission, View):
         form = account_form.AddOrganization(request.POST or None, request.FILES or None)
 
         if form.is_valid():
-            form.deploy()
+            salary_adjustment = request.POST.get('salary_adjustment')
+            insufficient_benefit_credits = request.POST.get('insufficient_benefit_credits')
+
+            add_org = form.deploy()
+
+            if salary_adjustment == 'on':
+                add_org.salary_adjustment = True
+            else:
+                pass
+
+            if insufficient_benefit_credits == 'on':
+                add_org.insufficient_benefit_credits = True
+            else:
+                pass
+
+            add_org.save()
 
             return redirect('staff:org')
 
@@ -241,9 +256,21 @@ class EditOrganization(StaffPermission, View):
 
         if form.is_valid():
             form.save()
-        else:
-            print(form.errors)
 
+            salary_adjustment = request.POST.get('salary_adjustment')
+            insufficient_benefit_credits = request.POST.get('insufficient_benefit_credits')
+
+            if salary_adjustment == 'on':
+                org.salary_adjustment = True
+            else:
+                org.salary_adjustment = False
+
+            if insufficient_benefit_credits == 'on':
+                org.insufficient_benefit_credits = True
+            else:
+                org.insufficient_benefit_credits = False
+
+            org.save()
 
         variables = {
             'org': org,

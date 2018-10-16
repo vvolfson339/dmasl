@@ -103,6 +103,31 @@
         </div>
 
 
+        <div class="input-field col l12">
+            <p class="left">
+                <label>
+                    {% if org.salary_adjustment %}
+                        <input name="salary_adjustment" type="checkbox" checked class="filled-in" />
+                    {% else %}
+                        <input name="salary_adjustment" type="checkbox" class="filled-in" />
+                    {% endif %}
+                    <span>Salary adjustment</span>
+                </label>
+            </p>
+
+            <p class="left" style="margin-left: 40px;">
+                <label>
+                    {% if org.insufficient_benefit_credits %}
+                        <input name="insufficient_benefit_credits" type="checkbox" checked class="filled-in" />
+                    {% else %}
+                        <input name="insufficient_benefit_credits" type="checkbox" class="filled-in" />
+                    {% endif %}
+                    <span>Insufficient benefit credits</span>
+                </label>
+            </p>
+        </div>
+
+
         {% if form.non_field_errors %}
             {% for error in form.non_field_errors %}
                 <div class="col s12 m10 offset-m1 l10 offset-l1 valign-wrapper" style="margin-top: 20px; background-color: red; height: 40px;">

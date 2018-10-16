@@ -154,6 +154,8 @@ class AddOrganization(forms.Form):
 
         deploy.save()
 
+        return deploy
+
 
 
 

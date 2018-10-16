@@ -114,6 +114,22 @@
             <label for="id_misc_1">Misc</label>
         </div>
 
+        <div class="input-field col l12">
+            <p class="left">
+                <label>
+                    <input name="salary_adjustment" type="checkbox" class="filled-in" />
+                    <span>Salary adjustment</span>
+                </label>
+            </p>
+
+            <p class="left" style="margin-left: 40px;">
+                <label>
+                    <input name="insufficient_benefit_credits" type="checkbox" class="filled-in" />
+                    <span>Insufficient benefit credits</span>
+                </label>
+            </p>
+        </div>
+
 
         {% if form.non_field_errors %}
             {% for error in form.non_field_errors %}

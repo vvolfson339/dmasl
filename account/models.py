@@ -22,6 +22,9 @@ class Organization(models.Model):
     enrolment_period    = models.CharField(max_length=255, null=True, blank=True)
     misc_1              = models.CharField(max_length=255, null=True, blank=True)
 
+    #check box
+    salary_adjustment   = models.BooleanField(default=False)
+    insufficient_benefit_credits = models.BooleanField(default=False)
 
 
     def __str__(self):

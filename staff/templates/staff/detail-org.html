@@ -39,6 +39,8 @@
 
     <p>Enrolment period: {{ org.enrolment_period }}</p>
     <p>Misc: {{ org.misc_1 }}</p>
+    <p>Salary adjustment checked: {{ org.salary_adjustment }}</p>
+    <p>Insufficient benefit credits checked: {{ org.insufficient_benefit_credits }}</p>
     <p>Total member: {{ total_member }} <span style="margin-left: 20px;"><a href="{% url 'staff:org-member' org_id=org.id %}">View all member</a></span></p>
 
     <p>
