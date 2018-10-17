@@ -401,7 +401,9 @@ class AddMember(StaffPermission, View):
         form = account_form.AddUserForm(request.POST or None)
 
         if form.is_valid():
-            form.deploy(org)
+            user_add = form.deploy(org)
+
+            return redirect('staff:detail-member', user_id=user_add.id)
 
 
         variables = {
