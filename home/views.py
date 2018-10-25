@@ -323,6 +323,7 @@ class EnrolmentPrint(LoginRequiredMixin, View):
         usr = request.user
 
         hsa_remaining_db = usr.hsa_remaining
+        salary_adjusted_db = usr.salary_adjusted
 
         form = account_form.AdditionalInfoForm(request.POST or None, instance=request.user)
 
@@ -335,6 +336,10 @@ class EnrolmentPrint(LoginRequiredMixin, View):
 
                 new_hsa_remaining = float(hsa_remaining_db - hsa_optional)
                 usr.hsa_remaining = new_hsa_remaining
+
+                salary_adjusted_calc = float(salary_adjusted_db - hsa_optional)
+                usr.salary_adjusted = salary_adjusted_calc
+
                 usr.save()
 
                 del request.session['hsa_optional_var']
