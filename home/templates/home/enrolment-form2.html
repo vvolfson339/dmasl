@@ -100,20 +100,20 @@
 
                 <div class="col s12 m112 l4">
                     <p class="" style="margin-top: 5px; margin-bottom: 20px;">
-                        HSA selected : {{ request.user.hsa_optional }}
+                        HSA selected : <span class="hsa_selected_current">{{ request.user.hsa_optional }}</span>
                     </p>
                 </div>
 
                 <div class="col s12 m112 l4">
                     <p class="" style="margin-top: 5px; margin-bottom: 20px;">
-                        Benefit credits remaining : {{ request.user.hsa_remaining }}
+                        Benefit credits remaining : <span class="benefit_credit_remaining">{{ request.user.hsa_remaining }}</span>
                     </p>
                 </div>
 
                 {% if org.salary_adjustment and org.insufficient_benefit_credits %}
                     <div class="col s12 m112 l4">
                         <p class="" style="margin-top: 5px; margin-bottom: 20px;">
-                            Adjusted base salary : {{ request.user.salary_adjusted }}
+                            Adjusted base salary : <span class="adjsuted_base_salary">{{ request.user.salary_adjusted }}</span>
                         </p>
                     </div>
                 {% endif %}
@@ -121,7 +121,7 @@
                 {% if org.salary_adjustment and not org.insufficient_benefit_credits %}
                     <div class="col s12 m112 l4">
                         <p class="" style="margin-top: 5px; margin-bottom: 20px;">
-                            Adjusted base salary : {{ request.user.salary_adjusted }}
+                            Adjusted base salary : <span class="adjsuted_base_salary">{{ request.user.salary_adjusted }}</span>
                         </p>
                     </div>
                 {% endif %}
@@ -253,7 +253,7 @@
                 $('input[name=hsa_optional]').prop('disabled', false);
             }
 
-         });*/
+         });
 
 
          $(document).ready(function(){
@@ -265,14 +265,22 @@
                 $('input[name=hsa_optional]').prop('disabled', false);
             }
 
-         });
+         });*/
 
 
          $('input[name="hsa_optional"]').change(function(){
             var hsa_optional = $('input[name="hsa_optional"]').val();
 
+            var benefit_credit_remaining_db = {{ usr.hsa_remaining }};
+            var benefit_credit_remaining_calculate = benefit_credit_remaining_db - hsa_optional;
 
-            $('#hsa_optional_input').html(hsa_optional);
+            var adjusted_base_salary_db = {{ usr.salary_adjusted }};
+            var adjusted_base_salary_calculate = adjusted_base_salary_db - hsa_optional;
+
+            $('.hsa_selected_current').html(hsa_optional);
+            $('.benefit_credit_remaining').html(benefit_credit_remaining_calculate);
+            $('.adjsuted_base_salary').html(adjusted_base_salary_calculate);
+
 
          });
 

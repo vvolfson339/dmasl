@@ -138,6 +138,8 @@ class EnrolmentForm2(LoginRequiredMixin, View):
             'org': org,
 
             'form': form,
+
+            'usr': usr,
         }
 
         return render(request, self.template_name, variables)
@@ -186,6 +188,8 @@ class EnrolmentForm2(LoginRequiredMixin, View):
 
             'form': form,
             'err_msg': err_msg,
+
+            'usr': usr,
         }
 
         return render(request, self.template_name, variables)
