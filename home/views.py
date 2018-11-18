@@ -167,13 +167,18 @@ class EnrolmentForm2(LoginRequiredMixin, View):
 
                     return redirect('home:enrolment-form4')
             else:
-                usr.opt_out_bool = True
-                usr.hsa_optional = 0
-                usr.save()
+                if form.is_valid():
+                    form.save()
 
-                del request.session['hsa_optional_var']
+                    hsa_optional = float(request.POST.get('hsa_optional'))
 
-                return redirect('home:enrolment-form4')
+                    usr.opt_out_bool = True
+                    usr.hsa_optional = 0
+                    usr.save()
+
+                    request.session['hsa_optional_var'] = hsa_optional
+
+                    return redirect('home:enrolment-form4')
 
         #form = account_form.EnrolmentForm2(request.POST or None, instance=request.user)
 
