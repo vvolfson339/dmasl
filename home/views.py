@@ -391,7 +391,7 @@ class OrgAdminPermissionMixin(object):
             return super(OrgAdminPermissionMixin, self).dispatch(
                 request, *args, **kwargs)
         else:
-            return redirect('home:org-admin-login', request.user.org.org_short_name)
+            return redirect('home:home')
 
 
 
