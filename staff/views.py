@@ -625,19 +625,15 @@ class MemberUpload(StaffPermission, View):
             success_msg = []
             for row in readCSV:
                 username = row[0]
-                password = row[1]
-                first_name = row[2]
-                middle_name = row[3]
-                last_name = row[4]
-                gender = row[5]
-                org = row[6]
-                birthdate = row[7]
-                salary_base = row[8]
-                hsa_annual_credit = row[9]
-                hsa_remaining = row[10]
-
-                date_object = datetime.strptime(birthdate, '%d/%m/%Y')
-                birthdate_expected_format = date_object.strftime('%Y-%m-%d')
+                email = row[1]
+                password = row[2]
+                first_name = row[3]
+                middle_name = row[4]
+                last_name = row[5]
+                org = row[6].lower()
+                salary_base = row[7]
+                hsa_annual_credit = row[8]
+                hsa_remaining = row[9]
 
                 check_username = account_model.UserProfile.objects.filter(username=username).exists()
 
@@ -649,8 +645,8 @@ class MemberUpload(StaffPermission, View):
                         org_obj = account_model.Organization.objects.get(org_short_name=org)
 
 
-                        member = account_model.UserProfile(username=username, org=org_obj, first_name=first_name, middle_name=middle_name, last_name=last_name,
-                                                           gender=gender, birthdate=birthdate_expected_format, salary_base=salary_base, hsa_annual_credits=hsa_annual_credit, hsa_remaining=hsa_remaining)
+                        member = account_model.UserProfile(username=username, email=email, org=org_obj, first_name=first_name, middle_name=middle_name, last_name=last_name,
+                                                           salary_base=salary_base, hsa_annual_credits=hsa_annual_credit, hsa_remaining=hsa_remaining)
 
                         member.set_password(password)
                         member.save()

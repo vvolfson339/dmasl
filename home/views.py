@@ -169,7 +169,7 @@ class EnrolmentForm2(LoginRequiredMixin, View):
             else:
                 if form.is_valid():
                     hsa_optional = float(request.POST.get('hsa_optional'))
-                    
+
                     form.save()
 
                     request.session['hsa_optional_var'] = hsa_optional
