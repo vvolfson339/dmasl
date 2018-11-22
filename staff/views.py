@@ -632,8 +632,10 @@ class MemberUpload(StaffPermission, View):
                 last_name = row[5]
                 org = row[6].lower()
                 salary_base = row[7]
-                hsa_annual_credit = row[8]
-                hsa_remaining = row[9]
+                salary_adjusted = row[8]
+                hsa_annual_credit = row[9]
+                hsa_optional = row[10]
+                hsa_remaining = row[11]
 
                 check_username = account_model.UserProfile.objects.filter(username=username).exists()
 
@@ -646,7 +648,7 @@ class MemberUpload(StaffPermission, View):
 
 
                         member = account_model.UserProfile(username=username, email=email, org=org_obj, first_name=first_name, middle_name=middle_name, last_name=last_name,
-                                                           salary_base=salary_base, hsa_annual_credits=hsa_annual_credit, hsa_remaining=hsa_remaining)
+                                                           salary_base=salary_base, salary_adjusted=salary_adjusted, hsa_annual_credits=hsa_annual_credit, hsa_optional=hsa_optional, hsa_remaining=hsa_remaining)
 
                         member.set_password(password)
                         member.save()
