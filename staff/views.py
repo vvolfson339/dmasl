@@ -315,11 +315,11 @@ class OrganizationMember(StaffPermission, View):
     def  csv_export(self, file_name, members):
         with open('media/csv_output/{}.csv'.format(file_name), 'w', newline='') as csvfile:
             writer = csv.writer(csvfile, delimiter=',')
-            row_first_line = ['User ID', 'First Name', 'Middle Name', 'Last Name', 'Gender', 'Organiztaion', 'Birthdate', 'Salary Base', 'HSA Annual Credits', 'HSA Optional', 'HSA Remaining']
+            row_first_line = ['User ID', 'First Name', 'Middle Name', 'Last Name', 'Organiztaion', 'Salary Base', 'HSA Annual Credits', 'HSA Optional', 'HSA Remaining']
             writer.writerow(row_first_line)
 
             for member in members:
-                row = [member.username, member.first_name, member.middle_name, member.last_name, member.gender, member.org.org_short_name, member.birthdate, member.salary_base, member.hsa_annual_credits, member.hsa_optional, member.hsa_remaining]
+                row = [member.username, member.first_name, member.middle_name, member.last_name, member.org.org_short_name, member.salary_base, member.hsa_annual_credits, member.hsa_optional, member.hsa_remaining]
                 writer.writerow(row)
 
             csvfile.close()
