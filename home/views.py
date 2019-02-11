@@ -39,6 +39,19 @@ class Home(View):
 
 
 
+#GoogleSiteVerification
+class GoogleSiteVerification(View):
+    template_name = 'home/google0bfb7942035812bc.html'
+
+    def get(self, request):
+
+        variables = {
+
+        }
+
+        return render(request, self.template_name, variables)
+
+
 
 #OrganizationDetail
 class Login(View):
