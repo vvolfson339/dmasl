@@ -10,7 +10,7 @@ urlpatterns = [
     url(r'^$', views.Home.as_view(), name='home'),
 
 
-    #url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/$', views.Login.as_view(), name='login'),
+    url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/$', views.Login.as_view(), name='login'),
 
     url(r'^enrolment/form-1/$', views.EnrolmentForm1.as_view(), name='enrolment-form1'),
     url(r'^enrolment/form-2/$', views.EnrolmentForm2.as_view(), name='enrolment-form2'),
@@ -34,9 +34,4 @@ urlpatterns = [
     url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/(?P<user_id>[0-9a-zA-Z-_.]+)/edit/$', views.OrgMemberEdit.as_view(), name='org-member-edit'),
     url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/(?P<user_id>[0-9a-zA-Z-_.]+)/change-password/$', views.OrgMemberChangePassword.as_view(), name='org-member-change-password'),
     #end org admin url
-
-
-    #google site verification
-    url(r'^google0bfb7942035812bc.html/$', views.GoogleSiteVerification.as_view(), name='google_site_verification'),
-
 ]

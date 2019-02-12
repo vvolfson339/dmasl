@@ -61,6 +61,17 @@ DATABASES = {
     }
 }
 
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com' # mail service smtp
+EMAIL_HOST_USER = 'dmasl_enrolment@volfson.ca' # email id
+EMAIL_HOST_PASSWORD = 'E<43BQqK' #password
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
