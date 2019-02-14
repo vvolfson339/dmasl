@@ -52,7 +52,7 @@
                 </p>
             </div>
 
-            <div class="col s12 m12 l12" style="padding: 0px; margin-top: 50px;">
+            <div class="col s12 m12 l12" style="padding: 0px; margin-top: 30px;">
                 <p style="font-size: 20px; font-weight: bold;">MEMBER DETAILS</p>
             </div>
 
@@ -102,7 +102,46 @@
             </div>
 
 
-            <div class="col s12 m12 l12" style="padding: 0px; margin-top: 50px;">
+            <div class="col s12 m12 l12" style="padding: 0px; margin-top: 30px;">
+                <p style="font-size: 20px; font-weight: bold;">INFORMATION SUMMARY</p>
+            </div>
+
+            <div class="col s12 m12 l12" style="padding: 0px; margin-top: 20px;">
+                <p class="col s4 m4 l4" style="padding: 0px;">Total Benefit Credits</p>
+                <p class="col s4 m4 l4">${{ request.user.hsa_annual_credits }}</p>
+                <p class="col s4 m4 l4"></p>
+            </div>
+
+            <div class="col s12 m12 l12" style="padding: 0px; margin-top: 5px;">
+                <p class="col s4 m4 l4" style="padding: 0px;">Current HSA Selection</p>
+                <p class="col s4 m4 l4">${{ request.session.hsa_optional_var }}</p>
+                <p class="col s4 m4 l4"></p>
+            </div>
+
+            <div class="col s12 m12 l12" style="padding: 0px; margin-top: 5px;">
+                <p class="col s4 m4 l4" style="padding: 0px;">Benefit Credits Remaining</p>
+                <p class="col s4 m4 l4">${{ hsa_remaining }}</p>
+                <p class="col s4 m4 l4"></p>
+            </div>
+
+
+            {% if request.user.opt_out_bool %}
+                <div class="col s12 m12 l12" style="padding: 0px; margin-top: 5px;">
+                    <p class="col s4 m4 l4" style="padding: 0px;">Salary Base</p>
+                    <p class="col s4 m4 l4">${{ request.user.salary_base }}</p>
+                    <p class="col s4 m4 l4"></p>
+                </div>
+
+                <div class="col s12 m12 l12" style="padding: 0px; margin-top: 5px;">
+                    <p class="col s4 m4 l4" style="padding: 0px;">Salary Adjusted</p>
+                    <p class="col s4 m4 l4">${{ salary_adjusted }}</p>
+                    <p class="col s4 m4 l4"></p>
+                </div>
+            {% endif %}
+
+
+
+            <div class="col s12 m12 l12" style="padding: 0px; margin-top: 30px;">
                 <p style="font-size: 20px; font-weight: bold;">BENEFITS SUMMARY</p>
             </div>
 
@@ -179,7 +218,7 @@
                     <button id="print" class="btn waves-effect waves-light black" type="submit" style="">Print
                     </button>
 
-                    <a href="{% url 'home:logout' %}" class="btn waves-effect waves-light red" style="">Logout
+                    <a href="{% url 'home:logout' %}?from=client&org={{ org.org_short_name }}" class="btn waves-effect waves-light red" style="">Logout
                     </a>
                 </div>
 

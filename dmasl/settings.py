@@ -63,15 +63,6 @@ DATABASES = {
 
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com' # mail service smtp
-EMAIL_HOST_USER = 'dmasl_enrolment@volfson.ca' # email id
-EMAIL_HOST_PASSWORD = 'E<43BQqK' #password
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-
-
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -108,3 +99,12 @@ AUTH_USER_MODEL = 'account.UserProfile'
 
 
 LOGIN_URL = '/'
+
+
+
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE

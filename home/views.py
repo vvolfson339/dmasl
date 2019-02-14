@@ -2,12 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.views import View
 from django.contrib.auth.views import login, logout
 from django.http import Http404
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from account import models as account_model
 from account import forms as account_form
 
-
-from django.contrib.auth.mixins import LoginRequiredMixin
+from . import tasks
 
 
 
@@ -19,6 +19,8 @@ def signout_request(request):
 
     if direction == 'staff':
         return redirect('staff:staff-login')
+    elif direction == 'client':
+        return redirect('home:login', org_short_name=request.GET.get('org'))
     else:
         return redirect('home:home')
 
@@ -273,9 +275,15 @@ class EnrolmentForm4(LoginRequiredMixin, View):
     def get(self, request):
         org = request.user.org
 
+        current_hsa_selection = request.session['hsa_optional_var']
+
+        hsa_remaining = request.user.hsa_remaining - current_hsa_selection
+        salary_adjusted = request.user.salary_adjusted - current_hsa_selection
 
         variables = {
             'org': org,
+            'hsa_remaining': hsa_remaining,
+            'salary_adjusted': salary_adjusted,
         }
 
         return render(request, self.template_name, variables)
@@ -315,11 +323,18 @@ class EnrolmentPrint(LoginRequiredMixin, View):
 
         form = account_form.AdditionalInfoForm(instance=request.user)
 
+        current_hsa_selection = request.session['hsa_optional_var']
+
+        hsa_remaining = request.user.hsa_remaining - current_hsa_selection
+        salary_adjusted = request.user.salary_adjusted - current_hsa_selection
+
 
         variables = {
             'org': org,
 
             'form': form,
+            'hsa_remaining': hsa_remaining,
+            'salary_adjusted': salary_adjusted,
         }
 
         return render(request, self.template_name, variables)
@@ -333,7 +348,6 @@ class EnrolmentPrint(LoginRequiredMixin, View):
         salary_adjusted_db = usr.salary_adjusted
 
         form = account_form.AdditionalInfoForm(request.POST or None, instance=request.user)
-
 
         if form.is_valid():
             form.save()
@@ -349,8 +363,11 @@ class EnrolmentPrint(LoginRequiredMixin, View):
 
                 usr.save()
 
-                del request.session['hsa_optional_var']
+                #sent email to org admin and member
+                tasks.sent_hsa_detail_to_member.delay(request.user.id, hsa_optional, new_hsa_remaining, salary_adjusted_calc)
+                tasks.sent_hsa_detail_to_admin.delay(request.user.id, hsa_optional, new_hsa_remaining, salary_adjusted_calc)
 
+                #del request.session['hsa_optional_var']
 
             return redirect('/enrolment/print/?print=yes')
 

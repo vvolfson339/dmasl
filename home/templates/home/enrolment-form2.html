@@ -2,26 +2,13 @@
 
 {% block title %}Enrolment Application | DMASL{% endblock %}
 
-{% block current_page %}Form 2 of 3{% endblock %}
+{% block current_page %}Form 2{% endblock %}
 
 {% block body %}
     <div class="col l12 white" style="padding: 20px;">
         <h4 class="col s12 m12 l12 center-align" style="margin-top: 20px; padding: 0px;">Enrolment application</h4>
 
         <p class="col s12 m12 l12 divider" style="margin-top: 30px;"></p>
-
-        <div class="col l12 grey white-text" style="margin-top: 40px; padding: 20px;">
-            <h5>Enrolment Guide</h5>
-
-            <p>
-                <span style="font-weight: bold;">Names: </span> Ensure that the name inputted is the name that you will use on your claim forms.
-            </p>
-
-            <p>
-                <span style="font-weight: bold;">ID Number </span>: This is the identification number you will use on your claim forms.
-            </p>
-
-        </div>
 
 
         <div class="col l10 offset-l1" style="border: 2px solid #333; margin-bottom: 20px; margin-top: 40px; padding: 20px;">
@@ -31,7 +18,7 @@
                 <h5 class="col l12 center-align" style="text-decoration: underline;">Your Information</h5>
 
                 <p class="col l12" style="margin-bottom: 5px; margin-top: 20px;">
-                    Covered Class : {{ org.org_short_name | upper }} - {{ org.org_full_name | title }}
+                    Employer : {{ org.org_short_name | upper }} - {{ org.org_full_name | title }}
                 </p>
 
                 <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
@@ -174,29 +161,11 @@
                     <button type="submit" name="next" value="next" class="btn waves-effect waves-light black" style="">Next
                     </button>
 
-                    <a href="{% url 'home:logout' %}" class="btn waves-effect waves-light red" style="">Logout
+                    <a href="{% url 'home:logout' %}?from=client&org={{ org.org_short_name }}" class="btn waves-effect waves-light red" style="">Logout
                     </a>
                 </div>
             </form>
 
-        </div>
-
-
-        <div class="col l12 grey white-text" style="margin-top: 40px; padding: 20px;">
-            <h5>When selecting your HSA please remember the following:</h5>
-
-
-            <p>
-                1. Funds not claimed by March 31, 2019 will be forfeited.
-            </p>
-
-            <p>
-                2. As long as $50 is deposited, claims for which you are not fully reimbursed can be carried forward to the following plan year.
-            </p>
-
-            <p>
-                3. Benefit credits not allocated to a HSA will be received in the form of taxable income.
-            </p>
         </div>
 
 
