@@ -77,7 +77,7 @@ class Login(View):
                 if user:
                     login(request, user)
 
-                    return redirect('home:enrolment-form1')
+                    return redirect('home:enrolment-form2')
             else:
                 err_msg = "You are not associated to {}".format(org_short_name)
 
