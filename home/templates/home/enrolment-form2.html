@@ -155,13 +155,13 @@
 
 
                 <div class="col l12" style="padding: 0px; margin-top: 30px;">
-                    <a href="{% url 'home:enrolment-form1' %}" class="btn waves-effect waves-light" style="">Back
+                    <a href="{% url 'home:enrolment-form1' %}" class="btn waves-effect waves-light" style="background-color: #002d62;">Back
                     </a>
 
-                    <button type="submit" name="next" value="next" class="btn waves-effect waves-light black" style="">Next
+                    <button type="submit" name="next" value="next" class="btn waves-effect waves-light" style="background-color: #002d62;">Next
                     </button>
 
-                    <a href="{% url 'home:logout' %}?from=client&org={{ org.org_short_name }}" class="btn waves-effect waves-light red" style="">Logout
+                    <a href="{% url 'home:logout' %}?from=client&org={{ org.org_short_name }}" class="btn waves-effect waves-light" style="background-color: #002d62;">Logout
                     </a>
                 </div>
             </form>
@@ -237,10 +237,15 @@
          });*/
 
 
-         $('input[name="hsa_optional"]').change(function(){
+        $("document").ready(function(){
             var hsa_optional = $('input[name="hsa_optional"]').val();
-
             var benefit_credit_remaining_db = {{ usr.hsa_remaining }};
+
+            if(hsa_optional > benefit_credit_remaining_db){
+                hsa_optional = 0;
+                $('input[name="hsa_optional"]').val(hsa_optional);
+            }
+
             var benefit_credit_remaining_calculate = benefit_credit_remaining_db - hsa_optional;
 
             var adjusted_base_salary_db = {{ usr.salary_adjusted }};
@@ -250,6 +255,28 @@
             $('.benefit_credit_remaining').html(benefit_credit_remaining_calculate);
             $('.adjsuted_base_salary').html(adjusted_base_salary_calculate);
 
+        });
+
+
+         $('input[name="hsa_optional"]').change(function(){
+            var hsa_optional = $('input[name="hsa_optional"]').val();
+            var benefit_credit_remaining_db = {{ usr.hsa_remaining }};
+
+            if(hsa_optional > benefit_credit_remaining_db){
+                alert("Not enough remaining credit!");
+                hsa_optional = 0;
+                $('input[name="hsa_optional"]').val(hsa_optional);
+            }
+
+
+            var benefit_credit_remaining_calculate = benefit_credit_remaining_db - hsa_optional;
+
+            var adjusted_base_salary_db = {{ usr.salary_adjusted }};
+            var adjusted_base_salary_calculate = adjusted_base_salary_db - hsa_optional;
+
+            $('.hsa_selected_current').html(hsa_optional);
+            $('.benefit_credit_remaining').html(benefit_credit_remaining_calculate);
+            $('.adjsuted_base_salary').html(adjusted_base_salary_calculate);
 
          });
 

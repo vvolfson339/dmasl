@@ -435,6 +435,9 @@ class EnrolmentForm3(forms.ModelForm):
 
                     if hsa_optional > hsa_remaining_db:
                             raise forms.ValidationError('Your remaining credit is less than {}'.format(hsa_optional))
+                    else:
+                        if hsa_optional == 0:
+                            raise forms.ValidationError('Can not be 0!')
 
 
     class Meta:

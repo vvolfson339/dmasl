@@ -273,6 +273,10 @@ class EnrolmentForm4(LoginRequiredMixin, View):
     template_name = 'home/enrolment-form4.html'
 
     def get(self, request):
+
+        if not request.session.get('hsa_optional_var'):
+            return redirect('home:enrolment-form2')
+
         org = request.user.org
 
         current_hsa_selection = request.session['hsa_optional_var']
@@ -291,6 +295,10 @@ class EnrolmentForm4(LoginRequiredMixin, View):
     def post(self, request):
         org = request.user.org
         member = request.user
+        usr = request.user
+
+        hsa_remaining_db = usr.hsa_remaining
+        salary_adjusted_db = usr.salary_adjusted
 
         if request.POST.get('next') == 'next':
             if member.submitted:
@@ -299,58 +307,7 @@ class EnrolmentForm4(LoginRequiredMixin, View):
                 member.submitted = True
                 member.save()
 
-            return redirect('home:enrolment-print')
 
-        variables = {
-            'org': org,
-        }
-
-        return render(request, self.template_name, variables)
-
-
-
-
-
-
-
-
-
-class EnrolmentPrint(LoginRequiredMixin, View):
-    template_name = 'home/enrolment-print.html'
-
-    def get(self, request):
-        org = request.user.org
-
-        form = account_form.AdditionalInfoForm(instance=request.user)
-
-        current_hsa_selection = request.session['hsa_optional_var']
-
-        hsa_remaining = request.user.hsa_remaining - current_hsa_selection
-        salary_adjusted = request.user.salary_adjusted - current_hsa_selection
-
-
-        variables = {
-            'org': org,
-
-            'form': form,
-            'hsa_remaining': hsa_remaining,
-            'salary_adjusted': salary_adjusted,
-        }
-
-        return render(request, self.template_name, variables)
-
-    def post(self, request):
-        org = request.user.org
-
-        usr = request.user
-
-        hsa_remaining_db = usr.hsa_remaining
-        salary_adjusted_db = usr.salary_adjusted
-
-        form = account_form.AdditionalInfoForm(request.POST or None, instance=request.user)
-
-        if form.is_valid():
-            form.save()
 
             if request.session.get('hsa_optional_var'):
                 hsa_optional = float(request.session['hsa_optional_var'])
@@ -367,7 +324,42 @@ class EnrolmentPrint(LoginRequiredMixin, View):
                 tasks.sent_hsa_detail_to_member.delay(request.user.id, hsa_optional, new_hsa_remaining, salary_adjusted_calc)
                 tasks.sent_hsa_detail_to_admin.delay(request.user.id, hsa_optional, new_hsa_remaining, salary_adjusted_calc)
 
-                #del request.session['hsa_optional_var']
+                del request.session['hsa_optional_var']
+
+
+            return redirect('home:enrolment-print')
+
+        variables = {
+            'org': org,
+        }
+
+        return render(request, self.template_name, variables)
+
+
+
+class EnrolmentPrint(LoginRequiredMixin, View):
+    template_name = 'home/enrolment-print.html'
+
+    def get(self, request):
+        org = request.user.org
+
+        form = account_form.AdditionalInfoForm(instance=request.user)
+
+        variables = {
+            'org': org,
+
+            'form': form,
+        }
+
+        return render(request, self.template_name, variables)
+
+    def post(self, request):
+        org = request.user.org
+
+        form = account_form.AdditionalInfoForm(request.POST or None, instance=request.user)
+
+        if form.is_valid():
+            form.save()
 
             return redirect('/enrolment/print/?print=yes')
 
