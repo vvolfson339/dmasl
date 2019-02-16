@@ -155,9 +155,6 @@
 
 
                 <div class="col l12" style="padding: 0px; margin-top: 30px;">
-                    <a href="{% url 'home:enrolment-form1' %}" class="btn waves-effect waves-light" style="background-color: #002d62;">Back
-                    </a>
-
                     <button type="submit" name="next" value="next" class="btn waves-effect waves-light" style="background-color: #002d62;">Next
                     </button>
 
@@ -241,17 +238,18 @@
             var hsa_optional = $('input[name="hsa_optional"]').val();
             var benefit_credit_remaining_db = {{ usr.hsa_remaining }};
 
-            if(hsa_optional > benefit_credit_remaining_db){
+            /*if(hsa_optional > benefit_credit_remaining_db){
                 hsa_optional = 0;
                 $('input[name="hsa_optional"]').val(hsa_optional);
-            }
+            }*/
 
             var benefit_credit_remaining_calculate = benefit_credit_remaining_db - hsa_optional;
 
             var adjusted_base_salary_db = {{ usr.salary_adjusted }};
             var adjusted_base_salary_calculate = adjusted_base_salary_db - hsa_optional;
 
-            $('.hsa_selected_current').html(hsa_optional);
+            $('input[name="hsa_optional"]').val(request.user.hsa_optional);
+            $('.hsa_selected_current').html({{ request.user.hsa_optional }});
             $('.benefit_credit_remaining').html(benefit_credit_remaining_calculate);
             $('.adjsuted_base_salary').html(adjusted_base_salary_calculate);
 
