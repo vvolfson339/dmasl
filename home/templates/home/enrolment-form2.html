@@ -2,11 +2,11 @@
 
 {% block title %}Enrolment Application | DMASL{% endblock %}
 
-{% block current_page %}Form 2{% endblock %}
+{% block current_page %}{% endblock %}
 
 {% block body %}
     <div class="col l12 white" style="padding: 20px;">
-        <h4 class="col s12 m12 l12 center-align" style="margin-top: 20px; padding: 0px;">Enrolment application</h4>
+        <h4 class="col s12 m12 l12 center-align" style="margin-top: 20px; padding: 0px;">Annual Benefits Enrolment Application</h4>
 
         <p class="col s12 m12 l12 divider" style="margin-top: 30px;"></p>
 
@@ -45,37 +45,23 @@
                     <label for="id_email">Email</label>
                 </div>
 
-                <!--<div class="input-field col l12">
-                    {{ form.first_name }}
-                    <label for="id_first_name">First name</label>
-                </div>
-
-                <div class="input-field col l6">
-                    {{ form.middle_name }}
-                    <label for="id_middle_name">Middle name</label>
-                </div>
-
-                <div class="input-field col l6">
-                    {{ form.last_name }}
-                    <label for="id_last_name">Last name</label>
-                </div>-->
 
                 <h5 class="col l12 center-align" style="text-decoration: underline;">Health Spending Account</h5>
 
                 {% if org.salary_adjustment and org.insufficient_benefit_credits %}
                     <p class="col l12" style="margin-bottom: 5px; margin-top: 20px;">
-                        Base salary : {{ request.user.salary_base }}
+                        Base salary : {{ request.user.salary_base |floatformat:2 }}
                     </p>
                 {% endif %}
 
                 {% if org.salary_adjustment and not org.insufficient_benefit_credits %}
                     <p class="col l12" style="margin-bottom: 5px; margin-top: 20px;">
-                        Base salary : {{ request.user.salary_base }}
+                        Base salary : {{ request.user.salary_base |floatformat:2 }}
                     </p>
                 {% endif %}
 
                 <p class="col l12" style="margin-top: 5px; margin-bottom: 20px;">
-                    Total benefit credits : {{ request.user.hsa_annual_credits }}
+                    Total benefit credits : {{ request.user.hsa_annual_credits |floatformat:2 }}
                 </p>
 
                 <div class="input-field col l12">
@@ -87,20 +73,20 @@
 
                 <div class="col s12 m112 l4">
                     <p class="" style="margin-top: 5px; margin-bottom: 20px;">
-                        HSA selected : <span class="hsa_selected_current">{{ request.user.hsa_optional }}</span>
+                        HSA selected : <span class="hsa_selected_current">{{ request.user.hsa_optional|floatformat:2 }}</span>
                     </p>
                 </div>
 
                 <div class="col s12 m112 l4">
                     <p class="" style="margin-top: 5px; margin-bottom: 20px;">
-                        Benefit credits remaining : <span class="benefit_credit_remaining">{{ request.user.hsa_remaining }}</span>
+                        Benefit credits remaining : <span class="benefit_credit_remaining">{{ request.user.hsa_remaining|floatformat:2 }}</span>
                     </p>
                 </div>
 
                 {% if org.salary_adjustment and org.insufficient_benefit_credits %}
                     <div class="col s12 m112 l4">
                         <p class="" style="margin-top: 5px; margin-bottom: 20px;">
-                            Adjusted base salary : <span class="adjsuted_base_salary">{{ request.user.salary_adjusted }}</span>
+                            Adjusted base salary : <span class="adjsuted_base_salary">{{ request.user.salary_adjusted|floatformat:2 }}</span>
                         </p>
                     </div>
                 {% endif %}
@@ -108,7 +94,7 @@
                 {% if org.salary_adjustment and not org.insufficient_benefit_credits %}
                     <div class="col s12 m112 l4">
                         <p class="" style="margin-top: 5px; margin-bottom: 20px;">
-                            Adjusted base salary : <span class="adjsuted_base_salary">{{ request.user.salary_adjusted }}</span>
+                            Adjusted base salary : <span class="adjsuted_base_salary">{{ request.user.salary_adjusted|floatformat:2 }}</span>
                         </p>
                     </div>
                 {% endif %}
@@ -153,13 +139,14 @@
                     <p class="col l12 red-text" style="margin-top: 20px">** {{ err_msg }}</p>
                 {% endif %}
 
-
+                <!-- Submit Button -->
                 <div class="col l12" style="padding: 0px; margin-top: 30px;">
                     <button type="submit" name="next" value="next" class="btn waves-effect waves-light" style="background-color: #002d62;">Next
                     </button>
 
-                    <a href="{% url 'home:logout' %}?from=client&org={{ org.org_short_name }}" class="btn waves-effect waves-light" style="background-color: #002d62;">Logout
-                    </a>
+                  <!-- Logout Button -->
+                  <!--  <a href="{% url 'home:logout' %}?from=client&org={{ org.org_short_name }}" class="btn waves-effect waves-light" style="background-color: #002d62;">Logout
+                    </a> -->
                 </div>
             </form>
 
@@ -208,88 +195,40 @@
             $('select').formSelect();
          });
 
+// javascript function value change
 
-
-         /*$('input[name="chk"]').change(function(){
-            if($('input[name="chk"]').is(':checked'))
-            {
-                $('input[name=hsa_optional]').prop('disabled', true);
-            }else
-            {
-                $('input[name=hsa_optional]').prop('disabled', false);
-            }
-
-         });
-
-
-         $(document).ready(function(){
-            if($('input[name="chk"]').is(':checked'))
-            {
-                $('input[name=hsa_optional]').prop('disabled', true);
-            }else
-            {
-                $('input[name=hsa_optional]').prop('disabled', false);
-            }
-
-         });*/
-
-
-        $("document").ready(function(){
+        $('input[name="hsa_optional"]').change(function(){
+            var total_hsa_credits_db = {{ usr.hsa_annual_credits }};
             var hsa_optional = $('input[name="hsa_optional"]').val();
-            var benefit_credit_remaining_db = {{ usr.hsa_remaining }};
-
-            /*if(hsa_optional > benefit_credit_remaining_db){
-                hsa_optional = 0;
-                $('input[name="hsa_optional"]').val(hsa_optional);
-            }*/
-
-            var benefit_credit_remaining_calculate = benefit_credit_remaining_db - hsa_optional;
-
-            var adjusted_base_salary_db = {{ usr.salary_adjusted }};
+            var benefit_credit_remaining = total_hsa_credits_db - hsa_optional;
+            var adjusted_base_salary_db = ({{ usr.salary_base }} + {{ usr.hsa_annual_credits }});
             var adjusted_base_salary_calculate = adjusted_base_salary_db - hsa_optional;
 
-            $('input[name="hsa_optional"]').val(request.user.hsa_optional);
-            $('.hsa_selected_current').html({{ request.user.hsa_optional }});
-            $('.benefit_credit_remaining').html(benefit_credit_remaining_calculate);
-            $('.adjsuted_base_salary').html(adjusted_base_salary_calculate);
 
-        });
-
-
-         $('input[name="hsa_optional"]').change(function(){
-            var hsa_optional = $('input[name="hsa_optional"]').val();
-            var benefit_credit_remaining_db = {{ usr.hsa_remaining }};
-
-            if(hsa_optional > benefit_credit_remaining_db){
-                alert("Not enough remaining credit!");
-                hsa_optional = 0;
-                $('input[name="hsa_optional"]').val(hsa_optional);
+            if (isNaN(hsa_optional)) {
+              alert("Please enter a valid HSA amount!");
+              hsa_optional = parseFloat(0).toFixed(2);
+              $('input[name="hsa_optional"]').val(hsa_optional);
+              $('.benefit_credit_remaining').html(parseFloat(total_hsa_credits_db).toFixed(2));
+              $('.adjsuted_base_salary').html(parseFloat(adjusted_base_salary_db).toFixed(2));
             }
+            else {
 
-
-            var benefit_credit_remaining_calculate = benefit_credit_remaining_db - hsa_optional;
-
-            var adjusted_base_salary_db = {{ usr.salary_adjusted }};
-            var adjusted_base_salary_calculate = adjusted_base_salary_db - hsa_optional;
-
-            $('.hsa_selected_current').html(hsa_optional);
-            $('.benefit_credit_remaining').html(benefit_credit_remaining_calculate);
-            $('.adjsuted_base_salary').html(adjusted_base_salary_calculate);
-
-         });
+              if(benefit_credit_remaining < 0){
+                  alert("You do not have enough HSA Benefit Credits to continue!");
+                  hsa_optional = parseFloat(0).toFixed(2);
+                  $('input[name="hsa_optional"]').val(hsa_optional);
+                  $('.benefit_credit_remaining').html(parseFloat(total_hsa_credits_db).toFixed(2));
+                  $('.adjsuted_base_salary').html(parseFloat(adjusted_base_salary_db).toFixed(2));
+              }
+              else {
+                  hsa_optional = parseFloat(hsa_optional).toFixed(2);
+                  $('.hsa_selected_current').html(hsa_optional);
+                  $('.benefit_credit_remaining').html(parseFloat(benefit_credit_remaining).toFixed(2));
+                  $('.adjsuted_base_salary').html(parseFloat(adjusted_base_salary_calculate).toFixed(2));
+              }
+            }
+       });
 
     </script>
 {% endblock %}
-
-
-
-
-
-
-
-
-
-
-
-
-

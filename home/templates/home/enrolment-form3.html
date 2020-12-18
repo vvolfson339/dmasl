@@ -30,11 +30,11 @@
                 <h5 class="col l12 center-align" style="text-decoration: underline;">Health Spending Account</h5>
 
                 <p class="col l12" style="margin-bottom: 25px; margin-top: 20px;">
-                    Total Credits Remaining : {{ request.user.hsa_remaining }}
+                    Total Credits Remaining : {{ request.user.hsa_remaining|floatformat:2 }}
                 </p>
 
                 <div class="input-field col l12">
-                    {{ form.hsa_optional }}
+                    {{ form.hsa_optional|floatformat:2 }}
                     <label for="id_hsa_optional">Current Health Spending Account selection</label>
                 </div>
 
@@ -160,16 +160,3 @@
 
     </script>
 {% endblock %}
-
-
-
-
-
-
-
-
-
-
-
-
-

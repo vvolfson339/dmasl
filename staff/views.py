@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.views import View
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.contrib.auth.views import login, logout
+# from django.contrib.auth.views import login, logout
+from django.contrib.auth.views import LoginView
+from django.contrib.auth import authenticate, login, logout
 import csv
 import os
 from django.http.response import StreamingHttpResponse
@@ -13,13 +15,10 @@ from account import forms as account_form
 
 
 
-
 class StaffPermission(PermissionRequiredMixin, View):
     permission_required = 'is_superuser'
 
     login_url = '/staff/login/'
-
-
 
 #OrganizationDetail
 class StaffLogin(View):
@@ -64,12 +63,6 @@ class StaffLogin(View):
 
         return render(request, self.template_name, variables)
 
-
-
-
-
-
-
 #home
 class StaffHome(StaffPermission, View):
     template_name = 'staff/home.html'
@@ -83,8 +76,6 @@ class StaffHome(StaffPermission, View):
         return render(request, self.template_name, variables)
 
 
-
-
 #Organization
 class Organization(StaffPermission, View):
     template_name = 'staff/org.html'
@@ -96,7 +87,6 @@ class Organization(StaffPermission, View):
         }
 
         return render(request, self.template_name, variables)
-
 
 
 #add Organization
@@ -145,8 +135,6 @@ class AddOrganization(StaffPermission, View):
         return render(request, self.template_name, variables)
 
 
-
-
 #add Organization
 class ViewOrganization(StaffPermission, View):
     template_name = 'staff/view-org.html'
@@ -189,9 +177,6 @@ class ViewOrganization(StaffPermission, View):
         return render(request, self.template_name, variables)
 
 
-
-
-
 #delete Organization
 class DeleteOrganization(StaffPermission, View):
 
@@ -202,8 +187,6 @@ class DeleteOrganization(StaffPermission, View):
         org.delete()
 
         return redirect('staff:view-org')
-
-
 
 
 #detail Organization
@@ -223,9 +206,6 @@ class DetailOrganization(StaffPermission, View):
         }
 
         return render(request, self.template_name, variables)
-
-
-
 
 
 #edit Organization
@@ -279,9 +259,6 @@ class EditOrganization(StaffPermission, View):
         }
 
         return render(request, self.template_name, variables)
-
-
-
 
 
 #edit Organization
@@ -352,15 +329,11 @@ class OrganizationMember(StaffPermission, View):
         return render(request, self.template_name, variables)
 
 
-
 def some_streaming_csv_view(request, file_name):
     path = 'media/csv_output/{}.csv'.format(file_name)
     response = StreamingHttpResponse(open(path), content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename=' + '{}.csv'.format(file_name)
     return response
-
-
-
 
 #Member
 class Member(StaffPermission, View):
@@ -373,8 +346,6 @@ class Member(StaffPermission, View):
         }
 
         return render(request, self.template_name, variables)
-
-
 
 
 #add Member
@@ -413,9 +384,6 @@ class AddMember(StaffPermission, View):
         }
 
         return render(request, self.template_name, variables)
-
-
-
 
 #view member
 class ViewMember(StaffPermission, View):
@@ -459,9 +427,6 @@ class ViewMember(StaffPermission, View):
         return render(request, self.template_name, variables)
 
 
-
-
-
 #delete member
 class DeleteMember(StaffPermission, View):
 
@@ -472,10 +437,6 @@ class DeleteMember(StaffPermission, View):
         member.delete()
 
         return redirect('staff:view-member')
-
-
-
-
 
 #detail member
 class DetailMember(StaffPermission, View):
@@ -490,11 +451,6 @@ class DetailMember(StaffPermission, View):
         }
 
         return render(request, self.template_name, variables)
-
-
-
-
-
 
 #activate deactivate member
 class ActivateDeactivateAccount(StaffPermission, View):
@@ -514,8 +470,23 @@ class ActivateDeactivateAccount(StaffPermission, View):
 
         return redirect('staff:detail-member', user_id=user_id)
 
+#activate deactivate member
+class ActivateDeactivateStaffStatus(StaffPermission, View):
 
+    def get(self, request, user_id):
 
+        member = get_object_or_404(account_model.UserProfile, id=user_id)
+
+        usr_is_staff = member.is_staff
+
+        if usr_is_staff:
+            member.is_staff = False
+            member.save()
+        else:
+            member.is_staff = True
+            member.save()
+
+        return redirect('staff:detail-member', user_id=user_id)
 
 #change password
 class ChangePassword(StaffPermission, View):
@@ -556,8 +527,6 @@ class ChangePassword(StaffPermission, View):
         return render(request, self.template_name, variables)
 
 
-
-
 #detail Organization
 class EditMember(StaffPermission, View):
     template_name = 'staff/edit-member.html'
@@ -595,9 +564,6 @@ class EditMember(StaffPermission, View):
         }
 
         return render(request, self.template_name, variables)
-
-
-
 
 #member upload
 class MemberUpload(StaffPermission, View):

@@ -2,7 +2,7 @@
 
 {% block title %}Enrolment Application | DMASL{% endblock %}
 
-{% block current_page %}SUMMERY{% endblock %}
+{% block current_page %}INFORMATION SUMMARY{% endblock %}
 
 {% block body %}
     <div class="col l12 white" style="padding: 20px;">
@@ -16,9 +16,9 @@
             <form method="post">
                 {% csrf_token %}
 
-                <h5 class="col l12 center-align" style="text-decoration: underline;">Information Summery</h5>
-                <h5 class="col l12 center-align" style="">{{ org.org_short_name | upper }} - {{ org.org_full_name | title }}</h5>
-                <h5 class="col l12 center-align" style="">Employee Information</h5>
+                <h5 class="col l12 center-align" style="text-decoration: underline;">Information Summary</h5>
+              <!--   <h5 class="col l12 center-align" style="">{{ org.org_short_name | upper }} - {{ org.org_full_name | title }}</h5> -->
+              <!--   <h5 class="col l12 center-align" style="">Employee Information</h5> -->
 
                 <p class="col l12" style="margin-bottom: 5px; margin-top: 30px;">
                     Name :
@@ -41,32 +41,33 @@
                     ID Number : {{ request.user.username }}
                 </p>
 
-
+                {% if org.salary_adjustment %}
                 <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
-                    TOTAL BENEFIT CREDITS = {{ request.user.hsa_annual_credits }}
+                    BASE SALARY = {{ request.user.salary_base |floatformat:2 }}
                 </p>
 
                 <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
-                    CURRENT HSA SELECTION = {{ request.session.hsa_optional_var }}
+                    ADJUSTED BASE SALARY = {{ request.user.salary_adjusted |floatformat:2 }}
+                </p>
+                {% endif %}
+
+                <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
+                    TOTAL BENEFIT CREDITS = {{ request.user.hsa_annual_credits |floatformat:2 }}
                 </p>
 
                 <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
-                    BENEFIT CREDITS REMAINING = {{ hsa_remaining }}
+                    CURRENT HSA SELECTION = {{ request.session.hsa_optional_var |floatformat:2 }}
                 </p>
 
+                <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
+                    BENEFIT CREDITS REMAINING = {{ hsa_remaining |floatformat:2}}
+                </p>
 
                 {% if request.user.opt_out_bool %}
                     <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
-                        OPT OUT BOOL = TRUE
+                        Benefit Credits Opted Out
                     </p>
 
-                    <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
-                        SALARY BASE : {{ request.user.salary_base }}
-                    </p>
-
-                    <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
-                        SALARY ADJUSTED : {{ salary_adjusted }}
-                    </p>
                 {% endif %}
 
 
@@ -101,16 +102,3 @@
 {% block script %}
 
 {% endblock %}
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -31,7 +31,6 @@ class Organization(models.Model):
         return str(self.org_short_name)
 
 
-
 # user profile manager
 class UserProfileManager(BaseUserManager):
     """Helps django work with our custom user model"""
@@ -39,9 +38,8 @@ class UserProfileManager(BaseUserManager):
     def create_user(self, username, password=None):
         """creates a new user profile objecs"""
 
-
         if not username:
-            raise ValueError('User must have an username!')
+            raise ValueError('User ID is not valid!')
 
         user = self.model(username=username,)
 
@@ -64,7 +62,6 @@ class UserProfileManager(BaseUserManager):
         return user
 
 
-
 # user profile model
 class UserProfile(AbstractBaseUser, PermissionsMixin):
     """Represents a user profile inside our system"""
@@ -79,19 +76,19 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=50, null=True, blank=True)
     middle_name = models.CharField(max_length=50, null=True, blank=True)
 
-    salary_base = models.FloatField(null=True, blank=True)
-    salary_adjusted = models.FloatField(null=True, blank=True)
+    salary_base = models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)
 
-    hsa_annual_credits = models.FloatField(null=True, blank=True)
-    hsa_optional = models.FloatField(null=True, blank=True)
-    hsa_remaining = models.FloatField(null=True, blank=True)
+    salary_adjusted = models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)
+
+    hsa_annual_credits = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    hsa_optional = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    hsa_remaining = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
 
     opt_out_bool = models.BooleanField(default=False)
 
     submitted = models.BooleanField(default=False)
 
     additional_info = models.TextField(max_length=350, null=True, blank=True)
-
 
 
     join_date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
@@ -111,30 +108,13 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
 
         return self.username
 
-
     def get_short_name(self):
         return self.username
-
-
-
 
 
 class MemberUpload(models.Model):
     member_file = models.FileField(upload_to='member_file/%Y/%m/%d/', blank=True, null=True)
     is_used = models.BooleanField(default=False)
 
-
     def __str__(self):
         return str(self.id)
-
-
-
-
-
-
-
-
-
-
-
-

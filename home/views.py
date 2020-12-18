@@ -1,14 +1,24 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.views import View
-from django.contrib.auth.views import login, logout
+
+#Vic modification
+from django.views import generic
+
+# from django.contrib.auth.views import login, logout
+
+from django.contrib.auth.views import LoginView
+
+from django.contrib.auth import authenticate, login, logout
+
 from django.http import Http404
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+
 
 from account import models as account_model
 from account import forms as account_form
 
 from . import tasks
-
+from decimal import *
 
 
 # sign out
@@ -19,82 +29,81 @@ def signout_request(request):
 
     if direction == 'staff':
         return redirect('staff:staff-login')
+    elif direction == 'org_admin':
+        print('**************************')
+        print(request.GET.get('org'))
+        print('**************************')
+        return redirect('home:org-admin-login', org_short_name=request.GET.get('org'))
     elif direction == 'client':
         return redirect('home:login', org_short_name=request.GET.get('org'))
     else:
         return redirect('home:home')
 
 
+class DetailView(generic.DetailView):
+    model = account_model
+    template_name = 'home/DetailView.html'
 
+    def get_queryset(self):
+        """
+        Excludes any questions that aren't published yet.
+        """
+        return account_model.objects.all()
 
-#home
+#=======================================================================================================================
+#=======================================================================================================================
+#                                           Enrolment App Forms
+#=======================================================================================================================
+#=======================================================================================================================
+
+#home view
 class Home(View):
     template_name = 'home/home.html'
 
     def get(self, request):
-
         variables = {
-
         }
 
         return render(request, self.template_name, variables)
 
-
-
-#OrganizationDetail
+#Main Login Pgae
 class Login(View):
     template_name = 'home/login.html'
 
     def get(self, request, org_short_name):
-
         org_found = get_object_or_404(account_model.Organization, org_short_name=org_short_name)
-
         form = account_form.LoginForm()
 
         variables = {
             'form': form,
-
             'org_found': org_found,
         }
-
         return render(request, self.template_name, variables)
-
 
     def post(self, request, org_short_name):
 
         org_found = get_object_or_404(account_model.Organization, org_short_name=org_short_name)
-
         form = account_form.LoginForm(request.POST or None)
-
-
         err_msg = None
         if form.is_valid():
             user = form.login_request()
-
             user_org = user.org
 
             if user_org == org_found:
                 if user:
                     login(request, user)
-
                     return redirect('home:enrolment-form2')
             else:
-                err_msg = "You are not associated to {}".format(org_short_name)
+                err_msg = "This user is not associated with {}!".format(org_short_name)
 
         variables = {
             'form': form,
-
             'org_found': org_found,
-
             'err_msg': err_msg,
         }
-
         return render(request, self.template_name, variables)
 
-
-
-
-#enrolment form1
+#enrolment form1 - this page is not in use
 class EnrolmentForm1(LoginRequiredMixin, View):
     template_name = 'home/enrolment-form1.html'
 
@@ -104,7 +113,6 @@ class EnrolmentForm1(LoginRequiredMixin, View):
         variables = {
             'org': org,
         }
-
         return render(request, self.template_name, variables)
 
     def post(self, request):
@@ -113,15 +121,10 @@ class EnrolmentForm1(LoginRequiredMixin, View):
         if request.POST.get('next') == 'next':
             return redirect('home:enrolment-form2')
 
-
         variables = {
             'org': org,
         }
-
         return render(request, self.template_name, variables)
-
-
-
 
 #enrolment form2
 class EnrolmentForm2(LoginRequiredMixin, View):
@@ -129,39 +132,57 @@ class EnrolmentForm2(LoginRequiredMixin, View):
 
     def get(self, request):
         org = request.user.org
-
         usr = request.user
 
-        #form = account_form.EnrolmentForm2(instance=request.user)
         form = account_form.EnrolmentForm3(instance=request.user, current_user=usr)
+
+        #Reset values from DB after each page load
+
+        hsa_remaining = request.user.hsa_annual_credits - request.user.hsa_optional
+        salary_adjusted = request.user.salary_base + hsa_remaining
+        usr.hsa_remaining = formatted_float = "{:.2f}".format(hsa_remaining)
+        usr.salary_adjusted = formatted_float = "{:.2f}".format(salary_adjusted)
+        usr.save
 
         variables = {
             'org': org,
-
             'form': form,
-
             'usr': usr,
+            'hsa_remaining': hsa_remaining,
+            'salary_adjusted': salary_adjusted,
         }
-
         return render(request, self.template_name, variables)
 
     def post(self, request):
         org = request.user.org
-
         usr = request.user
-
         form = account_form.EnrolmentForm3(request.POST or None, instance=request.user, current_user=usr)
-
         err_msg = None
 
+
+
         if request.POST.get('next') == 'next':
+
             if request.POST.get('chk') == None:
                 if form.is_valid():
+                    # hsa_optional = float(request.POST.get('hsa_optional'))
                     hsa_optional = float(request.POST.get('hsa_optional'))
-
                     form.save()
 
-                    request.session['hsa_optional_var'] = hsa_optional
+                    request.session['hsa_optional_var'] = (hsa_optional)
+
+                    hsa_optional_db = usr.hsa_optional
+                    hsa_remaining_db = usr.hsa_remaining
+                    salary_adjusted_db = usr.salary_adjusted
+
+
+                    if request.session.get('hsa_optional_var'):
+                        hsa_optional = float(request.session['hsa_optional_var'])
+                        new_hsa_remaining = float(hsa_remaining_db) - float(hsa_optional)
+                        usr.hsa_remaining = new_hsa_remaining
+                        salary_adjusted_calc = float(salary_adjusted_db) - float(hsa_optional)
+                        usr.salary_adjusted = salary_adjusted_calc
+                        usr.save()
 
                     usr.opt_out_bool = False
                     usr.save()
@@ -170,119 +191,105 @@ class EnrolmentForm2(LoginRequiredMixin, View):
             else:
                 if form.is_valid():
                     hsa_optional = float(request.POST.get('hsa_optional'))
-
+                    #usr.hsa_remaining += -hsa_optional
                     form.save()
 
+                    hsa_remaining_db = usr.hsa_remaining
+                    salary_adjusted_db = usr.salary_adjusted
+
                     request.session['hsa_optional_var'] = hsa_optional
+
+                    if request.session.get('hsa_optional_var'):
+                        hsa_optional = float(request.session['hsa_optional_var'])
+                        new_hsa_remaining = float(hsa_remaining_db) - float(hsa_optional)
+                        usr.hsa_remaining = new_hsa_remaining
+                        salary_adjusted_calc = float(salary_adjusted_db) - float(hsa_optional)
+                        usr.salary_adjusted = salary_adjusted_calc
+                        usr.save()
 
                     usr.opt_out_bool = True
                     usr.save()
 
                     return redirect('home:enrolment-form4')
 
-        #form = account_form.EnrolmentForm2(request.POST or None, instance=request.user)
-
-        #if form.is_valid():
-         #   form.save()
-          #  return redirect('home:enrolment-form3')
-
-
-
-        variables = {
+            variables = {
             'org': org,
 
             'form': form,
             'err_msg': err_msg,
-
             'usr': usr,
         }
 
         return render(request, self.template_name, variables)
 
-
-
-
-
+#enrolment form3
 class EnrolmentForm3(LoginRequiredMixin, View):
     template_name = 'home/enrolment-form3.html'
 
     def get(self, request):
         org = request.user.org
-
         usr = request.user
 
         form = account_form.EnrolmentForm3(instance=request.user, current_user=usr)
 
         variables = {
             'org': org,
-
             'form': form,
+            'hsa_remaining': hsa_remaining.decimal_places(2),
+            'salary_adjusted': salary_adjusted,
         }
 
         return render(request, self.template_name, variables)
 
 
-
     def post(self, request):
         org = request.user.org
-
         usr = request.user
-
         form = account_form.EnrolmentForm3(request.POST or None, instance=request.user, current_user=usr)
-
         err_msg = None
 
         if request.POST.get('next') == 'next':
             if request.POST.get('chk') == None:
                 if form.is_valid():
                     hsa_optional = float(request.POST.get('hsa_optional'))
-
                     form.save()
-
                     request.session['hsa_optional_var'] = hsa_optional
-
                     usr.opt_out_bool = False
                     usr.save()
-
                     return redirect('home:enrolment-form4')
             else:
                 usr.opt_out_bool = True
                 usr.hsa_optional = 0
                 usr.save()
-
                 del request.session['hsa_optional_var']
-
                 return redirect('home:enrolment-form4')
-
 
         variables = {
             'org': org,
-
             'form': form,
             'err_msg': err_msg,
         }
 
         return render(request, self.template_name, variables)
 
-
-
-
-
-
+#enrolment form4
 class EnrolmentForm4(LoginRequiredMixin, View):
     template_name = 'home/enrolment-form4.html'
 
     def get(self, request):
 
-        if not request.session.get('hsa_optional_var'):
-            return redirect('home:enrolment-form2')
+        # if not request.session.get('hsa_optional_var'):
+        #     return redirect('home:enrolment-form2')
 
         org = request.user.org
+        usr = request.user
 
-        current_hsa_selection = request.session['hsa_optional_var']
-
-        hsa_remaining = request.user.hsa_remaining - current_hsa_selection
-        salary_adjusted = request.user.salary_adjusted - current_hsa_selection
+        #Reset values from DB after each page load
+        hsa_remaining = request.user.hsa_annual_credits - request.user.hsa_optional
+        salary_adjusted = request.user.salary_base + hsa_remaining
+        usr.hsa_remaining = formatted_float = "{:.2f}".format(hsa_remaining)
+        usr.salary_adjusted = formatted_float = "{:.2f}".format(salary_adjusted)
+        usr.save
 
         variables = {
             'org': org,
@@ -297,8 +304,8 @@ class EnrolmentForm4(LoginRequiredMixin, View):
         member = request.user
         usr = request.user
 
-        hsa_remaining_db = usr.hsa_remaining
-        salary_adjusted_db = usr.salary_adjusted
+        hsa_remaining = request.user.hsa_remaining
+        salary_adjusted = request.user.salary_adjusted
 
         if request.POST.get('next') == 'next':
             if member.submitted:
@@ -306,27 +313,13 @@ class EnrolmentForm4(LoginRequiredMixin, View):
             else:
                 member.submitted = True
                 member.save()
-
-
-
-            if request.session.get('hsa_optional_var'):
-                hsa_optional = float(request.session['hsa_optional_var'])
-
-                new_hsa_remaining = float(hsa_remaining_db - hsa_optional)
-                usr.hsa_remaining = new_hsa_remaining
-
-                salary_adjusted_calc = float(salary_adjusted_db - hsa_optional)
-                usr.salary_adjusted = salary_adjusted_calc
-
                 usr.save()
 
-                #sent email to org admin and member
-                tasks.sent_hsa_detail_to_member.delay(request.user.id, hsa_optional, new_hsa_remaining, salary_adjusted_calc)
-                tasks.sent_hsa_detail_to_admin.delay(request.user.id, hsa_optional, new_hsa_remaining, salary_adjusted_calc)
+                #*********sent email to org admin and member*********
+                #tasks.sent_hsa_detail_to_member.delay(request.user.id, hsa_optional, new_hsa_remaining, salary_adjusted_calc)
+                #tasks.sent_hsa_detail_to_admin.delay(request.user.id, hsa_optional, new_hsa_remaining, salary_adjusted_calc)
 
                 del request.session['hsa_optional_var']
-
-
             return redirect('home:enrolment-print')
 
         variables = {
@@ -335,27 +328,28 @@ class EnrolmentForm4(LoginRequiredMixin, View):
 
         return render(request, self.template_name, variables)
 
-
-
+#enrolment printout
 class EnrolmentPrint(LoginRequiredMixin, View):
     template_name = 'home/enrolment-print.html'
 
     def get(self, request):
         org = request.user.org
-
+        usr = request.user
         form = account_form.AdditionalInfoForm(instance=request.user)
+        hsa_remaining = request.user.hsa_annual_credits - request.user.hsa_optional
+        salary_adjusted = request.user.salary_base + hsa_remaining
+        usr.hsa_remaining = formatted_float = "{:.2f}".format(hsa_remaining)
+        usr.salary_adjusted = formatted_float = "{:.2f}".format(salary_adjusted)
+        usr.save()
 
         variables = {
             'org': org,
-
             'form': form,
         }
-
         return render(request, self.template_name, variables)
 
     def post(self, request):
         org = request.user.org
-
         form = account_form.AdditionalInfoForm(request.POST or None, instance=request.user)
 
         if form.is_valid():
@@ -363,10 +357,8 @@ class EnrolmentPrint(LoginRequiredMixin, View):
 
             return redirect('/enrolment/print/?print=yes')
 
-
         variables = {
             'org': org,
-
             'form': form,
         }
 
@@ -374,22 +366,19 @@ class EnrolmentPrint(LoginRequiredMixin, View):
 
 
 
-
-
-
-
 #=======================================================================================================================
 #=======================================================================================================================
-#                                           organization admin login
+#                                           Enrolment App Staff Admin login
 #=======================================================================================================================
 #=======================================================================================================================
-
 
 
 class OrgAdminPermissionMixin(object):
     def has_permissions(self, request):
 
-        return request.user.email == request.user.org.admin_email
+        #return request.user.email == request.user.org.admin_email
+        return request.user.is_staff == True
+        #permission_required = 'is_staff'
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -398,10 +387,8 @@ class OrgAdminPermissionMixin(object):
             return super(OrgAdminPermissionMixin, self).dispatch(
                 request, *args, **kwargs)
         else:
-            return redirect('home:home')
-
-
-
+            #return redirect('home:home')
+            return redirect('home:org-admin-login', request.user.org.org_short_name)
 
 #org admin login
 class OrgAdminLogin(View):
@@ -428,14 +415,16 @@ class OrgAdminLogin(View):
         form = account_form.OrgAdminLoginForm(request.POST or None, org=org_found)
 
         err_msg = None
+
         if form.is_valid():
             user = form.login_request()
-
             user_org = user.org
+
 
             if user_org == org_found:
                 if user:
                     login(request, user)
+                    print('hi 2')
                     return redirect('home:org-admin-home', org_short_name=org_short_name)
             else:
                 err_msg = "You are not associated to {}".format(org_short_name)
@@ -443,12 +432,10 @@ class OrgAdminLogin(View):
         variables = {
             'org_found': org_found,
             'form': form,
-
             'err_msg': err_msg,
         }
 
         return render(request, self.template_name, variables)
-
 
 #org admin home
 class OrgAdminHome(OrgAdminPermissionMixin, View):
@@ -466,9 +453,6 @@ class OrgAdminHome(OrgAdminPermissionMixin, View):
         }
 
         return render(request, self.template_name, variables)
-
-
-
 
 #org admin member view
 class OrgMemberView(OrgAdminPermissionMixin, View):
@@ -489,8 +473,6 @@ class OrgMemberView(OrgAdminPermissionMixin, View):
 
         return render(request, self.template_name, variables)
 
-
-
 #org admin member view
 class OrgMemberDetail(OrgAdminPermissionMixin, View):
     template_name = 'home/org-admin/org-member-detail.html'
@@ -509,9 +491,6 @@ class OrgMemberDetail(OrgAdminPermissionMixin, View):
         }
 
         return render(request, self.template_name, variables)
-
-
-
 
 #activate deactivate member
 class ActivateDeactivateAccount(OrgAdminPermissionMixin, View):
@@ -535,9 +514,6 @@ class ActivateDeactivateAccount(OrgAdminPermissionMixin, View):
 
         return redirect('home:org-member-detail', org_short_name=org_short_name, user_id=user_id)
 
-
-
-
 #delete member
 class OrgMemberDelete(OrgAdminPermissionMixin, View):
 
@@ -552,9 +528,6 @@ class OrgMemberDelete(OrgAdminPermissionMixin, View):
         member.delete()
 
         return redirect('home:org-member-view', org_short_name=org_short_name)
-
-
-
 
 #org admin member add
 class OrgMemberAdd(OrgAdminPermissionMixin, View):
@@ -591,9 +564,6 @@ class OrgMemberAdd(OrgAdminPermissionMixin, View):
         }
 
         return render(request, self.template_name, variables)
-
-
-
 
 #org admin member edit
 class OrgMemberEdit(OrgAdminPermissionMixin, View):
@@ -634,9 +604,6 @@ class OrgMemberEdit(OrgAdminPermissionMixin, View):
 
         return render(request, self.template_name, variables)
 
-
-
-
 #org admin member change password
 class OrgMemberChangePassword(OrgAdminPermissionMixin, View):
     template_name = 'home/org-admin/org-member-change-password.html'
@@ -675,24 +642,3 @@ class OrgMemberChangePassword(OrgAdminPermissionMixin, View):
         }
 
         return render(request, self.template_name, variables)
-
-
-
-
-
-#=======================================================================================================================
-#=======================================================================================================================
-#                                           organization admin login
-#=======================================================================================================================
-#=======================================================================================================================
-
-
-
-
-
-
-
-
-
-
-

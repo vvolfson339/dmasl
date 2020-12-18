@@ -6,7 +6,8 @@ SECRET_KEY = 'u7z$z&=bltmwm9ywd^4pz1^$+lu@lj-0_n3r14@6or-0ee34jl'
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['159.89.146.14', 'dmasl.org', 'www.dmasl.org']
+#ALLOWED_HOSTS = ['159.89.146.14', 'dmasl.org', 'www.dmasl.org']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -15,6 +16,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'materialize',
+    'crispy_forms',
+    'crispy_forms_materialize',
 
     'account.apps.AccountConfig',
     'home.apps.HomeConfig',
@@ -51,16 +56,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'dmasl.wsgi.application'
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'dmasl',
+#         'USER': 'root',
+#         'PASSWORD': 'nstu12345678',
+#         'HOST': 'localhost',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dmasl',
-        'USER': 'root',
-        'PASSWORD': 'nstu12345678',
-        'HOST': 'localhost',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -80,7 +91,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/New_York'
 
 USE_I18N = True
 
@@ -94,12 +105,12 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-
 AUTH_USER_MODEL = 'account.UserProfile'
-
 
 LOGIN_URL = '/'
 
+# Default layout to use with "crispy_forms"
+CRISPY_TEMPLATE_PACK = 'materialize_css_forms'
 
 
 CELERY_BROKER_URL = 'redis://localhost:6379'

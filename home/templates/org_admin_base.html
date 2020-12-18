@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %}</title>
 
-    {% load staticfiles %}
+    {% load static %}
     <link rel="shortcut icon" type="image/png" href="{% static 'home/style/images/logo/favicon.png' %}" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -84,7 +84,7 @@
                         <a href="" style="font-size: 20px;" class="brand-logo white-text">DMASL "{{ org_found.org_short_name }} admin"</a>
                             <ul id="nav-mobile" class="right hide-on-med-and-down">
                                 <li><a class="" href="">{{ request.user.username | title }}</a></li>
-                                <li><a class="" href="{% url 'home:logout' %}?from=staff">Logout</a></li>
+                                <li><a class="" href="{% url 'home:logout' %}?from=org_admin&org={{ org_found.org_short_name }}">Logout</a></li>
                             </ul>
                     </div>
                 </nav>

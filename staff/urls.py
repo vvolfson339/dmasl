@@ -2,6 +2,7 @@ from django.conf.urls import url
 
 from . import views
 
+app_name = 'staff'
 
 urlpatterns = [
     url(r'^login/$', views.StaffLogin.as_view(), name='staff-login'),
@@ -25,6 +26,8 @@ urlpatterns = [
     url(r'^member/(?P<user_id>[0-9]+)/delete/$', views.DeleteMember.as_view(), name='delete-member'),
     url(r'^member/(?P<user_id>[0-9]+)/detail/$', views.DetailMember.as_view(), name='detail-member'),
     url(r'^member/(?P<user_id>[0-9]+)/activate-deactivate/$', views.ActivateDeactivateAccount.as_view(), name='activate-deactivate-account'),
+    url(r'^member/(?P<user_id>[0-9]+)/activate-deactivate-staff/$', views.ActivateDeactivateStaffStatus.as_view(), name='activate-deactivate-staff'),
+
     url(r'^member/(?P<user_id>[0-9]+)/change-password/$', views.ChangePassword.as_view(), name='change-password'),
     url(r'^member/(?P<user_id>[0-9]+)/edit/$', views.EditMember.as_view(), name='edit-member'),
 
