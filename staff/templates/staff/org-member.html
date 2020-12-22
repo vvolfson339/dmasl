@@ -6,9 +6,9 @@
 
     <div id="left-sidebar-menu" class="collection col s12 m12 l12" style="margin-top: 200px; padding: 0px;">
         <a href="{% url 'staff:staff-home' %}" class="collection-item">Home</a>
-        <a href="{% url 'staff:org' %}" class="collection-item active">Organization</a>
-        <a href="{% url 'staff:member' %}" class="collection-item">Member</a>
-        <a href="#!" class="collection-item">About us</a>
+        <a href="{% url 'staff:org' %}" class="collection-item active">Organizations</a>
+        <a href="{% url 'staff:member' %}" class="collection-item">Members</a>
+
     </div>
 {% endblock %}
 
@@ -33,8 +33,8 @@
                 <th>User ID</th>
                 <th>Name</th>
                 <th>ORG</th>
-                <th>HSA Optional</th>
-                <th>Is Active</th>
+                <th>HSA Selected</th>
+                <th>Submitted</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -46,8 +46,8 @@
                     <td>{{ member.username }}</td>
                     <td>{{ member.first_name | title }} {{ member.last_name| title }}</td>
                     <td>{{ member.org.org_short_name | upper }}</td>
-                    <td>{{ member.hsa_optional }}</td>
-                    <td>{{ member.is_active }}</td>
+                    <td>{{ member.hsa_optional  }}</td>
+                    <td>{{ member.submitted | yesno:"Yes,No" }}</td>
                     <td>
                         <a href="{% url 'staff:detail-member' user_id=member.id %}" class="btn">Detail</a>
                     </td>

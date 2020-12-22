@@ -6,9 +6,9 @@
 
     <div id="left-sidebar-menu" class="collection col s12 m12 l12" style="margin-top: 200px; padding: 0px;">
         <a href="{% url 'staff:staff-home' %}" class="collection-item">Home</a>
-        <a href="{% url 'staff:org' %}" class="collection-item active">Organization</a>
-        <a href="{% url 'staff:member' %}" class="collection-item">Member</a>
-        <a href="#!" class="collection-item">About us</a>
+        <a href="{% url 'staff:org' %}" class="collection-item active">Organizations</a>
+        <a href="{% url 'staff:member' %}" class="collection-item">Members</a>
+
     </div>
 {% endblock %}
 
@@ -19,7 +19,7 @@
     <div class="col l4">
         <div class="z-depth-1 center-align valign-wrapper teal" style="height: 250px; background-color: #D3D3D3;">
             <div class="col s12 m12 l12 center-align">
-                <h4>Add Organization</h4>
+                <h4>Add New Organization</h4>
 
                 <p>
                     <a class="white-text" href="{% url 'staff:add-org' %}">Add</a>
@@ -32,7 +32,7 @@
     <div class="col l4">
         <div class="z-depth-1 center-align valign-wrapper teal" style="height: 250px; background-color: #D3D3D3;">
             <div class="col s12 m12 l12 center-align">
-                <h4>View Organization</h4>
+                <h4>View Current Organizations</h4>
 
                 <p>
                     <a class="white-text" href="{% url 'staff:view-org' %}">View</a>

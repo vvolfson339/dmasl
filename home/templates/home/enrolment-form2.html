@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load humanize %}
 {% block title %}Enrolment Application | DMASL{% endblock %}
 
 {% block current_page %}{% endblock %}
@@ -18,7 +18,7 @@
                 <h5 class="col l12 center-align" style="text-decoration: underline;">Your Information</h5>
 
                 <p class="col l12" style="margin-bottom: 5px; margin-top: 20px;">
-                    Employer : {{ org.org_short_name | upper }} - {{ org.org_full_name | title }}
+                    Employer : {{ org.org_full_name | title }}
                 </p>
 
                 <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
@@ -28,7 +28,7 @@
                 <p class="col l12" style="margin-bottom: 20px; margin-top: 5px;">
                     Name :
                     {% if request.user.last_name %}
-                        {{ request.user.last_name | title }}
+                        {{ request.user.last_name | title }},
                     {% endif %}
 
                     {% if request.user.first_name %}
@@ -50,43 +50,42 @@
 
                 {% if org.salary_adjustment and org.insufficient_benefit_credits %}
                     <p class="col l12" style="margin-bottom: 5px; margin-top: 20px;">
-                        Base salary : {{ request.user.salary_base |floatformat:2 }}
+                        Job Rate : {{ request.user.salary_base |floatformat:2|intcomma }}
                     </p>
                 {% endif %}
 
                 {% if org.salary_adjustment and not org.insufficient_benefit_credits %}
                     <p class="col l12" style="margin-bottom: 5px; margin-top: 20px;">
-                        Base salary : {{ request.user.salary_base |floatformat:2 }}
+                        Job Rate : {{ request.user.salary_base |floatformat:2|intcomma }}
                     </p>
                 {% endif %}
 
                 <p class="col l12" style="margin-top: 5px; margin-bottom: 20px;">
-                    Total benefit credits : {{ request.user.hsa_annual_credits |floatformat:2 }}
+                    Total Benefit Credits : {{ request.user.hsa_annual_credits |floatformat:2|intcomma }}
                 </p>
 
                 <div class="input-field col l12">
                     {{ form.hsa_optional }}
-                    <label for="id_hsa_optional">Current Health Spending Account selection</label>
+                    <label for="id_hsa_optional">Health Spending Account Selection</label>
                 </div>
-
 
 
                 <div class="col s12 m112 l4">
                     <p class="" style="margin-top: 5px; margin-bottom: 20px;">
-                        HSA selected : <span class="hsa_selected_current">{{ request.user.hsa_optional|floatformat:2 }}</span>
+                        HSA Selected : <span class="hsa_selected_current">{{ request.user.hsa_optional|floatformat:2|intcomma }}</span>
                     </p>
                 </div>
 
                 <div class="col s12 m112 l4">
                     <p class="" style="margin-top: 5px; margin-bottom: 20px;">
-                        Benefit credits remaining : <span class="benefit_credit_remaining">{{ request.user.hsa_remaining|floatformat:2 }}</span>
+                        Benefit Credits Remaining : <span class="benefit_credit_remaining">{{ request.user.hsa_remaining|floatformat:2|intcomma }}</span>
                     </p>
                 </div>
 
                 {% if org.salary_adjustment and org.insufficient_benefit_credits %}
                     <div class="col s12 m112 l4">
                         <p class="" style="margin-top: 5px; margin-bottom: 20px;">
-                            Adjusted base salary : <span class="adjsuted_base_salary">{{ request.user.salary_adjusted|floatformat:2 }}</span>
+                            Taxable Earning : <span class="adjsuted_base_salary">{{ request.user.salary_adjusted|floatformat:2|intcomma }}</span>
                         </p>
                     </div>
                 {% endif %}
@@ -94,7 +93,7 @@
                 {% if org.salary_adjustment and not org.insufficient_benefit_credits %}
                     <div class="col s12 m112 l4">
                         <p class="" style="margin-top: 5px; margin-bottom: 20px;">
-                            Adjusted base salary : <span class="adjsuted_base_salary">{{ request.user.salary_adjusted|floatformat:2 }}</span>
+                            Taxable Earnings : <span class="adjsuted_base_salary">{{ request.user.salary_adjusted|floatformat:2|intcomma }}</span>
                         </p>
                     </div>
                 {% endif %}
@@ -159,7 +158,7 @@
 
 
 {% block script %}
-    <script>
+    <!-- <script>
         $(document).ready(function(){
 
             $('.datepicker').datepicker({
@@ -168,12 +167,11 @@
             });
         });
 
-
         $(document).ready(function(){
             $('select').formSelect();
          });
 
-    </script>
+    </script> -->
 
 
     <script>
@@ -189,23 +187,21 @@
                 closeOnSelect: false // Close upon selecting a date,
             });
         });
-
-
         $(document).ready(function(){
             $('select').formSelect();
          });
-
 // javascript function value change
 
         $('input[name="hsa_optional"]').change(function(){
             var total_hsa_credits_db = {{ usr.hsa_annual_credits }};
             var hsa_optional = $('input[name="hsa_optional"]').val();
             var benefit_credit_remaining = total_hsa_credits_db - hsa_optional;
-            var adjusted_base_salary_db = ({{ usr.salary_base }} + {{ usr.hsa_annual_credits }});
+            var adjusted_base_salary_db = ({{ usr.salary_base }});
             var adjusted_base_salary_calculate = adjusted_base_salary_db - hsa_optional;
 
+            // .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-            if (isNaN(hsa_optional)) {
+            if (isNaN(hsa_optional) || hsa_optional<0) {
               alert("Please enter a valid HSA amount!");
               hsa_optional = parseFloat(0).toFixed(2);
               $('input[name="hsa_optional"]').val(hsa_optional);

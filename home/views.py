@@ -13,12 +13,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import Http404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
-
 from account import models as account_model
 from account import forms as account_form
 
 from . import tasks
-from decimal import *
+#from decimal import *
 
 
 # sign out
@@ -30,9 +29,6 @@ def signout_request(request):
     if direction == 'staff':
         return redirect('staff:staff-login')
     elif direction == 'org_admin':
-        print('**************************')
-        print(request.GET.get('org'))
-        print('**************************')
         return redirect('home:org-admin-login', org_short_name=request.GET.get('org'))
     elif direction == 'client':
         return redirect('home:login', org_short_name=request.GET.get('org'))
@@ -136,13 +132,29 @@ class EnrolmentForm2(LoginRequiredMixin, View):
 
         form = account_form.EnrolmentForm3(instance=request.user, current_user=usr)
 
-        #Reset values from DB after each page load
 
-        hsa_remaining = request.user.hsa_annual_credits - request.user.hsa_optional
-        salary_adjusted = request.user.salary_base + hsa_remaining
+        #Reset values from DB after each page load
+        if org.salary_adjustment==True :
+            hsa_remaining = request.user.hsa_annual_credits - request.user.hsa_optional
+            salary_adjusted = request.user.salary_base - request.user.hsa_optional
+        else:
+            hsa_remaining = request.user.hsa_annual_credits - request.user.hsa_optional
+            salary_adjusted = 0
+
+
+        # print("On GET")
+        # print("HSA Selected value ",request.user.hsa_optional)
+        # print("HSA Remaining ",hsa_remaining)
+        # print("ADJ Salary ",salary_adjusted)
+
+
+        if org.insufficient_benefit_credits==False :
+            usr.opt_out_bool==False
+            usr.save()
+
         usr.hsa_remaining = formatted_float = "{:.2f}".format(hsa_remaining)
         usr.salary_adjusted = formatted_float = "{:.2f}".format(salary_adjusted)
-        usr.save
+        usr.save()
 
         variables = {
             'org': org,
@@ -159,58 +171,39 @@ class EnrolmentForm2(LoginRequiredMixin, View):
         form = account_form.EnrolmentForm3(request.POST or None, instance=request.user, current_user=usr)
         err_msg = None
 
-
-
         if request.POST.get('next') == 'next':
+            if form.is_valid():
 
-            if request.POST.get('chk') == None:
-                if form.is_valid():
-                    # hsa_optional = float(request.POST.get('hsa_optional'))
-                    hsa_optional = float(request.POST.get('hsa_optional'))
-                    form.save()
+                # retrieve value input from form
+                hsa_optional = float(request.POST.get('hsa_optional'))
 
-                    request.session['hsa_optional_var'] = (hsa_optional)
+                #calculate new values and store into the databse
+                new_hsa_remaining = float(usr.hsa_annual_credits) - float(hsa_optional)
+                usr.hsa_remaining = new_hsa_remaining
 
-                    hsa_optional_db = usr.hsa_optional
-                    hsa_remaining_db = usr.hsa_remaining
-                    salary_adjusted_db = usr.salary_adjusted
+                if org.salary_adjustment == True :
+                    salary_adjusted_calc = float(usr.salary_base) - float(hsa_optional)
+                    usr.salary_adjusted = salary_adjusted_calc
+                else :
+                    salary_adjusted_calc = 0
+                    usr.salary_adjusted = salary_adjusted_calc
 
+                usr.save()
 
-                    if request.session.get('hsa_optional_var'):
-                        hsa_optional = float(request.session['hsa_optional_var'])
-                        new_hsa_remaining = float(hsa_remaining_db) - float(hsa_optional)
-                        usr.hsa_remaining = new_hsa_remaining
-                        salary_adjusted_calc = float(salary_adjusted_db) - float(hsa_optional)
-                        usr.salary_adjusted = salary_adjusted_calc
-                        usr.save()
-
+                if request.POST.get('chk') == None :
                     usr.opt_out_bool = False
                     usr.save()
-
-                    return redirect('home:enrolment-form4')
-            else:
-                if form.is_valid():
-                    hsa_optional = float(request.POST.get('hsa_optional'))
-                    #usr.hsa_remaining += -hsa_optional
-                    form.save()
-
-                    hsa_remaining_db = usr.hsa_remaining
-                    salary_adjusted_db = usr.salary_adjusted
-
-                    request.session['hsa_optional_var'] = hsa_optional
-
-                    if request.session.get('hsa_optional_var'):
-                        hsa_optional = float(request.session['hsa_optional_var'])
-                        new_hsa_remaining = float(hsa_remaining_db) - float(hsa_optional)
-                        usr.hsa_remaining = new_hsa_remaining
-                        salary_adjusted_calc = float(salary_adjusted_db) - float(hsa_optional)
-                        usr.salary_adjusted = salary_adjusted_calc
-                        usr.save()
-
+                else:
                     usr.opt_out_bool = True
                     usr.save()
 
-                    return redirect('home:enrolment-form4')
+                # print("On POST afer calc")
+                # print("HSA Selected value ",hsa_optional)
+                # print("HSA Remaining ",new_hsa_remaining)
+                # print("ADJ Salary ",salary_adjusted_calc)
+
+            return redirect('home:enrolment-form4')
+
 
             variables = {
             'org': org,
@@ -224,6 +217,9 @@ class EnrolmentForm2(LoginRequiredMixin, View):
 
 #enrolment form3
 class EnrolmentForm3(LoginRequiredMixin, View):
+
+# ***************** form code not in use
+
     template_name = 'home/enrolment-form3.html'
 
     def get(self, request):
@@ -235,10 +231,10 @@ class EnrolmentForm3(LoginRequiredMixin, View):
         variables = {
             'org': org,
             'form': form,
-            'hsa_remaining': hsa_remaining.decimal_places(2),
+            # 'hsa_remaining': hsa_remaining.decimal_places(2),
+            'hsa_remaining': hsa_remaining,
             'salary_adjusted': salary_adjusted,
         }
-
         return render(request, self.template_name, variables)
 
 
@@ -286,10 +282,8 @@ class EnrolmentForm4(LoginRequiredMixin, View):
 
         #Reset values from DB after each page load
         hsa_remaining = request.user.hsa_annual_credits - request.user.hsa_optional
-        salary_adjusted = request.user.salary_base + hsa_remaining
-        usr.hsa_remaining = formatted_float = "{:.2f}".format(hsa_remaining)
-        usr.salary_adjusted = formatted_float = "{:.2f}".format(salary_adjusted)
-        usr.save
+        salary_adjusted = request.user.salary_base - request.user.hsa_optional
+
 
         variables = {
             'org': org,
@@ -304,8 +298,8 @@ class EnrolmentForm4(LoginRequiredMixin, View):
         member = request.user
         usr = request.user
 
-        hsa_remaining = request.user.hsa_remaining
-        salary_adjusted = request.user.salary_adjusted
+        hsa_remaining = usr.hsa_remaining
+        salary_adjusted = usr.salary_adjusted
 
         if request.POST.get('next') == 'next':
             if member.submitted:
@@ -315,12 +309,12 @@ class EnrolmentForm4(LoginRequiredMixin, View):
                 member.save()
                 usr.save()
 
-                #*********sent email to org admin and member*********
-                #tasks.sent_hsa_detail_to_member.delay(request.user.id, hsa_optional, new_hsa_remaining, salary_adjusted_calc)
-                #tasks.sent_hsa_detail_to_admin.delay(request.user.id, hsa_optional, new_hsa_remaining, salary_adjusted_calc)
+        #*********sent email to org admin and member*********
+        #tasks.sent_hsa_detail_to_member.delay(request.user.id, hsa_optional, new_hsa_remaining, salary_adjusted_calc)
+        #tasks.sent_hsa_detail_to_admin.delay(request.user.id, hsa_optional, new_hsa_remaining, salary_adjusted_calc)
 
-                del request.session['hsa_optional_var']
-            return redirect('home:enrolment-print')
+                # del request.session['hsa_optional_var']
+        return redirect('home:enrolment-print')
 
         variables = {
             'org': org,
@@ -336,11 +330,13 @@ class EnrolmentPrint(LoginRequiredMixin, View):
         org = request.user.org
         usr = request.user
         form = account_form.AdditionalInfoForm(instance=request.user)
-        hsa_remaining = request.user.hsa_annual_credits - request.user.hsa_optional
-        salary_adjusted = request.user.salary_base + hsa_remaining
-        usr.hsa_remaining = formatted_float = "{:.2f}".format(hsa_remaining)
-        usr.salary_adjusted = formatted_float = "{:.2f}".format(salary_adjusted)
-        usr.save()
+
+        hsa_remaining = request.user.hsa_remaining
+        salary_adjusted = request.user.salary_adjusted
+
+        # usr.hsa_remaining = formatted_float = "{:.2f}".format(hsa_remaining)
+        # usr.salary_adjusted = formatted_float = "{:.2f}".format(salary_adjusted)
+        # usr.save()
 
         variables = {
             'org': org,

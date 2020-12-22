@@ -4,6 +4,7 @@
 
 {% block style %}
 {% load static %}
+{% load humanize %}
 
     <link rel="stylesheet" type="text/css" href="{% static 'home/style/pdf_css.css' %}">
 {% endblock %}
@@ -80,7 +81,7 @@
                 <p class="col s4 m4 l4" style="padding: 0px;"><b>Member Name</b></p>
                 <p class="col s4 m4 l4">
                     {% if request.user.last_name %}
-                        {{ request.user.last_name | title }}
+                        {{ request.user.last_name | title }},
                     {% endif %}
 
                     {% if request.user.first_name %}
@@ -107,49 +108,45 @@
             </div>
             {% if org.salary_adjustment %}
             <div class="col s12 m12 l12" style="padding: 0px; margin-top: 20px;">
-                <p class="col s4 m4 l4" style="padding: 0px;">Base Salary</p>
-                <p class="col s4 m4 l4">${{ request.user.salary_base |floatformat:2 }}</p>
+                <p class="col s4 m4 l4" style="padding: 0px;">Job Rate</p>
+                <p class="col s4 m4 l4">${{ request.user.salary_base |floatformat:2|intcomma  }}</p>
                 <p class="col s4 m4 l4"></p>
             </div>
             <div class="col s12 m12 l12" style="padding: 0px; margin-top: 5px;">
-                <p class="col s4 m4 l4" style="padding: 0px;">Adjusted Base Salary</p>
-                <p class="col s4 m4 l4">${{ request.user.salary_adjusted |floatformat:2 }}</p>
+                <p class="col s4 m4 l4" style="padding: 0px;">Taxable Earnings</p>
+                <p class="col s4 m4 l4">${{ request.user.salary_adjusted |floatformat:2|intcomma }}</p>
                 <p class="col s4 m4 l4"></p>
             </div>
             {% endif %}
 
             <div class="col s12 m12 l12" style="padding: 0px; margin-top: 5px;">
                 <p class="col s4 m4 l4" style="padding: 0px;">Total Benefit Credits</p>
-                <p class="col s4 m4 l4">${{ request.user.hsa_annual_credits |floatformat:2 }}</p>
+                <p class="col s4 m4 l4">${{ request.user.hsa_annual_credits |floatformat:2|intcomma }}</p>
                 <p class="col s4 m4 l4"></p>
             </div>
 
             <div class="col s12 m12 l12" style="padding: 0px; margin-top: 5px;">
-                <p class="col s4 m4 l4" style="padding: 0px;">Current HSA Selection</p>
-                <p class="col s4 m4 l4">${{ request.user.hsa_optional |floatformat:2 }}</p>
+                <p class="col s4 m4 l4" style="padding: 0px;">HSA Selection</p>
+                <p class="col s4 m4 l4">${{ request.user.hsa_optional |floatformat:2|intcomma }}</p>
                 <p class="col s4 m4 l4"></p>
             </div>
 
             <div class="col s12 m12 l12" style="padding: 0px; margin-top: 5px;">
                 <p class="col s4 m4 l4" style="padding: 0px;">Benefit Credits Remaining</p>
-                <p class="col s4 m4 l4">${{ request.user.hsa_remaining |floatformat:2}}</p>
+                <p class="col s4 m4 l4">${{ request.user.hsa_remaining |floatformat:2|intcomma}}</p>
                 <p class="col s4 m4 l4"></p>
             </div>
 
 
 
             {% if request.user.opt_out_bool %}
-                <div class="col s12 m12 l12" style="padding: 0px; margin-top: 5px;">
-                    <p class="col s4 m4 l4" style="padding: 0px;">Salary Base</p>
-                    <p class="col s4 m4 l4">${{ request.user.salary_base |floatformat:2}}</p>
-                    <p class="col s4 m4 l4"></p>
-                </div>
 
-                <div class="col s12 m12 l12" style="padding: 0px; margin-top: 5px;">
-                    <p class="col s4 m4 l4" style="padding: 0px;">Salary Adjusted</p>
-                    <p class="col s4 m4 l4">${{ request.user.salary_adjusted |floatformat:2 }}</p>
-                    <p class="col s4 m4 l4"></p>
-                </div>
+            <div class="col s12 m12 l12" style="padding: 0px; margin-top: 5px;">
+
+              <p class="col s4 m4 l4" style="padding: 0px;">Benefit Credits Opted Out</p>
+              <p class="col s4 m4 l4">{{ request.user.opt_out_bool |yesno:"Yes,No"}}</p>
+              <p class="col s4 m4 l4"></p>
+
             {% endif %}
 
 
@@ -160,7 +157,7 @@
 
             <div class="col s12 m12 l12" style="padding: 0px; margin-top: 20px;">
                 <p class="col s4 m4 l4" style="padding: 0px;">Health Spending Account</p>
-                <p class="col s4 m4 l4">${{ request.user.hsa_optional |floatformat:2 }}</p>
+                <p class="col s4 m4 l4">${{ request.user.hsa_optional |floatformat:2|intcomma }}</p>
                 <p class="col s4 m4 l4"></p>
             </div>
 
@@ -213,7 +210,7 @@
                 <div class="col s12 m12 l12" style="padding: 0px; margin-top: 5px;">
                     <p style="font-weight: bold;">
                         {% if request.user.last_name %}
-                            {{ request.user.last_name | title }}
+                            {{ request.user.last_name | title }},
                         {% endif %}
 
                         {% if request.user.first_name %}

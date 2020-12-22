@@ -555,8 +555,6 @@ class EditMember(StaffPermission, View):
             form.save()
             return redirect('staff:detail-member', user_id=user_id)
 
-
-
         variables = {
             'member': member,
 

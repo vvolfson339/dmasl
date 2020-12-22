@@ -6,9 +6,9 @@
 
     <div id="left-sidebar-menu" class="collection col s12 m12 l12" style="margin-top: 200px; padding: 0px;">
         <a href="{% url 'staff:staff-home' %}" class="collection-item">Home</a>
-        <a href="{% url 'staff:org' %}" class="collection-item ">Organization</a>
-        <a href="{% url 'staff:member' %}" class="collection-item active">Member</a>
-        <a href="#!" class="collection-item">About us</a>
+        <a href="{% url 'staff:org' %}" class="collection-item ">Organizations</a>
+        <a href="{% url 'staff:member' %}" class="collection-item active">Members</a>
+
     </div>
 {% endblock %}
 
@@ -62,7 +62,7 @@
                                     <td>{{ s_member.first_name | title }} {{ s_member.last_name| title }}</td>
                                     <td>{{ s_member.org.org_short_name | upper }}</td>
                                     <td>
-                                        <a class="btn red" href="{% url 'staff:delete-member' user_id=s_member.id %}" style="margin-right: 20px;">Delete</a>
+                                        <a class="btn red" onclick="return confirm('Confirmation: Are you sure you want to delete this user?')" href="{% url 'staff:delete-member' user_id=s_member.id %}" style="margin-right: 20px;">Delete</a>
                                         <a class="btn" href="{% url 'staff:detail-member' user_id=s_member.id %}">View</a>
                                     </td>
                                 </tr>

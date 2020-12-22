@@ -6,8 +6,6 @@
 
 {% block body %}
     <div class="col l12 white" style="padding: 20px;">
-        <h5 class="col s12 m12 l12 center-align" style="margin-top: 20px; padding: 0px;">Enrolment application</h5>
-
         <!--<h5 class="col s12 m12 l12 center-align" style="margin-top: 20px; padding: 0px;">
             {{ org_found.org_short_name | upper }}
         </h5>-->
@@ -15,8 +13,10 @@
         {% if org_found.logo %}
             <img class="col l2 offset-l5 responsive-img" src="{{ org_found.logo.url }}">
         {% else %}
-            <h5 class="col s12 m12 l12 center-align">{{ org_found.org_short_name | upper }}</h5>
+            <h5 class="col s12 m12 l12 center-align">{{ org_found.org_full_name | upper }}</h5>
         {% endif %}
+
+        <h5 class="col s12 m12 l12 center-align" style="margin-top: 20px; padding: 0px;">Enrolment Application</h5>
 
         <p class="col s12 m12 l12 divider" style="margin-top: 30px;"></p>
 

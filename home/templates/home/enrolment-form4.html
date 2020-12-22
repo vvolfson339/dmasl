@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load humanize %}
 {% block title %}Enrolment Application | DMASL{% endblock %}
 
 {% block current_page %}INFORMATION SUMMARY{% endblock %}
@@ -23,7 +23,7 @@
                 <p class="col l12" style="margin-bottom: 5px; margin-top: 30px;">
                     Name :
                     {% if request.user.last_name %}
-                        {{ request.user.last_name | title }}
+                        {{ request.user.last_name | title }},
                     {% endif %}
 
                     {% if request.user.first_name %}
@@ -43,24 +43,24 @@
 
                 {% if org.salary_adjustment %}
                 <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
-                    BASE SALARY = {{ request.user.salary_base |floatformat:2 }}
+                    Job Rate = {{ request.user.salary_base |floatformat:2|intcomma }}
                 </p>
 
                 <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
-                    ADJUSTED BASE SALARY = {{ request.user.salary_adjusted |floatformat:2 }}
+                    Taxable Earnings = {{ request.user.salary_adjusted |floatformat:2|intcomma }}
                 </p>
                 {% endif %}
 
                 <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
-                    TOTAL BENEFIT CREDITS = {{ request.user.hsa_annual_credits |floatformat:2 }}
+                    Total Benefit Credits = {{ request.user.hsa_annual_credits |floatformat:2|intcomma }}
                 </p>
 
                 <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
-                    CURRENT HSA SELECTION = {{ request.session.hsa_optional_var |floatformat:2 }}
+                    HSA Selected = {{ request.user.hsa_optional|floatformat:2|intcomma }}
                 </p>
 
                 <p class="col l12" style="margin-bottom: 5px; margin-top: 5px;">
-                    BENEFIT CREDITS REMAINING = {{ hsa_remaining |floatformat:2}}
+                    Benefit Credits Remaining = {{ hsa_remaining |floatformat:2|intcomma}}
                 </p>
 
                 {% if request.user.opt_out_bool %}

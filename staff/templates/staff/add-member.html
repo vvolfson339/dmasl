@@ -6,9 +6,9 @@
 
     <div id="left-sidebar-menu" class="collection col s12 m12 l12" style="margin-top: 200px; padding: 0px;">
         <a href="{% url 'staff:staff-home' %}" class="collection-item">Home</a>
-        <a href="{% url 'staff:org' %}" class="collection-item">Organization</a>
-        <a href="{% url 'staff:member' %}" class="collection-item active">Member</a>
-        <a href="#!" class="collection-item">About us</a>
+        <a href="{% url 'staff:org' %}" class="collection-item">Organizations</a>
+        <a href="{% url 'staff:member' %}" class="collection-item active">Members</a>
+
     </div>
 {% endblock %}
 
@@ -16,7 +16,7 @@
 {% block admin_content %}
 
     <h4 class="col l10 offset-l1" style="margin-top: 10px; text-decoration: underline;">
-        Add Member for this ORG - {{ org.org_short_name | upper }}
+        New Member - {{ org.org_full_name }}
     </h4>
 
 
@@ -44,45 +44,46 @@
         </div>
 
         <div class="input-field col l4">
+            {{ form.last_name }}
+            <label for="id_last_name">Last Name</label>
+        </div>
+
+        <div class="input-field col l4">
             {{ form.first_name }}
-            <label for="id_first_name">First name</label>
+            <label for="id_first_name">First Name</label>
         </div>
 
         <div class="input-field col l4">
             {{ form.middle_name }}
-            <label for="id_middle_name">Middle name</label>
+            <label for="id_middle_name">Middle Name</label>
         </div>
 
-        <div class="input-field col l4">
-            {{ form.last_name }}
-            <label for="id_last_name">Last name</label>
-        </div>
 
 
         <div class="input-field col l6">
             {{ form.salary_base }}
-            <label for="id_salary_base">Salary base</label>
+            <label for="id_salary_base">Job Rate</label>
         </div>
 
         <div class="input-field col l6">
             {{ form.salary_adjusted }}
-            <label for="id_salary_adjusted">Salary adjusted</label>
+            <label for="id_salary_adjusted">Taxable Earnings</label>
         </div>
 
 
         <div class="input-field col l4">
             {{ form.hsa_annual_credits }}
-            <label for="id_hsa_annual_credits">HSA annual credits</label>
+            <label for="id_hsa_annual_credits">Total Benefit Credits</label>
         </div>
 
         <div class="input-field col l4">
             {{ form.hsa_optional }}
-            <label for="id_hsa_optional">HSA optional</label>
+            <label for="id_hsa_optional">HSA Selected</label>
         </div>
 
         <div class="input-field col l4">
             {{ form.hsa_remaining }}
-            <label for="id_hsa_remaining">HSA remaining</label>
+            <label for="id_hsa_remaining">Benefit Credits Remaining</label>
         </div>
 
 
@@ -130,5 +131,3 @@
 
     </script>
 {% endblock %}
-
-
