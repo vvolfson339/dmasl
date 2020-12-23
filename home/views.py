@@ -132,7 +132,6 @@ class EnrolmentForm2(LoginRequiredMixin, View):
 
         form = account_form.EnrolmentForm3(instance=request.user, current_user=usr)
 
-
         #Reset values from DB after each page load
         if org.salary_adjustment==True :
             hsa_remaining = request.user.hsa_annual_credits - request.user.hsa_optional

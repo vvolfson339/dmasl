@@ -1,13 +1,8 @@
 import os
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-SECRET_KEY = 'u7z$z&=bltmwm9ywd^4pz1^$+lu@lj-0_n3r14@6or-0ee34jl'
-
-DEBUG = True
-
-#ALLOWED_HOSTS = ['159.89.146.14', 'dmasl.org', 'www.dmasl.org']
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+BASE_DIR=os.path.dirname(
+          os.path.dirname(
+          os.path.dirname(
+          os.path.abspath(__file__))))
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -18,6 +13,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
 
+    'import_export',
     'materialize',
     'crispy_forms',
     'crispy_forms_materialize',
@@ -56,23 +52,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'dmasl.wsgi.application'
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'dmasl',
-#         'USER': 'root',
-#         'PASSWORD': 'nstu12345678',
-#         'HOST': 'localhost',
-#     }
-# }
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
 
 
 AUTH_PASSWORD_VALIDATORS = [
