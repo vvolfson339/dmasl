@@ -8,7 +8,8 @@ DEBUG = True
 
 SECRET_KEY = config['SECRET_KEY']
 
-ALLOWED_HOSTS = ['159.89.146.14', 'dmasl.org', 'www.dmasl.org']
+#ALLOWED_HOSTS = ['159.89.146.14', 'dmasl.org', 'www.dmasl.org' 'dmasl.ca', 'www.dmasl.ca']
+ALLOWED_HOSTS = ['159.89.146.14', 'dmasl.ca', 'www.dmasl.ca']
 
 DATABASES = {
     'default': {
