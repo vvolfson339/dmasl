@@ -8,15 +8,14 @@ DEBUG = True
 
 SECRET_KEY = config['SECRET_KEY']
 
-#ALLOWED_HOSTS = ['159.89.146.14', 'dmasl.org', 'www.dmasl.org' 'dmasl.ca', 'www.dmasl.ca']
-ALLOWED_HOSTS = ['159.89.146.14', 'dmasl.ca', 'www.dmasl.ca']
+ALLOWED_HOSTS = config['Allowed_Hosts']
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dmasl',
-        'USER': 'root',
-        'PASSWORD': 'nstu12345678',
-        'HOST': 'localhost',
+        'NAME': 'config['MySQL_DB_Name']',
+        'USER': 'config['MySQL_DB_User']',
+        'PASSWORD': 'config['MySQL_DB_Password']',
+        'HOST': 'config['MySQL_DB_Host']',
     }
 }
