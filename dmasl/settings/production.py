@@ -4,7 +4,7 @@ import json
 with open('/etc/dmasl_config.json') as config_file:
     config = json.load(config_file)
 
-DEBUG = True
+DEBUG = False
 
 SECRET_KEY = config['SECRET_KEY']
 
