@@ -21,9 +21,9 @@ class Organization(models.Model):
     admin_email         = models.EmailField(max_length=255, null=True, blank=True)
     enrolment_period    = models.CharField(max_length=255, null=True, blank=True)
     misc_1              = models.CharField(max_length=255, null=True, blank=True)
-    text_block_1 = models.TextField(max_length=350, null=True, blank=True)
-    text_block_2 = models.TextField(max_length=350, null=True, blank=True)
-    text_block_3 = models.TextField(max_length=350, null=True, blank=True)
+    text_block_1        = models.TextField(max_length=350, null=True, blank=True)
+    text_block_2        = models.TextField(max_length=350, null=True, blank=True)
+    text_block_3        = models.TextField(max_length=350, null=True, blank=True)
 
     #check box
     salary_adjustment   = models.BooleanField(default=False)
