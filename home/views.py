@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.views import View
 
 #Vic modification
-from django.views import generic
+# from django.views import generic
 
 # from django.contrib.auth.views import login, logout
 
@@ -12,6 +12,7 @@ from django.contrib.auth import authenticate, login, logout
 
 from django.http import Http404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 from account import models as account_model
 from account import forms as account_form
@@ -35,16 +36,6 @@ def signout_request(request):
     else:
         return redirect('home:home')
 
-
-class DetailView(generic.DetailView):
-    model = account_model
-    template_name = 'home/DetailView.html'
-
-    def get_queryset(self):
-        """
-        Excludes any questions that aren't published yet.
-        """
-        return account_model.objects.all()
 
 #=======================================================================================================================
 #=======================================================================================================================
@@ -454,16 +445,52 @@ class OrgMemberView(OrgAdminPermissionMixin, View):
     template_name = 'home/org-admin/org-member-view.html'
 
     def get(self, request, org_short_name):
+
         org_found = get_object_or_404(account_model.Organization, org_short_name=org_short_name)
 
-        members = account_model.UserProfile.objects.filter(org=org_found).order_by('-join_date')
+        members_list = account_model.UserProfile.objects.filter(org=org_found).order_by('last_name')
         members_count = account_model.UserProfile.objects.filter(org=org_found).count()
+        form = account_form.MemberSearchForm()
+
+        accounts_paginator = Paginator(members_list, 10)
+        page_num = request.GET.get('page')
+        page = accounts_paginator.get_page(page_num)
 
         variables = {
             'org_found': org_found,
 
-            'members': members,
+            'page': page,
             'members_count': members_count,
+            'form': form,
+        }
+
+        return render(request, self.template_name, variables)
+
+    def post(self, request, org_short_name):
+        
+        org_found = get_object_or_404(account_model.Organization, org_short_name=org_short_name)
+
+        members_list = account_model.UserProfile.objects.filter(org=org_found).order_by('last_name')
+        members_count = account_model.UserProfile.objects.filter(org=org_found).count()
+
+        accounts_paginator = Paginator(members_list, 10)
+        page_num = request.GET.get('page')
+        page = accounts_paginator.get_page(page_num)
+
+        form = account_form.MemberSearchForm(request.POST or None)
+
+        s_members = None
+
+        if form.is_valid():
+            s_members = form.deploy()
+
+
+        variables = {
+            'org_found': org_found,
+            'page': page,
+            'members_count': members_count,
+            'form': form,
+            's_members': s_members,
         }
 
         return render(request, self.template_name, variables)

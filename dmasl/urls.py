@@ -7,7 +7,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
-    url(r'^admin/', admin.site.urls),
+    url(r'^webmaster_admin/', admin.site.urls),
 
     url(r'^account/', include('account.urls', namespace='account')),
     url('^', include('home.urls', namespace='home')),

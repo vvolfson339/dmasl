@@ -1,66 +1,135 @@
 {% extends 'org_admin_base.html' %}
 
-{% block title %}ORGANIZATION MEMBER | Admin DMASL{% endblock %}
+{% block title %}MEMBERS | Admin DMASL{% endblock %}
 
 {% block left_menu %}
 
     <div id="left-sidebar-menu" class="collection col s12 m12 l12" style="margin-top: 200px; padding: 0px;">
         <a href="{% url 'home:org-admin-home' org_short_name=org_found.org_short_name %}" class="collection-item">Home</a>
-        <a href="{% url 'home:org-member-add' org_short_name=org_found.org_short_name %}" class="collection-item">Add new member</a>
-        <a href="{% url 'home:org-member-view' org_short_name=org_found.org_short_name %}" class="collection-item active">View members</a>
+        <a href="{% url 'home:org-member-add' org_short_name=org_found.org_short_name %}" class="collection-item">Add New Member</a>
+        <a href="{% url 'home:org-member-view' org_short_name=org_found.org_short_name %}" class="collection-item active">View Members</a>
     </div>
 {% endblock %}
 
 
 {% block admin_content %}
 
-
 <div class="col s12 m12 l12">
-    <h5 class="col s12 m12 l12" style="text-decoration: underline; padding: 0px;">Total {{ members_count }} Member found in {{ org_found.org_short_name | upper }}: </h5>
+    <h5 class="col s12 m12 l12" style="text-decoration: underline; padding: 0px;">{{ org_found.org_full_name }} - {{ members_count }} Registered Members Total</h5>
 
-<!-- <div class="col l12 m12 l12" style="padding: 0px; margin-top: 10px; margin-bottom: 10px;">
-        <form method="post">
+        <!-- <form class="col m12 l12 center-align" method="post" style="margin-bottom: 40px; border: 2px solid #333; padding: 20px;">
+            <h5 class=" orange-text">Search Member</h5>
+
             {% csrf_token %}
-            <button name="export_csv" value="export_csv" type="submit" class="btn red">Export to csv</button>
-        </form>
-  </div> -->
+            <div class="input-field col s12 m12 l8 offset-l2">
+                {{ form.user_id }}
+                <label for="id_user_id">USER ID</label>
+            </div>
+
+            <div class="col l12 center-align">
+                <button class="btn waves-effect waves-light orange white-text" type="submit" style="">
+                    Search
+                </button>
+            </div>
+
+            {% if s_members %}
+
+            <div class="col s12 m12 l12" style="margin-top: 30px; margin-bottom: 30px;">
+                <h5 style="text-decoration: underline;">Search Results </h5>
+                {% if s_members %}
+                    <div class="col s12 m12 l12">
+                        <table class="centered responsive-table striped" style="margin-bottom: 20px;">
+                            <thead>
+                                <tr class="red">
+                                    <!-- <th>S/N</th> -->
+                                    <th>User ID</th>
+                                    <th>Full Name</th>
+                                    <th>Organization</th>
+                                    <th>Operation</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                {% for s_member in s_members %}
+                                    <tr>
+                                        <!-- <td>{{ forloop.counter }}</td> -->
+                                        <td>{{ s_member.username }}</td>
+                                        <td>{{ s_member.last_name | title }}, {{ s_member.first_name| title }}</td>
+                                        <td>{{ s_member.org.org_short_name | upper }}</td>
+                                        <td>
+                                            <a class="btn red" onclick="return confirm('Confirmation: Are you sure you want to delete this user?')" href="{% url 'staff:delete-member' user_id=s_member.id %}" style="margin-right: 20px;">Delete</a>
+                                            <a class="btn" href="{% url 'home:org-member-view' user_id=s_member.id %}">View</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p>Member not found!</p>
+                {% endif %}
+            </div>
+            {% endif %}
+
+        </form> -->
 
 
-
-
-    {% if members %}
+    {% if page %}
     <table class="col s12 m12 l12 centered responsive-table striped" style="margin-bottom: 20px; margin-top: 20px;">
+      <div class="page-links">
+            {% if page.has_previous %}
+              <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+              <a class="btn btn-outline-info mb-4" href="?page={{ page.previous_page_number }}">Previous</a>
+            {% endif %}
+
+            {% for num in page.paginator.page_range %}
+              {% if page.number == num %}
+                <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+              {% elif num > page.number|add:'-3' and num < page.number|add:'3' %}
+                <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+              {% endif %}
+            {% endfor %}
+
+            {% if page.has_next %}
+              <a class="btn btn-outline-info mb-4" href="?page={{ page.next_page_number }}">Next</a>
+              <a class="btn btn-outline-info mb-4" href="?page={{ page.paginator.num_pages }}">Last</a>
+            {% endif %}
+      </div>
         <thead class="red white-text">
             <tr>
                 <th>User ID</th>
                 <th>Name</th>
-                <th>ORG</th>
-                <th>HSA Optional</th>
-                <th>Is Active</th>
+                <th>HSA Selected</th>
+                {% if org_found.insufficient_benefit_credits == True %}
+                <th>HSA Opt-Out</th>
+                {% endif %}
+                <th>Submitted Status</th>
                 <th>Action</th>
             </tr>
         </thead>
 
         <tbody>
 
-            {% for member in members %}
+            {% for member in page.object_list %}
                 <tr>
                     <td>{{ member.username }}</td>
-                    <td>{{ member.first_name | title }} {{ member.last_name| title }}</td>
-                    <td>{{ member.org.org_short_name | upper }}</td>
+                    <td>{{ member.last_name| title }}, {{ member.first_name | title }} </td>
                     <td>{{ member.hsa_optional }}</td>
-                    <td>{{ member.is_active }}</td>
+                    {% if org_found.insufficient_benefit_credits == True %}
+                    <td>{{ member.opt_out_bool | yesno:"Yes,No" }}</td>
+                    {% endif %}
+                    <td>{{ member.submitted |yesno:"Yes,No" }}</td>
                     <td>
                         <a href="{% url 'home:org-member-detail' org_short_name=member.org.org_short_name user_id=member.username %}" class="btn">Detail</a>
                     </td>
                 </tr>
             {% endfor %}
 
-
         </tbody>
     </table>
     {% else %}
-        <p>No member found!</p>
+        <p>No members found!</p>
     {% endif %}
 </div>
 

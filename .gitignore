@@ -56,6 +56,7 @@ coverage.xml
 local_settings.py
 manage.py
 db.sqlite3
+development.py
 
 # Flask stuff:
 instance/

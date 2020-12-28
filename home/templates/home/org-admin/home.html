@@ -6,8 +6,8 @@
 
     <div id="left-sidebar-menu" class="collection col s12 m12 l12" style="margin-top: 200px; padding: 0px;">
         <a href="{% url 'home:org-admin-home' org_short_name=org_found.org_short_name %}" class="collection-item active">Home</a>
-        <a href="{% url 'home:org-member-add' org_short_name=org_found.org_short_name %}" class="collection-item">Add member</a>
-        <a href="{% url 'home:org-member-view' org_short_name=org_found.org_short_name %}" class="collection-item">View members</a>
+        <a href="{% url 'home:org-member-add' org_short_name=org_found.org_short_name %}" class="collection-item">Add Member</a>
+        <a href="{% url 'home:org-member-view' org_short_name=org_found.org_short_name %}" class="collection-item">View Members</a>
     </div>
 {% endblock %}
 
@@ -18,7 +18,7 @@
     <div class="col l4">
         <div class="z-depth-1 center-align valign-wrapper teal" style="height: 250px; background-color: #D3D3D3;">
             <div class="col s12 m12 l12 center-align">
-                <h4>Add member</h4>
+                <h4>Add Member</h4>
 
                 <p>
                     <a class="white-text" href="{% url 'home:org-member-add' org_short_name=org_found.org_short_name %}">Manage</a>
@@ -31,7 +31,7 @@
     <div class="col l4">
         <div class="z-depth-1 center-align valign-wrapper teal" style="height: 250px; background-color: #D3D3D3;">
             <div class="col s12 m12 l12 center-align">
-                <h4>View member</h4>
+                <h4>View Members</h4>
 
                 <p>
                     <a class="white-text" href="{% url 'home:org-member-view' org_short_name=org_found.org_short_name %}">Manage</a>

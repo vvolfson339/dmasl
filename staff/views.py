@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
-from django.views import View
+# from django.views import View
+from django.views.generic import View
 from django.contrib.auth.mixins import PermissionRequiredMixin
 # from django.contrib.auth.views import login, logout
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import authenticate, login, logout
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 import csv
 import os
 from django.http.response import StreamingHttpResponse
@@ -12,8 +14,6 @@ from datetime import datetime
 
 from account import models as account_model
 from account import forms as account_form
-
-
 
 class StaffPermission(PermissionRequiredMixin, View):
     permission_required = 'is_superuser'
@@ -137,6 +137,7 @@ class AddOrganization(StaffPermission, View):
 
 #add Organization
 class ViewOrganization(StaffPermission, View):
+
     template_name = 'staff/view-org.html'
 
     def get(self, request):
@@ -269,14 +270,17 @@ class OrganizationMember(StaffPermission, View):
 
         org = get_object_or_404(account_model.Organization, id=org_id)
 
-        members = account_model.UserProfile.objects.filter(org=org).order_by('-join_date')
+        members_list = account_model.UserProfile.objects.filter(org=org).order_by('last_name')
         members_count = account_model.UserProfile.objects.filter(org=org).count()
 
+        accounts_paginator = Paginator(members_list, 10)
+        page_num = request.GET.get('page')
+        page = accounts_paginator.get_page(page_num)
 
         variables = {
             'org': org,
 
-            'members': members,
+            'page': page,
             'members_count': members_count,
         }
 
@@ -307,14 +311,17 @@ class OrganizationMember(StaffPermission, View):
 
         org = get_object_or_404(account_model.Organization, id=org_id)
 
-        members = account_model.UserProfile.objects.filter(org=org).order_by('-join_date')
+        members_list = account_model.UserProfile.objects.filter(org=org).order_by('-join_date')
         members_count = account_model.UserProfile.objects.filter(org=org).count()
 
+        accounts_paginator = Paginator(members_list, 10)
+        page_num = request.GET.get('page')
+        page = accounts_paginator.get_page(page_num)
 
         if request.POST.get('export_csv') == 'export_csv':
             uuid = self.get_uuid()
             file_name = str(org.org_short_name) + '-' + str(uuid)
-            self.csv_export(file_name, members)
+            self.csv_export(file_name, members_list)
 
             return redirect('staff:save_file', file_name=file_name)
 
@@ -322,7 +329,7 @@ class OrganizationMember(StaffPermission, View):
         variables = {
             'org': org,
 
-            'members': members,
+            'page': page,
             'members_count': members_count,
         }
 
@@ -391,15 +398,17 @@ class ViewMember(StaffPermission, View):
 
     def get(self, request):
 
-        members = account_model.UserProfile.objects.all().order_by('-join_date')
+        members_list = account_model.UserProfile.objects.all().order_by('org','id')
         members_count = account_model.UserProfile.objects.all().count()
-
         form = account_form.MemberSearchForm()
 
-        variables = {
-            'members': members,
-            'members_count': members_count,
+        accounts_paginator = Paginator(members_list, 10)
+        page_num = request.GET.get('page')
+        page = accounts_paginator.get_page(page_num)
 
+        variables = {
+            'page': page,
+            'members_count': members_count,
             'form': form,
         }
 
@@ -407,17 +416,22 @@ class ViewMember(StaffPermission, View):
 
     def post(self, request):
 
-        members = account_model.UserProfile.objects.all().order_by('-join_date')
+        members_list = account_model.UserProfile.objects.all().order_by('org','id')
         members_count = account_model.UserProfile.objects.all().count()
+
+        accounts_paginator = Paginator(members_list, 10)
+        page_num = request.GET.get('page')
+        page = accounts_paginator.get_page(page_num)
 
         form = account_form.MemberSearchForm(request.POST or None)
 
         s_members = None
+
         if form.is_valid():
             s_members = form.deploy()
 
         variables = {
-            'members': members,
+            'page': page,
             'members_count': members_count,
 
             'form': form,

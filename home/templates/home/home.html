@@ -24,23 +24,18 @@
             <p>
                 <a class="btn white-text red" href="{% url 'home:logout' %}">Logout</a>
             </p>
+        {% else %}
+          <div class="col l12 white" style="padding: 20px;">
+            <p>
+                <h3>Test URLS</h3>
+                <ul>
+                  <li><a href="/webmaster_admin">Webmaster Backoffice-Admin</li>
+                  <li><a href="/staff/login">DMASL Backoffice-Admin</li>
+                  <li><a href="/testorg/">Test Organization</li>
+                  <li><a href="/testorg/admin/login">Test Organization Backoffice-Admin</li>
+
+            </p>
         {% endif %}
+
     </div>
 {% endblock %}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

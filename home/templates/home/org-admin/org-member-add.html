@@ -5,8 +5,8 @@
 {% block left_menu %}
     <div id="left-sidebar-menu" class="collection col s12 m12 l12" style="margin-top: 200px; padding: 0px;">
         <a href="{% url 'home:org-admin-home' org_short_name=org_found.org_short_name %}" class="collection-item">Home</a>
-        <a href="{% url 'home:org-member-add' org_short_name=org_found.org_short_name %}" class="collection-item active">Add new member</a>
-        <a href="{% url 'home:org-member-view' org_short_name=org_found.org_short_name %}" class="collection-item">View members</a>
+        <a href="{% url 'home:org-member-add' org_short_name=org_found.org_short_name %}" class="collection-item active">Add New Member</a>
+        <a href="{% url 'home:org-member-view' org_short_name=org_found.org_short_name %}" class="collection-item">View Members</a>
     </div>
 {% endblock %}
 
@@ -75,7 +75,7 @@
 
         <div class="input-field col l4">
             {{ form.hsa_optional }}
-            <label for="id_hsa_optional">HSA Selected</label>
+            <label for="id_hsa_optional">HSA Pre-Selected</label>
         </div>
 
         <div class="input-field col l4">

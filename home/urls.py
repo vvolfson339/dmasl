@@ -11,8 +11,6 @@ urlpatterns = [
 
     url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/$', views.Login.as_view(), name='login'),
 
-    url(r'^enrolment/DetailView/$', views.DetailView.as_view(), name='DetailView'),
-
     url(r'^enrolment/form-1/$', views.EnrolmentForm1.as_view(), name='enrolment-form1'),
     url(r'^enrolment/form-2/$', views.EnrolmentForm2.as_view(), name='enrolment-form2'),
     #url(r'^enrolment/form-3/$', views.EnrolmentForm3.as_view(), name='enrolment-form3'),
