@@ -237,6 +237,7 @@ class EditOrganization(StaffPermission, View):
 
         if form.is_valid():
             form.save()
+            return redirect('staff:view-org')
 
             salary_adjustment = request.POST.get('salary_adjustment')
             insufficient_benefit_credits = request.POST.get('insufficient_benefit_credits')

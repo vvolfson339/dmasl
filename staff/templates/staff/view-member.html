@@ -119,7 +119,7 @@
                     <td>{{ member.last_name| title }}, {{ member.first_name | title }} </td>
                     <td>{{ member.org.org_short_name | upper }}</td>
                     <td>
-                        <a class="btn red" href="{% url 'staff:delete-member' user_id=member.id %}" style="margin-right: 20px;">Delete</a>
+                        <a class="btn red" onclick="return confirm('Confirmation: Are you sure you want to delete this user?')" href="{% url 'staff:delete-member' user_id=member.id %}" style="margin-right: 20px;">Delete</a>
                         <a class="btn" href="{% url 'staff:detail-member' user_id=member.id %}">View</a>
                     </td>
                 </tr>

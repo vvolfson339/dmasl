@@ -42,7 +42,9 @@
                         <thead>
                             <tr class="red">
                                 <th>S/N</th>
-                                <th>ORG SHORT NAME</th>
+                                <th>Org Short Name</th>
+                                <th>Org URL</th>
+                                <th>Org Full Name</th>
                                 <th>Operation</th>
                             </tr>
                         </thead>
@@ -52,7 +54,9 @@
                             {% for s_org in s_orgs %}
                                 <tr>
                                     <td>{{ forloop.counter }}</td>
-                                    <td>{{ s_org.org_short_name | upper }}</td>
+                                    <td>{{ s_org.org_short_name | lower }}</td>
+                                    <td>{{ s_org.URL | lower }}</td>
+                                    <td>{{ s_org.org_full_name | title }}</td>
                                     <td>
                                         <a class="btn red" onclick="return confirm('Confirmation: Are you sure you want to delete this org?')" href="{% url 'staff:delete-org' org_id=s_org.id %}" style="margin-right: 20px;">Delete</a>
                                         <a class="btn" href="{% url 'staff:detail-org' org_id=s_org.id %}">View</a>
@@ -76,9 +80,11 @@
     <table class="col s12 m12 l12 centered responsive-table striped" style="margin-bottom: 20px; margin-top: 20px;">
         <thead class="red white-text">
             <tr>
-                <th>S/N</th>
-                <th>ORG SHORT NAME</th>
-                <th>Operation</th>
+              <th>S/N</th>
+              <th>Org Short Name</th>
+              <th>Org URL</th>
+              <th>Org Full Name</th>
+              <th>Operation</th>
             </tr>
         </thead>
 
@@ -87,7 +93,9 @@
             {% for org in orgs %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td>{{ org.org_short_name | upper }}</td>
+                    <td>{{ org.org_short_name | lower }}</td>
+                    <td>{{ org.URL | lower }}</td>
+                    <td>{{ org.org_full_name | title }}</td>
                     <td>
                         <a class="btn red" onclick="return confirm('Confirmation: Are you sure you want to delete this org?')" href="{% url 'staff:delete-org' org_id=org.id %}" style="margin-right: 20px;">Delete</a>
                         <a class="btn" href="{% url 'staff:detail-org' org_id=org.id %}">View</a>
