@@ -17,7 +17,7 @@ gender_list = (
 # Main login form
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
-    password = forms.CharField(max_length=20, required=False, widget=forms.PasswordInput(attrs={'class': 'validate', }))
+    password = forms.CharField(max_length=40, required=False, widget=forms.PasswordInput(attrs={'class': 'validate', }))
 
     def clean(self):
         username = self.cleaned_data.get('username')
