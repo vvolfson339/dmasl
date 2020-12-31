@@ -99,7 +99,8 @@
         <thead class="red white-text">
             <tr>
                 <th>User ID</th>
-                <th>Name</th>
+                <th>Last Name</th>
+                <th>First Name</th>
                 <th>HSA Selected</th>
                 {% if org_found.insufficient_benefit_credits == True %}
                 <th>HSA Opt-Out</th>
@@ -114,7 +115,8 @@
             {% for member in page.object_list %}
                 <tr>
                     <td>{{ member.username }}</td>
-                    <td>{{ member.last_name| title }}, {{ member.first_name | title }} </td>
+                    <td>{{ member.last_name| title }}</td>
+                    <td>{{ member.first_name | title }}</td>
                     <td>{{ member.hsa_optional }}</td>
                     {% if org_found.insufficient_benefit_credits == True %}
                     <td>{{ member.opt_out_bool | yesno:"Yes,No" }}</td>

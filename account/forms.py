@@ -60,29 +60,21 @@ class EnrolmentForm3(forms.ModelForm):
         super(EnrolmentForm3, self).__init__(*args,**kwargs)
 
     # email = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
-    email = forms.EmailField()
+    email = forms.EmailField(required=False)
     hsa_optional = forms.DecimalField(max_digits=6, decimal_places=2, required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
     # models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)
 
     def clean(self):
         # email = self.cleaned_data.get('email')
         hsa_optional = self.cleaned_data.get('hsa_optional')
+        # check_number = isinstance(hsa_optional, (int,float,Decimal))
         check_number = isinstance(hsa_optional, (int,float,Decimal))
 
-        # email_correction = re.match('^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,4})$', email)
-
-        # if not email_correction:
-        #     raise forms.ValidationError('Please enter a valid Email address!')
         if not check_number:
                 raise forms.ValidationError('Please enter a valid Optional Health Spending amount!')
         else:
             if hsa_optional < 0:
                 raise forms.ValidationError('Please enter a valid Optional Health Spending amount!')
-                # else:
-                #     hsa_remaining_db = float(self.current_user.hsa_remaining)
-                #
-                #     if hsa_optional > hsa_remaining_db:
-                #             raise forms.ValidationError('Your remaining credit is less than {}'.format(hsa_optional))
 
     class Meta:
         model = models.UserProfile
@@ -145,7 +137,7 @@ class AddOrganization(forms.Form):
     enrolment_period    = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
 
     logo = forms.ImageField(required=False)
-    admin_email       = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
+    admin_email       = forms.EmailField(required=False)
     misc_1              = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
     text_block_1 = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
     text_block_2 = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
@@ -189,11 +181,11 @@ class AddOrganization(forms.Form):
 
                 if org_exists:
                     raise forms.ValidationError('Organization short name allready exists')
-                else:
-                    email_correction = re.match('^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,4})$', admin_email)
-
-                    if not email_correction:
-                        raise forms.ValidationError('Email address is not valid')
+                # else:
+                #     email_correction = re.match('^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,4})$', admin_email)
+                #
+                #     if not email_correction:
+                #         raise forms.ValidationError('Email address is not valid')
 
     def deploy(self):
         org_url                 = self.cleaned_data.get('org_url')
@@ -240,7 +232,7 @@ class EditOrgForm(forms.ModelForm):
     enrolment_period    = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
 
     logo                = forms.ImageField(required=False, widget=forms.FileInput)
-    admin_email         = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
+    admin_email         = forms.EmailField(required=False)
     misc_1              = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
     text_block_1        = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
     text_block_2        = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
@@ -281,7 +273,7 @@ class EditOrgForm(forms.ModelForm):
 #add user
 class AddUserForm(forms.Form):
     username = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
-    email = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
+    email = forms.EmailField(required=False)
     password1 = forms.CharField(max_length=20, required=False, widget=forms.PasswordInput(attrs={'class': 'validate', 'id': 'password1'}))
     password2 = forms.CharField(max_length=20, required=False, widget=forms.PasswordInput(attrs={'class': 'validate', 'id': 'password2'}))
 
@@ -324,63 +316,55 @@ class AddUserForm(forms.Form):
 
             if username_exists:
                 raise forms.ValidationError('User ID already exists')
+            # else:
+            #     email_correction = re.match('^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,4})$', email)
+            #     if not email_correction:
+            #         raise forms.ValidationError('Email address is not valid!')
+            #     else:
+            #         email_exists = models.UserProfile.objects.filter(email=email).exists()
+            #         if email_exists:
+            #             raise forms.ValidationError('A user with this email address already exists!')
             else:
-                email_correction = re.match('^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,4})$', email)
-                if not email_correction:
-                    raise forms.ValidationError('Email address is not valid!')
+                if len(password1) < 8:
+                    raise forms.ValidationError("Password must be at least 8 characters long!")
                 else:
-                    email_exists = models.UserProfile.objects.filter(email=email).exists()
-                    if email_exists:
-                        raise forms.ValidationError('A user with this email address already exists!')
+                    if password1 != password2:
+                        raise forms.ValidationError("Passwords do not match!")
                     else:
-                        if len(password1) < 8:
-                            raise forms.ValidationError("Password must be at least 8 characters long!")
+                        check_number = isinstance(salary_base, (int, float, Decimal))
+                        if not check_number:
+                            raise forms.ValidationError('Salary amount is not valid!')
                         else:
-                            if password1 != password2:
-                                raise forms.ValidationError("Passwords do not match!")
+                            if salary_base < 0:
+                                raise forms.ValidationError('Salary adjusted amount is not valid!')
                             else:
-                                check_number = isinstance(salary_base, (int, float, Decimal))
-
+                                check_number = isinstance(salary_adjusted, (int, float, Decimal))
                                 if not check_number:
-                                    raise forms.ValidationError('Salary amount is not valid!')
+                                    raise forms.ValidationError('Salary adjusted amount is not valid!')
                                 else:
-                                    if salary_base < 0:
+                                    if salary_adjusted < 0:
                                         raise forms.ValidationError('Salary adjusted amount is not valid!')
                                     else:
-                                        check_number = isinstance(salary_adjusted, (int, float, Decimal))
-
+                                        check_number = isinstance(hsa_annual_credits, (int, float))
                                         if not check_number:
-                                            raise forms.ValidationError('Salary adjusted amount is not valid!')
+                                            raise forms.ValidationError('HSA Base Credit amount is not valid!')
                                         else:
-                                            if salary_adjusted < 0:
-                                                raise forms.ValidationError('Salary adjusted amount is not valid!')
-
+                                            if hsa_annual_credits < 0:
+                                                raise forms.ValidationError('HSA Base Credit amount is not valid!')
                                             else:
-                                                check_number = isinstance(hsa_annual_credits, (int, float))
-
+                                                check_number = isinstance(hsa_optional, (int, float, Decimal))
                                                 if not check_number:
-                                                    raise forms.ValidationError('HSA Base Credit amount is not valid!')
+                                                        raise forms.ValidationError('HSA Optinal amount is not valid!')
                                                 else:
-                                                    if hsa_annual_credits < 0:
-                                                        raise forms.ValidationError('HSA Base Credit amount is not valid!')
-
+                                                    if hsa_optional < 0:
+                                                        raise forms.ValidationError('HSA Optinal amount is not valid!')
                                                     else:
-                                                        check_number = isinstance(hsa_optional, (int, float, Decimal))
-
+                                                        check_number = isinstance(hsa_remaining, (int, float))
                                                         if not check_number:
-                                                            raise forms.ValidationError('HSA Optinal amount is not valid!')
+                                                                raise forms.ValidationError('HSA Remaining amount is not valid!')
                                                         else:
-                                                            if hsa_optional < 0:
-                                                                raise forms.ValidationError('HSA Optinal amount is not valid!')
-                                                            else:
-                                                                check_number = isinstance(hsa_remaining, (int, float))
-
-                                                                if not check_number:
+                                                                if hsa_remaining < 0:
                                                                     raise forms.ValidationError('HSA Remaining amount is not valid!')
-                                                                else:
-                                                                    if hsa_remaining < 0:
-                                                                        raise forms.ValidationError('HSA Remaining amount is not valid!')
-
 
     def deploy(self, org):
         username = self.cleaned_data.get('username')
@@ -446,7 +430,7 @@ class ChageUserProfile(forms.ModelForm):
 
     org = forms.ModelChoiceField(queryset=models.Organization.objects.all(), required=False,widget=forms.Select(attrs={'class':'validate'}))
 
-    email = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
+    email = forms.EmailField(required=False)
 
     first_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
     last_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
@@ -478,50 +462,50 @@ class ChageUserProfile(forms.ModelForm):
 
         check_number = isinstance(salary_base, (int, float, Decimal))
 
-        email_correction = re.match('^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,4})$', email)
+        # email_correction = re.match('^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,4})$', email)
 
-        if not email_correction:
-            raise forms.ValidationError('Email address is not valid!')
+        # if not email_correction:
+        #     raise forms.ValidationError('Email address is not valid!')
+        # else:
+        if not check_number:
+            raise forms.ValidationError('Salary amount is not valid!')
         else:
-            if not check_number:
+            if salary_base < 0:
                 raise forms.ValidationError('Salary amount is not valid!')
             else:
-                if salary_base < 0:
-                    raise forms.ValidationError('Salary amount is not valid!')
+                check_number = isinstance(salary_adjusted, (int, float, Decimal))
+
+                if not check_number:
+                    raise forms.ValidationError('Salary adjusted amount is not valid!')
                 else:
-                    check_number = isinstance(salary_adjusted, (int, float, Decimal))
-
-                    if not check_number:
+                    if salary_adjusted < 0:
                         raise forms.ValidationError('Salary adjusted amount is not valid!')
+
                     else:
-                        if salary_adjusted < 0:
-                            raise forms.ValidationError('Salary adjusted amount is not valid!')
+                        check_number = isinstance(hsa_annual_credits, (int, float))
 
+                        if not check_number:
+                            raise forms.ValidationError('HSA Base Credit amount is not valid!')
                         else:
-                            check_number = isinstance(hsa_annual_credits, (int, float))
-
-                            if not check_number:
+                            if hsa_annual_credits < 0:
                                 raise forms.ValidationError('HSA Base Credit amount is not valid!')
+
                             else:
-                                if hsa_annual_credits < 0:
-                                    raise forms.ValidationError('HSA Base Credit amount is not valid!')
+                                check_number = isinstance(hsa_optional, (int, float, Decimal))
 
+                                if not check_number:
+                                    raise forms.ValidationError('HSA Optinal amount is not valid!')
                                 else:
-                                    check_number = isinstance(hsa_optional, (int, float, Decimal))
-
-                                    if not check_number:
+                                    if hsa_optional < 0:
                                         raise forms.ValidationError('HSA Optinal amount is not valid!')
                                     else:
-                                        if hsa_optional < 0:
-                                            raise forms.ValidationError('HSA Optinal amount is not valid!')
-                                        else:
-                                            check_number = isinstance(hsa_remaining, (int, float))
+                                        check_number = isinstance(hsa_remaining, (int, float))
 
-                                            if not check_number:
+                                        if not check_number:
+                                            raise forms.ValidationError('HSA Remaining amount is not valid!')
+                                        else:
+                                            if hsa_remaining < 0:
                                                 raise forms.ValidationError('HSA Remaining amount is not valid!')
-                                            else:
-                                                if hsa_remaining < 0:
-                                                    raise forms.ValidationError('HSA Remaining amount is not valid!')
 
 
     class Meta:
@@ -531,7 +515,7 @@ class ChageUserProfile(forms.ModelForm):
 #change user profile from org admin
 class ChageUserProfileFromOrgAdmin(forms.ModelForm):
 
-    email = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
+    email = forms.EmailField(required=False)
 
     first_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
     last_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
@@ -564,51 +548,50 @@ class ChageUserProfileFromOrgAdmin(forms.ModelForm):
 
         check_number = isinstance(salary_base, (int, float, Decimal))
 
-        email_correction = re.match('^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,4})$', email)
+        # email_correction = re.match('^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,4})$', email)
 
-        if not email_correction:
-            raise forms.ValidationError('Email address is not valid!')
+        # if not email_correction:
+        #     raise forms.ValidationError('Email address is not valid!')
+        # else:
+        if not check_number:
+            raise forms.ValidationError('Salary amount is not valid!')
         else:
-            if not check_number:
+            if salary_base < 0:
                 raise forms.ValidationError('Salary amount is not valid!')
             else:
-                if salary_base < 0:
-                    raise forms.ValidationError('Salary amount is not valid!')
+                check_number = isinstance(salary_adjusted, (int, float, Decimal))
+
+                if not check_number:
+                    raise forms.ValidationError('Salary adjusted amount is not valid!')
                 else:
-                    check_number = isinstance(salary_adjusted, (int, float, Decimal))
-
-                    if not check_number:
+                    if salary_adjusted < 0:
                         raise forms.ValidationError('Salary adjusted amount is not valid!')
+
                     else:
-                        if salary_adjusted < 0:
-                            raise forms.ValidationError('Salary adjusted amount is not valid!')
+                        check_number = isinstance(hsa_annual_credits, (int, float))
 
+                        if not check_number:
+                            raise forms.ValidationError('HSA Base Credit amount is not valid!')
                         else:
-                            check_number = isinstance(hsa_annual_credits, (int, float))
-
-                            if not check_number:
+                            if hsa_annual_credits < 0:
                                 raise forms.ValidationError('HSA Base Credit amount is not valid!')
+
                             else:
-                                if hsa_annual_credits < 0:
-                                    raise forms.ValidationError('HSA Base Credit amount is not valid!')
+                                check_number = isinstance(hsa_optional, (int, float, Decimal))
 
+                                if not check_number:
+                                    raise forms.ValidationError('HSA Optinal amount is not valid!')
                                 else:
-                                    check_number = isinstance(hsa_optional, (int, float, Decimal))
-
-                                    if not check_number:
+                                    if hsa_optional < 0:
                                         raise forms.ValidationError('HSA Optinal amount is not valid!')
                                     else:
-                                        if hsa_optional < 0:
-                                            raise forms.ValidationError('HSA Optinal amount is not valid!')
+                                        check_number = isinstance(hsa_remaining, (int, float))
+
+                                        if not check_number:
+                                            raise forms.ValidationError('HSA Remaining amount is not valid!')
                                         else:
-                                            check_number = isinstance(hsa_remaining, (int, float))
-
-                                            if not check_number:
+                                            if hsa_remaining < 0:
                                                 raise forms.ValidationError('HSA Remaining amount is not valid!')
-                                            else:
-                                                if hsa_remaining < 0:
-                                                    raise forms.ValidationError('HSA Remaining amount is not valid!')
-
 
     class Meta:
         model = models.UserProfile

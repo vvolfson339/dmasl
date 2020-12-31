@@ -42,7 +42,7 @@
 
                 <div class="input-field col l12">
                     {{ form.email }}
-                    <label for="id_email">Email</label>
+                    <label for="id_email">Email Address (optional)</label>
                 </div>
 
 
@@ -158,21 +158,6 @@
 
 
 {% block script %}
-    <!-- <script>
-        $(document).ready(function(){
-
-            $('.datepicker').datepicker({
-                format: 'yyyy-mm-dd',
-                yearRange: 100
-            });
-        });
-
-        $(document).ready(function(){
-            $('select').formSelect();
-         });
-
-    </script> -->
-
 
     <script>
         $(document).ready(function(){
@@ -187,10 +172,45 @@
                 closeOnSelect: false // Close upon selecting a date,
             });
         });
-        $(document).ready(function(){
-            $('select').formSelect();
-         });
+
+        // $(document).ready(function(){
+        //     $('select').formSelect();
+        //  });
+
+         // $('input[name="chk"]').change(function(){
+         //    if($('input[name="chk"]').is(':checked'))
+         //    {
+         //        $('input[name=hsa_optional]').prop('disabled', true);
+         //        $('input[name="hsa_optional"]').val(0);
+         //    }else
+         //    {
+         //        $('input[name=hsa_optional]').prop('disabled', false);
+         //    }
+         //
+         // });
+         //
+         //
+         // $(document).ready(function(){
+         //    if($('input[name="chk"]').is(':checked'))
+         //    {
+         //        $('input[name=hsa_optional]').prop('disabled', true);
+         //        $('input[name="hsa_optional"]').val(0);
+         //    }else
+         //    {
+         //        $('input[name=hsa_optional]').prop('disabled', false);
+         //    }
+         //
+         // });
+
+
+
 // javascript function value change
+
+        var countDecimals = function (value) {
+            if ((value % 1) != 0)
+                return value.toString().split(".")[1].length;
+            return 0;
+        };
 
         $('input[name="hsa_optional"]').change(function(){
             var total_hsa_credits_db = {{ usr.hsa_annual_credits }};
@@ -201,8 +221,8 @@
 
             // .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-            if (isNaN(hsa_optional) || hsa_optional<0) {
-              alert("Please enter a valid HSA amount!");
+            if (isNaN(hsa_optional) || hsa_optional<0 || countDecimals(hsa_optional)>2) {
+              alert("Please enter a proper HSA amount!");
               hsa_optional = parseFloat(0).toFixed(2);
               $('input[name="hsa_optional"]').val(hsa_optional);
               $('.benefit_credit_remaining').html(parseFloat(total_hsa_credits_db).toFixed(2));

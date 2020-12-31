@@ -49,7 +49,8 @@
         <thead class="red white-text">
             <tr>
                 <th>User ID</th>
-                <th>Name</th>
+                <th>Last Name</th>
+                <th>First Name</th>
                 <th>ORG</th>
                 <th>HSA Selected</th>
                 <th>Submitted</th>
@@ -62,7 +63,8 @@
             {% for member in page.object_list %}
                 <tr>
                     <td>{{ member.username }}</td>
-                    <td>{{ member.last_name| title }}, {{ member.first_name | title }}</td>
+                    <td>{{ member.last_name| title }}</td>
+                    <td>{{ member.first_name | title }}</td>
                     <td>{{ member.org.org_short_name | upper }}</td>
                     <td>{{ member.hsa_optional  }}</td>
                     <td>{{ member.submitted | yesno:"Yes,No" }}</td>
