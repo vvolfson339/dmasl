@@ -61,7 +61,7 @@ class EnrolmentForm3(forms.ModelForm):
 
     # email = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
     email = forms.EmailField(required=False)
-    hsa_optional = forms.DecimalField(max_digits=6, decimal_places=2, required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
+    hsa_optional = forms.DecimalField(max_digits=7, decimal_places=2, required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
     # models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)
 
     def clean(self):
@@ -102,7 +102,7 @@ class OrgAdminLoginForm(forms.Form):
         if len(username) < 1:
             raise forms.ValidationError('Invalid User ID and/or password. Please try again!')
         else:
-            if len(password) < 8:
+            if len(password) < 6:
                 raise forms.ValidationError("Invalid User ID and/or password. Please try again!")
             else:
                 user = authenticate(username=username, password=password)

@@ -15,6 +15,7 @@ from datetime import datetime
 from account import models as account_model
 from account import forms as account_form
 
+
 class StaffPermission(PermissionRequiredMixin, View):
     permission_required = 'is_superuser'
 

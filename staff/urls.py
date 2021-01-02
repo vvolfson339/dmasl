@@ -19,7 +19,6 @@ urlpatterns = [
 
     url(r'^save/(?P<file_name>[a-zA-Z0-9_-]+)/$', views.some_streaming_csv_view, name='save_file'),
 
-
     url(r'^member/$', views.Member.as_view(), name='member'),
     url(r'^member/(?P<org_id>[0-9]+)/add/$', views.AddMember.as_view(), name='add-member'),
     url(r'^member/view/$', views.ViewMember.as_view(), name='view-member'),
@@ -30,7 +29,6 @@ urlpatterns = [
 
     url(r'^member/(?P<user_id>[0-9]+)/change-password/$', views.ChangePassword.as_view(), name='change-password'),
     url(r'^member/(?P<user_id>[0-9]+)/edit/$', views.EditMember.as_view(), name='edit-member'),
-
 
     url(r'^member/upload/$', views.MemberUpload.as_view(), name='member-upload'),
 

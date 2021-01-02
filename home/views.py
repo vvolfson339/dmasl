@@ -373,8 +373,8 @@ class OrgAdminPermissionMixin(object):
             return super(OrgAdminPermissionMixin, self).dispatch(
                 request, *args, **kwargs)
         else:
-            #return redirect('home:home')
-            return redirect('home:org-admin-login', request.user.org.org_short_name)
+            return redirect('home:home')
+            #return redirect('home:org-admin-login', request.user.org.org_short_name)
 
 #org admin login
 class OrgAdminLogin(View):
@@ -467,7 +467,7 @@ class OrgMemberView(OrgAdminPermissionMixin, View):
         return render(request, self.template_name, variables)
 
     def post(self, request, org_short_name):
-        
+
         org_found = get_object_or_404(account_model.Organization, org_short_name=org_short_name)
 
         members_list = account_model.UserProfile.objects.filter(org=org_found).order_by('last_name')
