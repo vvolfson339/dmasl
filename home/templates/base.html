@@ -26,7 +26,7 @@
         *{
             padding: 0px;
             margin: 0px;
-            font-family: 'Changa';
+            font-family: Arial, Helvetica, sans-serif;
         }
     </style>
     <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -39,13 +39,14 @@
         <div class="row">
             <div class="col s12 m8 offset-m2 l8 offset-l2">
                 <!--nav-->
-                <div class="col s12 m12 l12 white-text valign-wrapper top-nav" style="min-height: 100px; background-color: #5091cd; border-bottom: 1px solid #5091cd;">
+                <div class="col s12 m12 l12 white-text valign-wrapper top-nav" style="min-height: 100px; background-color: #ffffff; border-bottom: 0px solid #00315d;">
                     <div class="col m6" style="">
-                        <p style="font-size: 35px;"><b><a class="" style="color: white;" href="{% url 'home:home' %}">DMASL</a></b></p>
+                        <!-- <p style="font-size: 35px;"><b><a class="" style="color: white;" href="{% url 'home:links' %}">DMASL</a></b></p> -->
+                        <a href="{% url 'home:links' %}"><img style="margin-left: 0px; margin-bottom: 0px" src="{% static 'home/images/dmasl.png' %}" /></a>
                     </div>
 
                     <div class="col m6 right-align" style="">
-                        <p style="font-size: 25px; color: white; margin-top: 30px;">{% block current_page %} {% endblock %}</p>
+                        <p style="font-size: 25px; color: #00315d; margin-top: 30px;">{% block current_page %} {% endblock %}</p>
                     </div>
                 </div>
                 <!--end nav-->

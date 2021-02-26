@@ -9,6 +9,8 @@ urlpatterns = [
 
     url(r'^$', views.Home.as_view(), name='home'),
 
+    url(r'^home/$', views.Links.as_view(), name='links'),
+
     url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/$', views.Login.as_view(), name='login'),
 
     url(r'^enrolment/form-1/$', views.EnrolmentForm1.as_view(), name='enrolment-form1'),

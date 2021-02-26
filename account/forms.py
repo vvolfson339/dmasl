@@ -35,6 +35,9 @@ class LoginForm(forms.Form):
                 else:
                     if not user.is_active:
                         raise forms.ValidationError("This User ID is no longer active, please contact your plan administrator!")
+                    # else:
+                    #     if user is not None and user.is_active:
+                    #         auth.login(request, user)
 
 
     def login_request(self):

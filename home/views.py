@@ -53,6 +53,15 @@ class Home(View):
 
         return render(request, self.template_name, variables)
 
+class Links(View):
+    template_name = 'home/links.html'
+
+    def get(self, request):
+        variables = {
+        }
+
+        return render(request, self.template_name, variables)
+
 #Main Login Pgae
 class Login(View):
     template_name = 'home/login.html'
