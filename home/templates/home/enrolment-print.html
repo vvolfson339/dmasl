@@ -9,11 +9,11 @@
     <link rel="stylesheet" type="text/css" href="{% static 'home/style/pdf_css.css' %}">
 {% endblock %}
 
-{% block current_page %}Print{% endblock %}
+{% block current_page %}Benefits Confirmation{% endblock %}
 
 {% block body %}
     <div class="col l12 white" style="padding: 20px;">
-        <h4 class="col s12 m12 l12 center-align enrl-txt" style="margin-top: 20px; padding: 0px;">Enrolment Application</h4>
+        <h4 class="col s12 m12 l12 center-align enrl-txt" style="margin-top: 20px; padding: 0px;">Annual Benefits Enrolment</h4>
 
         <p class="col s12 m12 l12 divider" style="margin-top: 30px;"></p>
 
@@ -100,7 +100,7 @@
             </div>
 
 
-            <div class="col s12 m12 l12" style="padding: 0px; margin-top: 30px;">
+            <!-- <div class="col s12 m12 l12" style="padding: 0px; margin-top: 30px;">
                 <p style="font-size: 20px; font-weight: bold;">INFORMATION SUMMARY</p>
             </div>
             {% if org.salary_adjustment %}
@@ -132,8 +132,7 @@
                 <p class="col s4 m4 l4" style="padding: 0px;">Benefit Credits Remaining</p>
                 <p class="col s4 m4 l4">${{ request.user.hsa_remaining |floatformat:2|intcomma}}</p>
                 <p class="col s4 m4 l4"></p>
-            </div>
-
+            </div> -->
 
 
             {% if request.user.opt_out_bool %}

@@ -328,8 +328,8 @@ class AddUserForm(forms.Form):
             #         if email_exists:
             #             raise forms.ValidationError('A user with this email address already exists!')
             else:
-                if len(password1) < 8:
-                    raise forms.ValidationError("Password must be at least 8 characters long!")
+                if len(password1) < 6:
+                    raise forms.ValidationError("Password must be at least 6 characters long!")
                 else:
                     if password1 != password2:
                         raise forms.ValidationError("Passwords do not match!")
@@ -414,8 +414,8 @@ class ChangeUserPasswordForm(forms.Form):
         new_password1 = self.cleaned_data.get('new_password1')
         new_password2 = self.cleaned_data.get('new_password2')
 
-        if len(new_password1) < 8:
-            raise forms.ValidationError("Passowrd length must be at least 8 characters!")
+        if len(new_password1) < 6:
+            raise forms.ValidationError("Passowrd length must be at least 6 characters!")
         else:
             if new_password1 != new_password2:
                 raise forms.ValidationError("Passwords do not match!")
