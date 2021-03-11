@@ -603,6 +603,7 @@ class MemberUpload(StaffPermission, View):
 
             err_msg = []
             success_msg = []
+            count = 0
             for row in readCSV:
                 username = row[0]
                 email = row[1]
@@ -635,8 +636,14 @@ class MemberUpload(StaffPermission, View):
 
                         success_msg.append("{} userid has been added.".format(username))
 
+                        count = count + 1
+
                     else:
                         err_msg.append("{} organization not found!".format(org))
+
+
+            success_msg.append("A total of {} new users were added.".format(count))
+
         return err_msg, success_msg
 
 

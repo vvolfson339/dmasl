@@ -634,7 +634,7 @@ class MemberSearchForm(forms.Form):
 
         return member
 
-#org search form
+
 class MemberUploadForm(forms.Form):
     member_file = forms.FileField(required=False, widget=forms.FileInput)
 
