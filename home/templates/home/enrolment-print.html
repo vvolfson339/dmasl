@@ -23,7 +23,7 @@
                 <p class="col s4 m4 l4"></p>
                 <p class="col s4 m4 l4 center-align">
                     {% if request.user.last_name %}
-                        {{ request.user.last_name | title }}
+                        {{ request.user.last_name | title }},
                     {% endif %}
 
                     {% if request.user.first_name %}
