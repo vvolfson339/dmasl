@@ -1,35 +1,36 @@
-from django.conf.urls import url
+from django.urls import path, include
 
 from . import views
 
 app_name = 'staff'
 
 urlpatterns = [
-    url(r'^login/$', views.StaffLogin.as_view(), name='staff-login'),
 
-    url(r'^home/$', views.StaffHome.as_view(), name='staff-home'),
+    path('login/', views.StaffLogin.as_view(), name='staff-login'),
 
-    url(r'^org/$', views.Organization.as_view(), name='org'),
-    url(r'^org/add/$', views.AddOrganization.as_view(), name='add-org'),
-    url(r'^org/view/$', views.ViewOrganization.as_view(), name='view-org'),
-    url(r'^org/(?P<org_id>[0-9]+)/delete/$', views.DeleteOrganization.as_view(), name='delete-org'),
-    url(r'^org/(?P<org_id>[0-9]+)/detail/$', views.DetailOrganization.as_view(), name='detail-org'),
-    url(r'^org/(?P<org_id>[0-9]+)/edit/$', views.EditOrganization.as_view(), name='edit-org'),
-    url(r'^org/(?P<org_id>[0-9]+)/member/$', views.OrganizationMember.as_view(), name='org-member'),
+    path('home/', views.StaffHome.as_view(), name='staff-home'),
 
-    url(r'^save/(?P<file_name>[a-zA-Z0-9_-]+)/$', views.some_streaming_csv_view, name='save_file'),
+    path('org/', views.Organization.as_view(), name='org'),
+    path('org/add/', views.AddOrganization.as_view(), name='add-org'),
+    path('org/view/', views.ViewOrganization.as_view(), name='view-org'),
+    path('org/<org_id>/delete/', views.DeleteOrganization.as_view(), name='delete-org'),
+    path('org/<org_id>/detail/', views.DetailOrganization.as_view(), name='detail-org'),
+    path('org/<org_id>/edit/', views.EditOrganization.as_view(), name='edit-org'),
+    path('org/<org_id>/member/', views.OrganizationMember.as_view(), name='org-member'),
 
-    url(r'^member/$', views.Member.as_view(), name='member'),
-    url(r'^member/(?P<org_id>[0-9]+)/add/$', views.AddMember.as_view(), name='add-member'),
-    url(r'^member/view/$', views.ViewMember.as_view(), name='view-member'),
-    url(r'^member/(?P<user_id>[0-9]+)/delete/$', views.DeleteMember.as_view(), name='delete-member'),
-    url(r'^member/(?P<user_id>[0-9]+)/detail/$', views.DetailMember.as_view(), name='detail-member'),
-    url(r'^member/(?P<user_id>[0-9]+)/activate-deactivate/$', views.ActivateDeactivateAccount.as_view(), name='activate-deactivate-account'),
-    url(r'^member/(?P<user_id>[0-9]+)/activate-deactivate-staff/$', views.ActivateDeactivateStaffStatus.as_view(), name='activate-deactivate-staff'),
+    path('save/<file_name>/', views.some_streaming_csv_view, name='save_file'),
 
-    url(r'^member/(?P<user_id>[0-9]+)/change-password/$', views.ChangePassword.as_view(), name='change-password'),
-    url(r'^member/(?P<user_id>[0-9]+)/edit/$', views.EditMember.as_view(), name='edit-member'),
+    path('member/', views.Member.as_view(), name='member'),
+    path('member/<org_id>/add/', views.AddMember.as_view(), name='add-member'),
+    path('member/view/', views.ViewMember.as_view(), name='view-member'),
+    path('member/<user_id>/delete/', views.DeleteMember.as_view(), name='delete-member'),
+    path('member/<user_id>/detail/', views.DetailMember.as_view(), name='detail-member'),
+    path('member/<user_id>/activate-deactivate/', views.ActivateDeactivateAccount.as_view(), name='activate-deactivate-account'),
+    path('member/<user_id>/activate-deactivate-staff/', views.ActivateDeactivateStaffStatus.as_view(), name='activate-deactivate-staff'),
 
-    url(r'^member/upload/$', views.MemberUpload.as_view(), name='member-upload'),
+    path('member/<user_id>/change-password/', views.ChangePassword.as_view(), name='change-password'),
+    path('member/<user_id>/edit/', views.EditMember.as_view(), name='edit-member'),
+
+    path('member/upload/', views.MemberUpload.as_view(), name='member-upload'),
 
 ]

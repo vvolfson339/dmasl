@@ -100,7 +100,7 @@ class Login(View):
                     if user_org.enrollment_closed:
                         return redirect('home:enrollment-closed')
                     else:
-                        return redirect('home:enrollment-form2')
+                        return redirect('home:enrolment-form2')
             else:
                 err_msg = "This user is not associated with {}!".format(org_short_name)
 

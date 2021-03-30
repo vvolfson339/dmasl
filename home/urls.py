@@ -20,23 +20,8 @@ urlpatterns = [
     path('enrolment/print/', views.EnrolmentPrint.as_view(), name='enrolment-print'),
     path('enrolment/closed/', views.EnrolmentClosed.as_view(), name='enrollment-closed'),
 
-    #org admin url
-    # url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/login/$', views.OrgAdminLogin.as_view(), name='org-admin-login'),
-    # url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/$', views.OrgAdminHome.as_view(), name='org-admin-home'),
-
     path('<org_short_name>/admin/login/', views.OrgAdminLogin.as_view(), name='org-admin-login'),
     path('<org_short_name>/admin/', views.OrgAdminHome.as_view(), name='org-admin-home'),
-
-    # url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/view/$', views.OrgMemberView.as_view(), name='org-member-view'),
-    # url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/(?P<user_id>[0-9a-zA-Z-_.]+)/detail/$', views.OrgMemberDetail.as_view(), name='org-member-detail'),
-    # url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/(?P<user_id>[0-9a-zA-Z-_.]+)/activate-deactivate/$', views.ActivateDeactivateAccount.as_view(), name='org-member-activate-deactivate'),
-    # url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/(?P<user_id>[0-9a-zA-Z-_.]+)/delete/$', views.OrgMemberDelete.as_view(), name='org-member-delete'),
-    #
-    #
-    # url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/add/$', views.OrgMemberAdd.as_view(), name='org-member-add'),
-    #
-    # url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/(?P<user_id>[0-9a-zA-Z-_.]+)/edit/$', views.OrgMemberEdit.as_view(), name='org-member-edit'),
-    # url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/(?P<user_id>[0-9a-zA-Z-_.]+)/change-password/$', views.OrgMemberChangePassword.as_view(), name='org-member-change-password'),
 
     path('<org_short_name>)/admin/member/view/', views.OrgMemberView.as_view(), name='org-member-view'),
     path('<org_short_name>)/admin/member/<user_id>/detail/', views.OrgMemberDetail.as_view(), name='org-member-detail'),

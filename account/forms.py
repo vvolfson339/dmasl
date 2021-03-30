@@ -282,8 +282,10 @@ class EditOrgForm(forms.ModelForm):
 class AddUserForm(forms.Form):
     username = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
     email = forms.EmailField(required=False)
-    password1 = forms.CharField(max_length=20, required=False, widget=forms.PasswordInput(attrs={'class': 'validate', 'id': 'password1'}))
-    password2 = forms.CharField(max_length=20, required=False, widget=forms.PasswordInput(attrs={'class': 'validate', 'id': 'password2'}))
+    # password1 = forms.CharField(max_length=20, required=False, widget=forms.PasswordInput(attrs={'class': 'validate', 'id': 'password1'}))
+    # password2 = forms.CharField(max_length=20, required=False, widget=forms.PasswordInput(attrs={'class': 'validate', 'id': 'password2'}))
+    password1 = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
+    password2 = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
 
     first_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
     last_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
@@ -412,8 +414,8 @@ class AdditionalInfoForm(forms.ModelForm):
 
 #change user password from staff
 class ChangeUserPasswordForm(forms.Form):
-    new_password1 = forms.CharField(max_length=20, required=False, widget=forms.PasswordInput(attrs={'class': 'validate'}))
-    new_password2 = forms.CharField(max_length=20, required=False, widget=forms.PasswordInput(attrs={'class': 'validate'}))
+    new_password1 = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
+    new_password2 = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
 
     def clean(self):
         new_password1 = self.cleaned_data.get('new_password1')
