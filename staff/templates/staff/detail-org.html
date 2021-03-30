@@ -42,8 +42,10 @@
     <p>TextBlock_1: {{ org.text_block_1 }}</p>
     <p>TextBlock_2: {{ org.text_block_2 }}</p>
     <p>TextBlock_3: {{ org.text_block_3 }}</p>
+    <p>TextBlock_4: {{ org.text_block_4 }}</p>
     <p>Salary adjustment checked: {{ org.salary_adjustment }}</p>
     <p>Insufficient benefit credits checked: {{ org.insufficient_benefit_credits }}</p>
+    <p>Enrollment closed checked: {{ org.enrollment_closed }}</p>
     <p>Total member: {{ total_member }} <span style="margin-left: 20px;"><a href="{% url 'staff:org-member' org_id=org.id %}">View all member</a></span></p>
 
     <p>

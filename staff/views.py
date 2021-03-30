@@ -111,6 +111,7 @@ class AddOrganization(StaffPermission, View):
         if form.is_valid():
             salary_adjustment = request.POST.get('salary_adjustment')
             insufficient_benefit_credits = request.POST.get('insufficient_benefit_credits')
+            enrollment_closed = request.POST.get('enrollment_closed')
 
             add_org = form.deploy()
 
@@ -121,6 +122,11 @@ class AddOrganization(StaffPermission, View):
 
             if insufficient_benefit_credits == 'on':
                 add_org.insufficient_benefit_credits = True
+            else:
+                pass
+
+            if enrollment_closed == 'on':
+                add_org.enrollment_closed = True
             else:
                 pass
 
@@ -237,11 +243,10 @@ class EditOrganization(StaffPermission, View):
 
 
         if form.is_valid():
-            form.save()
-            return redirect('staff:view-org')
 
             salary_adjustment = request.POST.get('salary_adjustment')
             insufficient_benefit_credits = request.POST.get('insufficient_benefit_credits')
+            enrollment_closed = request.POST.get('enrollment_closed')
 
             if salary_adjustment == 'on':
                 org.salary_adjustment = True
@@ -253,14 +258,21 @@ class EditOrganization(StaffPermission, View):
             else:
                 org.insufficient_benefit_credits = False
 
+            if enrollment_closed == 'on':
+                org.enrollment_closed = True
+            else:
+                org.enrollment_closed = False
+
             org.save()
+            form.save()
+            return redirect('staff:view-org')
 
         variables = {
             'org': org,
 
             'form': form,
         }
-
+        print('org enrolment value {} ', org.enrollment_closed)
         return render(request, self.template_name, variables)
 
 
@@ -298,11 +310,11 @@ class OrganizationMember(StaffPermission, View):
     def  csv_export(self, file_name, members):
         with open('media/csv_output/{}.csv'.format(file_name), 'w', newline='') as csvfile:
             writer = csv.writer(csvfile, delimiter=',')
-            row_first_line = ['User ID', 'First Name', 'Middle Name', 'Last Name', 'Organiztaion', 'Salary Base', 'HSA Annual Credits', 'HSA Optional', 'HSA Remaining']
+            row_first_line = ['User ID', 'First Name', 'Middle Name', 'Last Name', 'Organiztaion', 'Salary Base', 'HSA Annual Credits', 'HSA Optional', 'HSA Remaining', 'Submitted Status']
             writer.writerow(row_first_line)
 
             for member in members:
-                row = [member.username, member.first_name, member.middle_name, member.last_name, member.org.org_short_name, member.salary_base, member.hsa_annual_credits, member.hsa_optional, member.hsa_remaining]
+                row = [member.username, member.first_name, member.middle_name, member.last_name, member.org.org_short_name, member.salary_base, member.hsa_annual_credits, member.hsa_optional, member.hsa_remaining, member.submitted]
                 writer.writerow(row)
 
             csvfile.close()

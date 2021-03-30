@@ -105,20 +105,26 @@
         <div class="input-field col l12">
             <i class="material-icons prefix">ac_unit</i>
             {{ form.text_block_1 }}
-            <label for="id_misc_1">Text for Information Summary</label>
+            <label for="text_block_1">Text for Information Summary</label>
         </div>
 
         <div class="input-field col l12">
             <i class="material-icons prefix">ac_unit</i>
             {{ form.text_block_2 }}
-            <label for="id_misc_1">Text for Printout top</label>
+            <label for="text_block_2">Text for Printout top</label>
         </div>
 
 
         <div class="input-field col l12">
             <i class="material-icons prefix">ac_unit</i>
             {{ form.text_block_3 }}
-            <label for="id_misc_1">Text for Printout bottom</label>
+            <label for="text_block_3">Text for Printout bottom</label>
+        </div>
+
+        <div class="input-field col l12">
+            <i class="material-icons prefix">ac_unit</i>
+            {{ form.text_block_4 }}
+            <label for="text_block_4">Text for Enrollment Closed</label>
         </div>
 
         <div class="input-field col l12">
@@ -140,6 +146,12 @@
                 <label>
                     <input name="insufficient_benefit_credits" type="checkbox" class="filled-in" />
                     <span>Insufficient benefit credits</span>
+                </label>
+            </p>
+            <p class="left">
+                <label>
+                    <input name="enrollment_closed" type="checkbox" class="filled-in" />
+                    <span>Enrollment Closed</span>
                 </label>
             </p>
         </div>

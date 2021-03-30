@@ -16,7 +16,6 @@ class Organization(models.Model):
     date_fiscal_start   = models.DateField(null=True, blank=True)
     date_fiscal_end     = models.DateField(null=True, blank=True)
     num_pay_periods     = models.FloatField(null=True, blank=True)
-    #logo_path          = models.CharField(max_length=255, null=True, blank=True)
     logo                = models.ImageField(upload_to='org/image/%Y/%m/%d/', null=True, blank=True)
     admin_email         = models.EmailField(max_length=255, null=True, blank=True)
     enrolment_period    = models.CharField(max_length=255, null=True, blank=True)
@@ -24,8 +23,10 @@ class Organization(models.Model):
     text_block_1        = models.TextField(max_length=350, null=True, blank=True)
     text_block_2        = models.TextField(max_length=350, null=True, blank=True)
     text_block_3        = models.TextField(max_length=350, null=True, blank=True)
+    text_block_4        = models.TextField(max_length=350, null=True, blank=True)
 
     #check box
+    enrollment_closed   = models.BooleanField(default=False)
     salary_adjustment   = models.BooleanField(default=False)
     insufficient_benefit_credits = models.BooleanField(default=False)
 

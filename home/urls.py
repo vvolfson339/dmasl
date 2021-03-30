@@ -1,38 +1,52 @@
 from django.conf.urls import url
-
+from django.urls import path, include
 from . import views
 
 app_name = 'home'
 
 urlpatterns = [
-    url(r'^logout/$', views.signout_request, name='logout'),
+    path('logout/', views.signout_request, name='logout'),
 
-    url(r'^$', views.Home.as_view(), name='home'),
+    path('', views.Home.as_view(), name='home'),
 
-    url(r'^home/$', views.Links.as_view(), name='links'),
+    path('home/', views.Links.as_view(), name='links'),
+    path('lhin_links/', views.LHIN_Links.as_view(), name='lhin_links'),
 
-    url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/$', views.Login.as_view(), name='login'),
+    path('<org_short_name>/', views.Login.as_view(), name='login'),
 
-    url(r'^enrolment/form-1/$', views.EnrolmentForm1.as_view(), name='enrolment-form1'),
-    url(r'^enrolment/form-2/$', views.EnrolmentForm2.as_view(), name='enrolment-form2'),
-    #url(r'^enrolment/form-3/$', views.EnrolmentForm3.as_view(), name='enrolment-form3'),
-    url(r'^enrolment/form-3/$', views.EnrolmentForm4.as_view(), name='enrolment-form4'),
-    url(r'^enrolment/print/$', views.EnrolmentPrint.as_view(), name='enrolment-print'),
-
+    path('enrolment/form-1/', views.EnrolmentForm1.as_view(), name='enrolment-form1'),
+    path('enrolment/form-2/', views.EnrolmentForm2.as_view(), name='enrolment-form2'),
+    path('enrolment/form-3/', views.EnrolmentForm4.as_view(), name='enrolment-form4'),
+    path('enrolment/print/', views.EnrolmentPrint.as_view(), name='enrolment-print'),
+    path('enrolment/closed/', views.EnrolmentClosed.as_view(), name='enrollment-closed'),
 
     #org admin url
-    url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/login/$', views.OrgAdminLogin.as_view(), name='org-admin-login'),
-    url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/$', views.OrgAdminHome.as_view(), name='org-admin-home'),
+    # url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/login/$', views.OrgAdminLogin.as_view(), name='org-admin-login'),
+    # url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/$', views.OrgAdminHome.as_view(), name='org-admin-home'),
 
-    url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/view/$', views.OrgMemberView.as_view(), name='org-member-view'),
-    url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/(?P<user_id>[0-9a-zA-Z-_.]+)/detail/$', views.OrgMemberDetail.as_view(), name='org-member-detail'),
-    url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/(?P<user_id>[0-9a-zA-Z-_.]+)/activate-deactivate/$', views.ActivateDeactivateAccount.as_view(), name='org-member-activate-deactivate'),
-    url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/(?P<user_id>[0-9a-zA-Z-_.]+)/delete/$', views.OrgMemberDelete.as_view(), name='org-member-delete'),
+    path('<org_short_name>/admin/login/', views.OrgAdminLogin.as_view(), name='org-admin-login'),
+    path('<org_short_name>/admin/', views.OrgAdminHome.as_view(), name='org-admin-home'),
 
+    # url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/view/$', views.OrgMemberView.as_view(), name='org-member-view'),
+    # url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/(?P<user_id>[0-9a-zA-Z-_.]+)/detail/$', views.OrgMemberDetail.as_view(), name='org-member-detail'),
+    # url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/(?P<user_id>[0-9a-zA-Z-_.]+)/activate-deactivate/$', views.ActivateDeactivateAccount.as_view(), name='org-member-activate-deactivate'),
+    # url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/(?P<user_id>[0-9a-zA-Z-_.]+)/delete/$', views.OrgMemberDelete.as_view(), name='org-member-delete'),
+    #
+    #
+    # url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/add/$', views.OrgMemberAdd.as_view(), name='org-member-add'),
+    #
+    # url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/(?P<user_id>[0-9a-zA-Z-_.]+)/edit/$', views.OrgMemberEdit.as_view(), name='org-member-edit'),
+    # url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/(?P<user_id>[0-9a-zA-Z-_.]+)/change-password/$', views.OrgMemberChangePassword.as_view(), name='org-member-change-password'),
 
-    url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/add/$', views.OrgMemberAdd.as_view(), name='org-member-add'),
+    path('<org_short_name>)/admin/member/view/', views.OrgMemberView.as_view(), name='org-member-view'),
+    path('<org_short_name>)/admin/member/<user_id>/detail/', views.OrgMemberDetail.as_view(), name='org-member-detail'),
+    path('<org_short_name>)/admin/member/<user_id>/activate-deactivate/', views.ActivateDeactivateAccount.as_view(), name='org-member-activate-deactivate'),
+    path('<org_short_name>)/admin/member/<user_id>/delete/', views.OrgMemberDelete.as_view(), name='org-member-delete'),
 
-    url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/(?P<user_id>[0-9a-zA-Z-_.]+)/edit/$', views.OrgMemberEdit.as_view(), name='org-member-edit'),
-    url(r'^(?P<org_short_name>[0-9a-zA-Z-_.]+)/admin/member/(?P<user_id>[0-9a-zA-Z-_.]+)/change-password/$', views.OrgMemberChangePassword.as_view(), name='org-member-change-password'),
+    path('<org_short_name>)/admin/member/add/', views.OrgMemberAdd.as_view(), name='org-member-add'),
+
+    path('<org_short_name>)/admin/member/<user_id>/edit/', views.OrgMemberEdit.as_view(), name='org-member-edit'),
+    path('<org_short_name>)/admin/member/<user_id>/change-password/', views.OrgMemberChangePassword.as_view(), name='org-member-change-password'),
+
     #end org admin url
 ]

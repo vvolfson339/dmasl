@@ -145,6 +145,7 @@ class AddOrganization(forms.Form):
     text_block_1 = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
     text_block_2 = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
     text_block_3 = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
+    text_block_4 = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
 
     def check_space(self, org_short_name):
         for x in org_short_name:
@@ -171,6 +172,7 @@ class AddOrganization(forms.Form):
         text_block_1            = self.cleaned_data.get('text_block_1')
         text_block_2            = self.cleaned_data.get('text_block_2')
         text_block_3            = self.cleaned_data.get('text_block_3')
+        text_block_4            = self.cleaned_data.get('text_block_4')
 
         if len(org_short_name) < 1:
             raise forms.ValidationError('Organization short name is required')
@@ -209,6 +211,7 @@ class AddOrganization(forms.Form):
         text_block_1            = self.cleaned_data.get('text_block_1')
         text_block_2            = self.cleaned_data.get('text_block_2')
         text_block_3            = self.cleaned_data.get('text_block_3')
+        text_block_4            = self.cleaned_data.get('text_block_4')
 
 
         deploy = models.Organization(org_url=org_url, org_short_name=org_short_name, org_full_name=org_full_name,
@@ -216,7 +219,7 @@ class AddOrganization(forms.Form):
                                      policy_agency=policy_agency, date_fiscal_start=date_fiscal_start,
                                      date_fiscal_end=date_fiscal_end, num_pay_periods=num_pay_periods,
                                      logo=logo, admin_email=admin_email, enrolment_period=enrolment_period, misc_1=misc_1,
-                                     text_block_1=text_block_1, text_block_2=text_block_2, text_block_3=text_block_3)
+                                     text_block_1=text_block_1, text_block_2=text_block_2, text_block_3=text_block_3, text_block_4=text_block_4)
 
         deploy.save()
         return deploy
@@ -240,6 +243,7 @@ class EditOrgForm(forms.ModelForm):
     text_block_1        = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
     text_block_2        = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
     text_block_3        = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
+    text_block_4        = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
 
 
 
@@ -268,10 +272,11 @@ class EditOrgForm(forms.ModelForm):
         text_block_1            = self.cleaned_data.get('text_block_1')
         text_block_2            = self.cleaned_data.get('text_block_2')
         text_block_3            = self.cleaned_data.get('text_block_3')
+        text_block_4            = self.cleaned_data.get('text_block_4')
 
     class Meta:
         model = models.Organization
-        fields = ('org_url', 'org_full_name', 'contract_holder', 'class_type', 'policy_num', 'policy_agency', 'date_fiscal_start', 'date_fiscal_end', 'num_pay_periods', 'enrolment_period', 'logo', 'admin_email', 'misc_1', 'text_block_1','text_block_2','text_block_3')
+        fields = ('org_url', 'org_full_name', 'contract_holder', 'class_type', 'policy_num', 'policy_agency', 'date_fiscal_start', 'date_fiscal_end', 'num_pay_periods', 'enrolment_period', 'logo', 'admin_email', 'misc_1', 'text_block_1','text_block_2','text_block_3','text_block_4')
 
 #add user
 class AddUserForm(forms.Form):

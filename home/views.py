@@ -34,7 +34,7 @@ def signout_request(request):
     elif direction == 'client':
         return redirect('home:login', org_short_name=request.GET.get('org'))
     else:
-        return redirect('home:home')
+        return redirect('home:lhin_links')
 
 
 #=======================================================================================================================
@@ -55,6 +55,15 @@ class Home(View):
 
 class Links(View):
     template_name = 'home/links.html'
+
+    def get(self, request):
+        variables = {
+        }
+
+        return render(request, self.template_name, variables)
+
+class LHIN_Links(View):
+    template_name = 'home/lhin_links.html'
 
     def get(self, request):
         variables = {
@@ -88,7 +97,10 @@ class Login(View):
             if user_org == org_found:
                 if user:
                     login(request, user)
-                    return redirect('home:enrolment-form2')
+                    if user_org.enrollment_closed:
+                        return redirect('home:enrollment-closed')
+                    else:
+                        return redirect('home:enrollment-form2')
             else:
                 err_msg = "This user is not associated with {}!".format(org_short_name)
 
@@ -321,6 +333,53 @@ class EnrolmentForm4(LoginRequiredMixin, View):
 
         return render(request, self.template_name, variables)
 
+#enrolment form4
+class EnrolmentClosed(LoginRequiredMixin, View):
+    template_name = 'home/enrolment-closed.html'
+
+    def get(self, request):
+
+        org = request.user.org
+        usr = request.user
+
+        #Reset values from DB after each page load
+        hsa_remaining = request.user.hsa_annual_credits - request.user.hsa_optional
+        salary_adjusted = request.user.salary_base - request.user.hsa_optional
+
+        variables = {
+            'org': org,
+            'hsa_remaining': hsa_remaining,
+            'salary_adjusted': salary_adjusted,
+        }
+
+        return render(request, self.template_name, variables)
+
+    def post(self, request):
+        org = request.user.org
+        member = request.user
+        usr = request.user
+
+        hsa_remaining = usr.hsa_remaining
+        salary_adjusted = usr.salary_adjusted
+
+        if request.POST.get('next') == 'next':
+            if member.submitted:
+                pass
+            else:
+                member.submitted = True
+                member.save()
+                usr.save()
+
+                # del request.session['hsa_optional_var']
+        return redirect('home:enrolment-print')
+
+        variables = {
+            'org': org,
+        }
+
+        return render(request, self.template_name, variables)
+
+
 #enrolment printout
 class EnrolmentPrint(LoginRequiredMixin, View):
     template_name = 'home/enrolment-print.html'
@@ -382,8 +441,7 @@ class OrgAdminPermissionMixin(object):
             return super(OrgAdminPermissionMixin, self).dispatch(
                 request, *args, **kwargs)
         else:
-            return redirect('home:home')
-            #return redirect('home:org-admin-login', request.user.org.org_short_name)
+            return redirect('home:lhin_links')
 
 #org admin login
 class OrgAdminLogin(View):
@@ -419,7 +477,6 @@ class OrgAdminLogin(View):
             if user_org == org_found:
                 if user:
                     login(request, user)
-                    print('hi 2')
                     return redirect('home:org-admin-home', org_short_name=org_short_name)
             else:
                 err_msg = "You are not associated to {}".format(org_short_name)
