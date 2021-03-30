@@ -287,7 +287,7 @@ class OrganizationMember(StaffPermission, View):
         members_list = account_model.UserProfile.objects.filter(org=org).order_by('last_name')
         members_count = account_model.UserProfile.objects.filter(org=org).count()
 
-        accounts_paginator = Paginator(members_list, 10)
+        accounts_paginator = Paginator(members_list, 20)
         page_num = request.GET.get('page')
         page = accounts_paginator.get_page(page_num)
 
@@ -310,11 +310,11 @@ class OrganizationMember(StaffPermission, View):
     def  csv_export(self, file_name, members):
         with open('media/csv_output/{}.csv'.format(file_name), 'w', newline='') as csvfile:
             writer = csv.writer(csvfile, delimiter=',')
-            row_first_line = ['User ID', 'First Name', 'Middle Name', 'Last Name', 'Organiztaion', 'Salary Base', 'HSA Annual Credits', 'HSA Optional', 'HSA Remaining', 'Submitted Status']
+            row_first_line = ['Organization', 'User ID', 'First Name', 'Middle Name', 'Last Name', 'Submitted', 'Last Logged In', 'Annual Credits', 'HSA Optional', 'Taxable Income',  'Additional Info']
             writer.writerow(row_first_line)
 
             for member in members:
-                row = [member.username, member.first_name, member.middle_name, member.last_name, member.org.org_short_name, member.salary_base, member.hsa_annual_credits, member.hsa_optional, member.hsa_remaining, member.submitted]
+                row = [member.org.org_short_name, member.username, member.first_name, member.middle_name, member.last_name, ("Yes" if member.submitted else "No") , ("Never" if member.last_login==None else (member.last_login.strftime("%Y-%m-%d %I:%M%p"))),  member.hsa_annual_credits, member.hsa_optional, member.salary_adjusted,  member.additional_info]
                 writer.writerow(row)
 
             csvfile.close()
