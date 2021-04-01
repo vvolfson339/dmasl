@@ -314,7 +314,7 @@ class OrganizationMember(StaffPermission, View):
             writer.writerow(row_first_line)
 
             for member in members.order_by('last_name'):
-                row = [member.org.org_short_name, member.username, member.first_name, member.middle_name, member.last_name, ("Yes" if member.submitted else "No") , ("Never" if member.last_login==None else (member.last_login.strftime("%Y-%m-%d %I:%M%p"))),  member.hsa_annual_credits, member.hsa_optional, member.salary_adjusted,  member.additional_info]
+                row = [member.org.org_short_name, member.username, member.first_name, member.middle_name, member.last_name, ("Yes" if member.submitted else "No") , ("Never" if member.last_login==None else (member.last_login.strftime("%Y-%m-%d %I:%M%p"))),  member.hsa_annual_credits, member.hsa_optional, member.hsa_remaining,  member.additional_info]
                 writer.writerow(row)
 
             csvfile.close()
