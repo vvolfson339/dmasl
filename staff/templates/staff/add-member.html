@@ -108,8 +108,7 @@
         <div class="col s12 m12 l12" style="margin-bottom: 20px; margin-top: 20px;">
             <button class="btn waves-effect waves-light black" type="submit" style="">Add member
             </button>
-            <!-- <button onclick="fillPasswd()" class="btn waves-effect waves-light black" style="">Generate Password
-            </button> -->
+            <a id="generateBtn" class="btn waves-effect waves-light black" style="">Generate New Password</a>
         </div>
     </form>
 
@@ -118,24 +117,22 @@
 
 
 {% block script %}
-    <script>
-        $(document).ready(function(){
-            $('.datepicker').datepicker({
-                format: 'yyyy-mm-dd',
-                yearRange: 100,
-            });
-        });
-
-
-        $(document).ready(function(){
-            $('select').formSelect();
+<script>
+          document.getElementById("generateBtn").addEventListener("click", () => {
+            pass = password_generator(6);
+            document.getElementById('id_password1').focus();
+            document.getElementById('id_password1').select();
+            document.getElementById('id_password1').value = pass;
+            document.getElementById('id_password2').focus();
+            document.getElementById('id_password2').select();
+            document.getElementById('id_password2').value = pass;
          });
 
          function password_generator( len ) {
              var length = (len)?(len):(10);
              var string = "abcdefghijklmnopqrstuvwxyz"; //to upper
              var numeric = '0123456789';
-             var punctuation = '!@#$%&*?';
+             var punctuation = '!@#$&?';
              var password = "";
              var character = "";
              var crunch = true;
@@ -154,11 +151,5 @@
              return password.substr(0,len);
          };
 
-         function fillPasswd() {
-           pass = password_generator(6);
-           $('input[name="password1"]').val(pass);
-           $('input[name="password2"]').val(pass);
-         };
-
-    </script>
+</script>
 {% endblock %}

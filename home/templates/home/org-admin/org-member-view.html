@@ -17,8 +17,15 @@
 <div class="col s12 m12 l12">
     <h5 class="col s12 m12 l12" style="text-decoration: underline; padding: 0px;">{{ org_found.org_full_name }} - {{ members_count }} Registered Members Total</h5>
 
+
+    <div class="col l12 m12 l12" style="padding: 0px; margin-top: 10px; margin-bottom: 10px;">
+        <form method="post">
+            {% csrf_token %}
+            <button name="export_csv" value="export_csv" type="submit" class="btn red">Export to csv</button>
+        </form>
+    </div>
         <!-- <form class="col m12 l12 center-align" method="post" style="margin-bottom: 40px; border: 2px solid #333; padding: 20px;">
-            <h5 class=" orange-text">Search Member</h5>
+            <h5 class=" orange-text">Member Search</h5>
 
             {% csrf_token %}
             <div class="input-field col s12 m12 l8 offset-l2">
@@ -41,7 +48,7 @@
                         <table class="centered responsive-table striped" style="margin-bottom: 20px;">
                             <thead>
                                 <tr class="red">
-                                    <!-- <th>S/N</th> -->
+
                                     <th>User ID</th>
                                     <th>Full Name</th>
                                     <th>Organization</th>
@@ -53,7 +60,7 @@
 
                                 {% for s_member in s_members %}
                                     <tr>
-                                        <!-- <td>{{ forloop.counter }}</td> -->
+
                                         <td>{{ s_member.username }}</td>
                                         <td>{{ s_member.last_name | title }}, {{ s_member.first_name| title }}</td>
                                         <td>{{ s_member.org.org_short_name | upper }}</td>
@@ -69,11 +76,10 @@
                 {% else %}
                     <p>Member not found!</p>
                 {% endif %}
+                {% endif %}
+
             </div>
-            {% endif %}
-
-        </form> -->
-
+          </form> -->
 
     {% if page %}
     <table class="col s12 m12 l12 centered responsive-table striped" style="margin-bottom: 20px; margin-top: 20px;">

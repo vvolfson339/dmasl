@@ -299,7 +299,6 @@ class AddUserForm(forms.Form):
 
     additional_info = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
 
-
     def clean(self):
         username = self.cleaned_data.get('username')
         email = self.cleaned_data.get('email')
@@ -326,14 +325,6 @@ class AddUserForm(forms.Form):
 
             if username_exists:
                 raise forms.ValidationError('User ID already exists')
-            # else:
-            #     email_correction = re.match('^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,4})$', email)
-            #     if not email_correction:
-            #         raise forms.ValidationError('Email address is not valid!')
-            #     else:
-            #         email_exists = models.UserProfile.objects.filter(email=email).exists()
-            #         if email_exists:
-            #             raise forms.ValidationError('A user with this email address already exists!')
             else:
                 if len(password1) < 6:
                     raise forms.ValidationError("Password must be at least 6 characters long!")
@@ -343,38 +334,17 @@ class AddUserForm(forms.Form):
                     else:
                         check_number = isinstance(salary_base, (int, float, Decimal))
                         if not check_number:
-                            raise forms.ValidationError('Salary amount is not valid!')
+                            raise forms.ValidationError('Job Rate amount is not valid!')
                         else:
                             if salary_base < 0:
-                                raise forms.ValidationError('Salary adjusted amount is not valid!')
+                                raise forms.ValidationError('Job Rate amount is not valid!')
                             else:
-                                check_number = isinstance(salary_adjusted, (int, float, Decimal))
+                                check_number = isinstance(hsa_annual_credits, (int, float))
                                 if not check_number:
-                                    raise forms.ValidationError('Salary adjusted amount is not valid!')
+                                    raise forms.ValidationError('Total Benefit Credits amount is not valid!')
                                 else:
-                                    if salary_adjusted < 0:
-                                        raise forms.ValidationError('Salary adjusted amount is not valid!')
-                                    else:
-                                        check_number = isinstance(hsa_annual_credits, (int, float))
-                                        if not check_number:
-                                            raise forms.ValidationError('HSA Base Credit amount is not valid!')
-                                        else:
-                                            if hsa_annual_credits < 0:
-                                                raise forms.ValidationError('HSA Base Credit amount is not valid!')
-                                            else:
-                                                check_number = isinstance(hsa_optional, (int, float, Decimal))
-                                                if not check_number:
-                                                        raise forms.ValidationError('HSA Optinal amount is not valid!')
-                                                else:
-                                                    if hsa_optional < 0:
-                                                        raise forms.ValidationError('HSA Optinal amount is not valid!')
-                                                    else:
-                                                        check_number = isinstance(hsa_remaining, (int, float))
-                                                        if not check_number:
-                                                                raise forms.ValidationError('HSA Remaining amount is not valid!')
-                                                        else:
-                                                                if hsa_remaining < 0:
-                                                                    raise forms.ValidationError('HSA Remaining amount is not valid!')
+                                    if hsa_annual_credits < 0:
+                                        raise forms.ValidationError('Total Benefit Credits amount is not valid!')
 
     def deploy(self, org):
         username = self.cleaned_data.get('username')
@@ -387,10 +357,15 @@ class AddUserForm(forms.Form):
         middle_name = self.cleaned_data.get('middle_name')
 
         salary_base = self.cleaned_data.get('salary_base')
-        salary_adjusted = self.cleaned_data.get('salary_adjusted')
+
         hsa_annual_credits = self.cleaned_data.get('hsa_annual_credits')
-        hsa_optional = self.cleaned_data.get('hsa_optional')
-        hsa_remaining = self.cleaned_data.get('hsa_remaining')
+
+        # hsa_optional = self.cleaned_data.get('hsa_optional')
+        # hsa_remaining = self.cleaned_data.get('hsa_remaining')
+        hsa_optional = 0
+        hsa_remaining = hsa_annual_credits
+        salary_adjusted = salary_base
+
         additional_info = self.cleaned_data.get('additional_info')
 
 
@@ -627,7 +602,29 @@ class OrgSearchForm(forms.Form):
 
 #org search form
 class MemberSearchForm(forms.Form):
+
     user_id = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
+
+    def clean(self):
+        user_id = self.cleaned_data.get('user_id')
+
+        if len(user_id) < 4:
+            raise forms.ValidationError('User ID cannot be shorter than 4 characters!')
+
+    def deploy(self):
+        user_id = self.cleaned_data.get('user_id')
+        member = models.UserProfile.objects.filter(username__contains=user_id)
+
+        return member
+
+#org search form
+class MemberSearchFormWithOrg(forms.Form):
+    # def __init__(self,*args,**kwargs):
+    #     self.org = kwargs.pop('org')
+    #     super(MemberSearchFormWithOrg, self).__init__(*args,**kwargs)
+
+    user_id = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
+    # print('org value: ', org)
 
     def clean(self):
         user_id = self.cleaned_data.get('user_id')
@@ -637,7 +634,7 @@ class MemberSearchForm(forms.Form):
 
     def deploy(self):
         user_id = self.cleaned_data.get('user_id')
-        member = models.UserProfile.objects.filter(username=user_id)
+        member = models.UserProfile.objects.filter(username__contains=user_id)
 
         return member
 

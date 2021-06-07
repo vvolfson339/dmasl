@@ -412,7 +412,7 @@ class ViewMember(StaffPermission, View):
 
     def get(self, request):
 
-        members_list = account_model.UserProfile.objects.all().order_by('org','id')
+        members_list = account_model.UserProfile.objects.all().order_by('org','id').order_by('last_name')
         members_count = account_model.UserProfile.objects.all().count()
         form = account_form.MemberSearchForm()
 

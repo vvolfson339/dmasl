@@ -1,21 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.views import View
-
-#Vic modification
-# from django.views import generic
-
-# from django.contrib.auth.views import login, logout
-
 from django.contrib.auth.views import LoginView
-
 from django.contrib.auth import authenticate, login, logout
-
 from django.http import Http404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
-
 from account import models as account_model
 from account import forms as account_form
+from django.http.response import StreamingHttpResponse
+from datetime import datetime
+import csv
+import os
+
 
 from . import tasks
 #from decimal import *
@@ -516,21 +512,40 @@ class OrgMemberView(OrgAdminPermissionMixin, View):
 
         members_list = account_model.UserProfile.objects.filter(org=org_found).order_by('last_name')
         members_count = account_model.UserProfile.objects.filter(org=org_found).count()
-        form = account_form.MemberSearchForm()
+        # form = account_form.MemberSearchFormWithOrg(current_org=org_found)
+        form = account_form.MemberSearchFormWithOrg()
 
         accounts_paginator = Paginator(members_list, 10)
         page_num = request.GET.get('page')
         page = accounts_paginator.get_page(page_num)
 
+        s_members = None
+
         variables = {
             'org_found': org_found,
-
             'page': page,
             'members_count': members_count,
             'form': form,
         }
 
         return render(request, self.template_name, variables)
+
+    def get_uuid(self):
+        uuid = os.urandom(5).hex()
+
+        return uuid
+
+    def  csv_export(self, file_name, members):
+        with open('media/csv_output/{}.csv'.format(file_name), 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile, delimiter=',')
+            row_first_line = ['Organization', 'User ID', 'First Name', 'Middle Name', 'Last Name', 'Submitted', 'Last Logged In', 'Annual Credits', 'HSA Allocation', 'Taxable Income',  'Additional Info']
+            writer.writerow(row_first_line)
+
+            for member in members.order_by('last_name'):
+                row = [member.org.org_short_name, member.username, member.first_name, member.middle_name, member.last_name, ("Yes" if member.submitted else "No") , ("Never" if member.last_login==None else (member.last_login.strftime("%Y-%m-%d %I:%M%p"))),  member.hsa_annual_credits, member.hsa_optional, member.hsa_remaining,  member.additional_info]
+                writer.writerow(row)
+
+            csvfile.close()
 
     def post(self, request, org_short_name):
 
@@ -542,13 +557,23 @@ class OrgMemberView(OrgAdminPermissionMixin, View):
         accounts_paginator = Paginator(members_list, 10)
         page_num = request.GET.get('page')
         page = accounts_paginator.get_page(page_num)
+        # form = account_form.MemberSearchFormWithOrg(request.POST or None, current_org=org_found)
+        form = account_form.MemberSearchFormWithOrg(request.POST or None)
+        print('org found value: ',org_found)
 
-        form = account_form.MemberSearchForm(request.POST or None)
+        if request.POST.get('export_csv') == 'export_csv':
+            uuid = self.get_uuid()
+            file_name = str(org_found.org_short_name) + '-member_export-' + datetime.now().strftime("%Y-%m-%d")
+            self.csv_export(file_name, members_list)
+
+            return redirect('home:save_file', file_name=file_name)
+
 
         s_members = None
 
         if form.is_valid():
             s_members = form.deploy()
+            print('number', s_members.count())
 
 
         variables = {
@@ -560,6 +585,12 @@ class OrgMemberView(OrgAdminPermissionMixin, View):
         }
 
         return render(request, self.template_name, variables)
+
+def some_streaming_csv_view(request, file_name):
+    path = 'media/csv_output/{}.csv'.format(file_name)
+    response = StreamingHttpResponse(open(path), content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=' + '{}.csv'.format(file_name)
+    return response
 
 #org admin member view
 class OrgMemberDetail(OrgAdminPermissionMixin, View):
@@ -574,7 +605,6 @@ class OrgMemberDetail(OrgAdminPermissionMixin, View):
 
         variables = {
             'org_found': org_found,
-
             'member': member,
         }
 
@@ -625,29 +655,27 @@ class OrgMemberAdd(OrgAdminPermissionMixin, View):
         org_found = get_object_or_404(account_model.Organization, org_short_name=org_short_name)
 
         form = account_form.AddUserForm()
+        form.hsa_optional = 0
+        form.hsa_remaining = 0
 
         variables = {
             'org_found': org_found,
-
             'form': form,
         }
 
         return render(request, self.template_name, variables)
 
-
     def post(self, request, org_short_name):
         org_found = get_object_or_404(account_model.Organization, org_short_name=org_short_name)
-
         form = account_form.AddUserForm(request.POST or None)
+
 
         if form.is_valid():
             u = form.deploy(org_found)
-
             return redirect('home:org-member-detail', org_short_name=org_short_name, user_id=u.username)
 
         variables = {
             'org_found': org_found,
-
             'form': form,
         }
 
@@ -680,8 +708,14 @@ class OrgMemberEdit(OrgAdminPermissionMixin, View):
         form = account_form.ChageUserProfileFromOrgAdmin(request.POST or None, instance=user_found)
 
         if form.is_valid():
-            form.save()
-            return redirect('home:org-member-detail', org_short_name=org_short_name, user_id=user_id)
+            if org_found.salary_adjustment is True:
+                user_found.salary_base = 0
+                user_found.salary_adjusted = 0
+                form.save()
+            else:
+                form.save()
+
+        return redirect('home:org-member-detail', org_short_name=org_short_name, user_id=user_id)
 
         variables = {
             'org_found': org_found,
