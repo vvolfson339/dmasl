@@ -333,7 +333,7 @@ class AddUserForm(forms.Form):
                     else:
                         check_number = isinstance(salary_base, (int, float, Decimal)) or salary_base is None
                         if not check_number:
-                            raise forms.ValidationError('Job Rate amount is not a valid number!)
+                            raise forms.ValidationError('Job Rate amount is not a valid number!')
                         else:
                             if salary_base is not None and salary_base < 0:
                                 raise forms.ValidationError('Job Rate amount cannot be negative!')
