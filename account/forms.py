@@ -317,7 +317,6 @@ class AddUserForm(forms.Form):
 
         additional_info = self.cleaned_data.get('additional_info')
 
-
         if len(username) < 1:
             raise forms.ValidationError('User ID cannot be blank!')
         else:
@@ -332,12 +331,12 @@ class AddUserForm(forms.Form):
                     if password1 != password2:
                         raise forms.ValidationError("Passwords do not match!")
                     else:
-                        check_number = isinstance(salary_base, (int, float, Decimal))
+                        check_number = isinstance(salary_base, (int, float, Decimal)) or salary_base is None
                         if not check_number:
-                            raise forms.ValidationError('Job Rate amount is not valid!')
+                            raise forms.ValidationError('Job Rate amount is not a valid number!)
                         else:
-                            if salary_base < 0:
-                                raise forms.ValidationError('Job Rate amount is not valid!')
+                            if salary_base is not None and salary_base < 0:
+                                raise forms.ValidationError('Job Rate amount cannot be negative!')
                             else:
                                 check_number = isinstance(hsa_annual_credits, (int, float))
                                 if not check_number:
@@ -355,13 +354,10 @@ class AddUserForm(forms.Form):
         first_name = self.cleaned_data.get('first_name')
         last_name = self.cleaned_data.get('last_name')
         middle_name = self.cleaned_data.get('middle_name')
+        hsa_annual_credits = self.cleaned_data.get('hsa_annual_credits')
 
         salary_base = self.cleaned_data.get('salary_base')
 
-        hsa_annual_credits = self.cleaned_data.get('hsa_annual_credits')
-
-        # hsa_optional = self.cleaned_data.get('hsa_optional')
-        # hsa_remaining = self.cleaned_data.get('hsa_remaining')
         hsa_optional = 0
         hsa_remaining = hsa_annual_credits
         salary_adjusted = salary_base
