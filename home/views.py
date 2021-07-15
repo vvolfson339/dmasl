@@ -289,8 +289,11 @@ class EnrolmentForm4(LoginRequiredMixin, View):
 
         #Reset values from DB after each page load
         hsa_remaining = request.user.hsa_annual_credits - request.user.hsa_optional
-        salary_adjusted = request.user.salary_base - request.user.hsa_optional
 
+        if org.salary_adjustment is True:
+            salary_adjusted = request.user.salary_base - request.user.hsa_optional
+        else:
+            salary_adjusted = 0
 
         variables = {
             'org': org,
