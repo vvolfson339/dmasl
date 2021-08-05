@@ -80,6 +80,9 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=50, null=True, blank=True)
     middle_name = models.CharField(max_length=50, null=True, blank=True)
 
+    #new field added in July 2021
+    effective_date = models.DateField(null=True, blank=True)
+    
     salary_base = models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)
 
     salary_adjusted = models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)

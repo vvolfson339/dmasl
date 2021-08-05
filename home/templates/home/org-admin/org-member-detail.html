@@ -45,6 +45,8 @@
     <p>First Name: {{ member.first_name | title }}</p>
     <p>Middle Name: {{ member.middle_name | title }}</p>
 
+    <p>Effective Date: {{ member.effective_date }}</p>
+
     {% if member.org.salary_adjustment %}
     <p>Job Rate: {{ member.salary_base }}</p>
     <p>Taxable Earning: {{ member.salary_adjusted }}</p>
@@ -57,7 +59,7 @@
     {% if member.org.insufficient_benefit_credits %}
     <p>HSA Opt-out Option: {{ member.opt_out_bool | yesno:"Yes,No" }}</p>
     {% endif %}
-    
+
     <p>Submitted: {{ member.submitted | yesno:"Yes,No" }}</p>
     <!-- <p>Join date: {{ member.join_date | date }}</p> -->
     <p>Additional info: {{ member.additional_info }}</p>

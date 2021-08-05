@@ -1,6 +1,6 @@
 {% extends 'org_admin_base.html' %}
 
-{% block title %}ADD MEMBER | Admin DMASL{% endblock %}
+{% block title %}MODIFY MEMBER | Admin DMASL{% endblock %}
 
 {% block left_menu %}
     <div id="left-sidebar-menu" class="collection col s12 m12 l12" style="margin-top: 200px; padding: 0px;">
@@ -36,7 +36,6 @@
             <label for="id_email">Email</label>
         </div>
 
-
         <div class="input-field col l4">
             {{ form.last_name }}
             <label for="id_last_name">Last Name</label>
@@ -50,6 +49,11 @@
         <div class="input-field col l4">
             {{ form.middle_name }}
             <label for="id_middle_name">Middle Name</label>
+        </div>
+
+        <div class="input-field col l4">
+            {{ form.effective_date }}
+            <label for="id_effective_date">Effective Date</label>
         </div>
 
         {% if org_found.salary_adjustment %}
@@ -102,24 +106,21 @@
             </button>
         </div>
     </form>
-
-
 {% endblock %}
 
 
 {% block script %}
-    <script>
-        $(document).ready(function(){
-            $('.datepicker').datepicker({
-                format: 'yyyy-mm-dd',
-                yearRange: 100,
-            });
+<script>
+    $(document).ready(function(){
+        $('.datepicker').datepicker({
+            format: 'yyyy-mm-dd',
+            yearRange: 5,
         });
+    });
 
+    $(document).ready(function(){
+        $('select').formSelect();
+     });
 
-        $(document).ready(function(){
-            $('select').formSelect();
-         });
-
-    </script>
+</script>
 {% endblock %}

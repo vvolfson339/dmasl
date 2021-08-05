@@ -56,6 +56,12 @@
             <label for="id_middle_name">Middle Name</label>
         </div>
 
+        <div class="input-field col l4">
+            <i class="material-icons prefix">date_range</i>
+            {{ form.effective_date }}
+            <label for="id_effective_date">Effective Date</label>
+        </div>
+
         {% if org_found.salary_adjustment %}
         <div class="input-field col l6">
             {{ form.salary_base }}
@@ -125,6 +131,14 @@
              password=password.split('').sort(function(){return 0.5-Math.random()}).join('');
              return password.substr(0,len);
          };
+
+         $(document).ready(function(){
+             $('.datepicker').datepicker({
+                 format: 'yyyy-mm-dd',
+                 yearRange: 5,
+             });
+         });
+
 
 </script>
 {% endblock %}

@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password
 from decimal import *
 import re
+from django.utils.translation import gettext as _
 
 from . import models
 
@@ -128,23 +129,23 @@ class OrgAdminLoginForm(forms.Form):
 #enrollment organizarion form
 class AddOrganization(forms.Form):
     org_url             = forms.URLField(max_length=255, required=False, widget=forms.URLInput(attrs={'class': 'validate'}))
-    org_short_name      = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
-    org_full_name       = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
-    contract_holder     = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
-    class_type          = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
-    policy_num          = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
+    org_short_name      = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'class': 'validate'}))
+    org_full_name       = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'class': 'validate'}))
+    contract_holder     = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'class': 'validate'}))
+    class_type          = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'class': 'validate'}))
+    policy_num          = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'class': 'validate'}))
     policy_agency       = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
-    date_fiscal_start   = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate datepicker'}))
-    date_fiscal_end     = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate datepicker'}))
-    num_pay_periods     = forms.FloatField(required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
-    enrolment_period    = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
+    date_fiscal_start   = forms.DateField(required=True, widget=forms.TextInput(attrs={'class': 'validate datepicker'}))
+    date_fiscal_end     = forms.DateField(required=True, widget=forms.TextInput(attrs={'class': 'validate datepicker'}))
+    num_pay_periods     = forms.FloatField(required=True, widget=forms.TextInput(attrs={'class': 'validate'}))
+    enrolment_period    = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'class': 'validate'}))
 
     logo = forms.ImageField(required=False)
     admin_email       = forms.EmailField(required=False)
     misc_1              = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
-    text_block_1 = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
-    text_block_2 = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
-    text_block_3 = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
+    text_block_1 = forms.CharField( required=True, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
+    text_block_2 = forms.CharField( required=True, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
+    text_block_3 = forms.CharField( required=True, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
     text_block_4 = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
 
     def check_space(self, org_short_name):
@@ -280,16 +281,18 @@ class EditOrgForm(forms.ModelForm):
 
 #add user
 class AddUserForm(forms.Form):
-    username = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
+    username = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'validate', }))
     email = forms.EmailField(required=False)
     # password1 = forms.CharField(max_length=20, required=False, widget=forms.PasswordInput(attrs={'class': 'validate', 'id': 'password1'}))
     # password2 = forms.CharField(max_length=20, required=False, widget=forms.PasswordInput(attrs={'class': 'validate', 'id': 'password2'}))
-    password1 = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
-    password2 = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
+    password1 = forms.CharField(max_length=20, required=True, widget=forms.TextInput(attrs={'class': 'validate', }))
+    password2 = forms.CharField(max_length=20, required=True, widget=forms.TextInput(attrs={'class': 'validate', }))
 
-    first_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
-    last_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
+    first_name = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'validate', }))
+    last_name = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'validate', }))
     middle_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
+
+    effective_date = forms.DateField(required=True, widget=forms.TextInput(attrs={'class': 'validate datepicker'}))
 
     salary_base = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
     salary_adjusted = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
@@ -304,7 +307,7 @@ class AddUserForm(forms.Form):
         email = self.cleaned_data.get('email')
         password1 = self.cleaned_data.get('password1')
         password2 = self.cleaned_data.get('password2')
-
+        effective_date = self.cleaned_data.get('effective_date')
         first_name = self.cleaned_data.get('first_name')
         last_name = self.cleaned_data.get('last_name')
         middle_name = self.cleaned_data.get('middle_name')
@@ -320,30 +323,32 @@ class AddUserForm(forms.Form):
         if len(username) < 1:
             raise forms.ValidationError('User ID cannot be blank!')
         else:
-            username_exists = models.UserProfile.objects.filter(username=username).exists()
-
-            if username_exists:
-                raise forms.ValidationError('User ID already exists')
+            if not re.match('^[A-Za-z]{2}',username):
+                raise forms.ValidationError('User ID must be prefixed with two letters!')
             else:
-                if len(password1) < 6:
-                    raise forms.ValidationError("Password must be at least 6 characters long!")
+                username_exists = models.UserProfile.objects.filter(username=username).exists()
+                if username_exists:
+                    raise forms.ValidationError('User ID already exists')
                 else:
-                    if password1 != password2:
-                        raise forms.ValidationError("Passwords do not match!")
+                    if len(password1) < 6:
+                        raise forms.ValidationError("Password must be at least 6 characters long!")
                     else:
-                        check_number = isinstance(salary_base, (int, float, Decimal)) or salary_base is None
-                        if not check_number:
-                            raise forms.ValidationError('Job Rate amount is not a valid number!')
+                        if password1 != password2:
+                            raise forms.ValidationError("Passwords do not match!")
                         else:
-                            if salary_base is not None and salary_base < 0:
-                                raise forms.ValidationError('Job Rate amount cannot be negative!')
+                            check_number = isinstance(salary_base, (int, float, Decimal)) or salary_base is None
+                            if not check_number:
+                                raise forms.ValidationError('Job Rate amount is not a valid number!')
                             else:
-                                check_number = isinstance(hsa_annual_credits, (int, float))
-                                if not check_number:
-                                    raise forms.ValidationError('Total Benefit Credits amount is not valid!')
+                                if salary_base is not None and salary_base < 0:
+                                    raise forms.ValidationError('Job Rate amount cannot be negative!')
                                 else:
-                                    if hsa_annual_credits < 0:
+                                    check_number = isinstance(hsa_annual_credits, (int, float))
+                                    if not check_number:
                                         raise forms.ValidationError('Total Benefit Credits amount is not valid!')
+                                    else:
+                                        if hsa_annual_credits < 0:
+                                            raise forms.ValidationError('Total Benefit Credits amount is not valid!')
 
     def deploy(self, org):
         username = self.cleaned_data.get('username')
@@ -354,6 +359,7 @@ class AddUserForm(forms.Form):
         first_name = self.cleaned_data.get('first_name')
         last_name = self.cleaned_data.get('last_name')
         middle_name = self.cleaned_data.get('middle_name')
+        effective_date = self.cleaned_data.get('effective_date')
         hsa_annual_credits = self.cleaned_data.get('hsa_annual_credits')
 
         salary_base = self.cleaned_data.get('salary_base')
@@ -366,7 +372,7 @@ class AddUserForm(forms.Form):
 
 
         user = models.UserProfile(username=username, email=email, org=org, first_name=first_name, last_name=last_name,
-                                    middle_name=middle_name, salary_base=salary_base,
+                                    middle_name=middle_name, effective_date=effective_date, salary_base=salary_base,
                                     salary_adjusted=salary_adjusted, hsa_annual_credits=hsa_annual_credits, hsa_optional=hsa_optional,
                                     hsa_remaining=hsa_remaining, additional_info=additional_info)
 
@@ -385,8 +391,8 @@ class AdditionalInfoForm(forms.ModelForm):
 
 #change user password from staff
 class ChangeUserPasswordForm(forms.Form):
-    new_password1 = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
-    new_password2 = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
+    new_password1 = forms.CharField(max_length=20, required=True, widget=forms.TextInput(attrs={'class': 'validate'}))
+    new_password2 = forms.CharField(max_length=20, required=True, widget=forms.TextInput(attrs={'class': 'validate'}))
 
     def clean(self):
         new_password1 = self.cleaned_data.get('new_password1')
@@ -416,7 +422,7 @@ class ChageUserProfile(forms.ModelForm):
     first_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
     last_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
     middle_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
-
+    effective_date = forms.DateField(required=False, widget=forms.TextInput(attrs={'class': 'validate datepicker'}))
     salary_base = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
     salary_adjusted = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
     hsa_annual_credits = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
@@ -432,7 +438,7 @@ class ChageUserProfile(forms.ModelForm):
         first_name = self.cleaned_data.get('first_name')
         last_name = self.cleaned_data.get('last_name')
         middle_name = self.cleaned_data.get('middle_name')
-
+        effective_date = self.cleaned_data.get('effective_date')
         salary_base = self.cleaned_data.get('salary_base')
         salary_adjusted = self.cleaned_data.get('salary_adjusted')
         hsa_annual_credits = self.cleaned_data.get('hsa_annual_credits')
@@ -442,25 +448,18 @@ class ChageUserProfile(forms.ModelForm):
         additional_info = self.cleaned_data.get('additional_info')
 
         check_number = isinstance(salary_base, (int, float, Decimal))
-
-        # email_correction = re.match('^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,4})$', email)
-
-        # if not email_correction:
-        #     raise forms.ValidationError('Email address is not valid!')
-        # else:
-        if not check_number:
-            raise forms.ValidationError('Salary amount is not valid!')
+        if not check_number or salary_base is None:
+            raise forms.ValidationError('Job Rate amount is not valid!')
         else:
             if salary_base < 0:
-                raise forms.ValidationError('Salary amount is not valid!')
+                raise forms.ValidationError('Job Rate amount is not valid!')
             else:
                 check_number = isinstance(salary_adjusted, (int, float, Decimal))
-
-                if not check_number:
-                    raise forms.ValidationError('Salary adjusted amount is not valid!')
+                if not check_number or salary_adjusted is None:
+                    raise forms.ValidationError('Taxable Earnings amount is not valid!')
                 else:
                     if salary_adjusted < 0:
-                        raise forms.ValidationError('Salary adjusted amount is not valid!')
+                        raise forms.ValidationError('Taxable Earnings amount is not valid!')
 
                     else:
                         check_number = isinstance(hsa_annual_credits, (int, float))
@@ -491,7 +490,7 @@ class ChageUserProfile(forms.ModelForm):
 
     class Meta:
         model = models.UserProfile
-        fields = ('email', 'org', 'first_name', 'last_name', 'middle_name', 'salary_base', 'salary_adjusted', 'hsa_annual_credits', 'hsa_optional', 'hsa_remaining', 'additional_info')
+        fields = ('email', 'org', 'first_name', 'last_name', 'middle_name', 'effective_date', 'salary_base', 'salary_adjusted', 'hsa_annual_credits', 'hsa_optional', 'hsa_remaining', 'additional_info')
 
 #change user profile from org admin
 class ChageUserProfileFromOrgAdmin(forms.ModelForm):
@@ -501,7 +500,7 @@ class ChageUserProfileFromOrgAdmin(forms.ModelForm):
     first_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
     last_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
     middle_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
-
+    effective_date = forms.DateField(required=False, widget=forms.TextInput(attrs={'class': 'validate datepicker'}))
     salary_base = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
     salary_adjusted = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
     hsa_annual_credits = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
@@ -512,71 +511,69 @@ class ChageUserProfileFromOrgAdmin(forms.ModelForm):
 
 
     def clean(self):
+        cleaned_data = super().clean()
         email = self.cleaned_data.get('email')
         first_name = self.cleaned_data.get('first_name')
         last_name = self.cleaned_data.get('last_name')
         middle_name = self.cleaned_data.get('middle_name')
-
+        effective_date = self.cleaned_data.get('effective_date')
         salary_base = self.cleaned_data.get('salary_base')
         salary_adjusted = self.cleaned_data.get('salary_adjusted')
         hsa_annual_credits = self.cleaned_data.get('hsa_annual_credits')
         hsa_optional = self.cleaned_data.get('hsa_optional')
         hsa_remaining = self.cleaned_data.get('hsa_remaining')
-
         additional_info = self.cleaned_data.get('additional_info')
 
 
-
-        check_number = isinstance(salary_base, (int, float, Decimal))
-
-        # email_correction = re.match('^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,4})$', email)
-
-        # if not email_correction:
-        #     raise forms.ValidationError('Email address is not valid!')
-        # else:
-        if not check_number:
-            raise forms.ValidationError('Salary amount is not valid!')
+        if salary_base is None and salary_adjusted is None:
+            pass
         else:
-            if salary_base < 0:
-                raise forms.ValidationError('Salary amount is not valid!')
+            check_number = isinstance(salary_base, (int, float, Decimal))
+            if not check_number and salary_base is not None:
+                raise forms.ValidationError(
+                _('Job Rate is not valid! Input value is %s') % salary_base)
             else:
-                check_number = isinstance(salary_adjusted, (int, float, Decimal))
-
-                if not check_number:
-                    raise forms.ValidationError('Salary adjusted amount is not valid!')
+                if effective_date is None or effective_date is null:
+                    pass
                 else:
-                    if salary_adjusted < 0:
-                        raise forms.ValidationError('Salary adjusted amount is not valid!')
-
+                    chek_date = isinstance(effective_date, (DateField))
+                    if not check_date:
+                        raise forms.ValidationError('Please enter a valid effective date. It must be in YYYY-MM-DD format!')
                     else:
-                        check_number = isinstance(hsa_annual_credits, (int, float))
-
-                        if not check_number:
-                            raise forms.ValidationError('HSA Base Credit amount is not valid!')
+                        if salary_base < 0:
+                            raise forms.ValidationError('Job Rate is not valid!')
                         else:
-                            if hsa_annual_credits < 0:
-                                raise forms.ValidationError('HSA Base Credit amount is not valid!')
-
+                            check_number = isinstance(salary_adjusted, (int, float, Decimal))
+                            if not check_number:
+                                raise forms.ValidationError('Taxable Earnings amount is not valid!')
                             else:
-                                check_number = isinstance(hsa_optional, (int, float, Decimal))
-
-                                if not check_number:
-                                    raise forms.ValidationError('HSA Optinal amount is not valid!')
+                                if salary_adjusted < 0:
+                                    raise forms.ValidationError('Taxable Earnings amount is not valid!')
                                 else:
-                                    if hsa_optional < 0:
-                                        raise forms.ValidationError('HSA Optinal amount is not valid!')
+                                    check_number = isinstance(hsa_annual_credits, (int, float))
+                                    if not check_number:
+                                        raise forms.ValidationError('HSA Base Credit amount is not valid!')
                                     else:
-                                        check_number = isinstance(hsa_remaining, (int, float))
-
-                                        if not check_number:
-                                            raise forms.ValidationError('HSA Remaining amount is not valid!')
+                                        if hsa_annual_credits < 0:
+                                            raise forms.ValidationError('HSA Base Credit amount is not valid!')
                                         else:
-                                            if hsa_remaining < 0:
-                                                raise forms.ValidationError('HSA Remaining amount is not valid!')
+                                            check_number = isinstance(hsa_optional, (int, float, Decimal))
+                                            if not check_number:
+                                                raise forms.ValidationError('HSA Optinal amount is not valid!')
+                                            else:
+                                                if hsa_optional < 0:
+                                                    raise forms.ValidationError('HSA Optinal amount is not valid!')
+                                                else:
+                                                    check_number = isinstance(hsa_remaining, (int, float))
+                                                    if not check_number:
+                                                        raise forms.ValidationError('HSA Remaining amount is not valid!')
+                                                    else:
+                                                        if hsa_remaining < 0:
+                                                            raise forms.ValidationError('HSA Remaining amount is not valid!')
 
     class Meta:
         model = models.UserProfile
-        fields = ('email', 'first_name', 'last_name', 'middle_name', 'salary_base', 'salary_adjusted', 'hsa_annual_credits', 'hsa_optional', 'hsa_remaining', 'additional_info')
+        fields = ('email', 'first_name', 'last_name', 'middle_name', 'effective_date', 'salary_base', 'salary_adjusted', 'hsa_annual_credits', 'hsa_optional', 'hsa_remaining', 'additional_info')
 
 #org search form
 class OrgSearchForm(forms.Form):
