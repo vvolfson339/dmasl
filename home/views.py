@@ -315,13 +315,11 @@ class EnrolmentForm4(LoginRequiredMixin, View):
             if member.submitted:
                 pass
             else:
+                if not member.effective_date is None:
+                    tasks.send_new_member_detail.delay(member.username)
                 member.submitted = True
                 member.save()
                 usr.save()
-
-        #*********sent email to org admin and member*********
-        #tasks.sent_hsa_detail_to_member.delay(request.user.id, hsa_optional, new_hsa_remaining, salary_adjusted_calc)
-        #tasks.sent_hsa_detail_to_admin.delay(request.user.id, hsa_optional, new_hsa_remaining, salary_adjusted_calc)
 
         return redirect('home:enrolment-print')
 
