@@ -323,7 +323,6 @@ class EnrolmentForm4(LoginRequiredMixin, View):
         #tasks.sent_hsa_detail_to_member.delay(request.user.id, hsa_optional, new_hsa_remaining, salary_adjusted_calc)
         #tasks.sent_hsa_detail_to_admin.delay(request.user.id, hsa_optional, new_hsa_remaining, salary_adjusted_calc)
 
-                # del request.session['hsa_optional_var']
         return redirect('home:enrolment-print')
 
         variables = {
@@ -562,7 +561,7 @@ class OrgMemberView(OrgAdminPermissionMixin, View):
         page = accounts_paginator.get_page(page_num)
         # form = account_form.MemberSearchFormWithOrg(request.POST or None, current_org=org_found)
         form = account_form.MemberSearchFormWithOrg(request.POST or None)
-        print('org found value: ',org_found)
+        #print('org found value: ',org_found)
 
         if request.POST.get('export_csv') == 'export_csv':
             uuid = self.get_uuid()
@@ -576,7 +575,7 @@ class OrgMemberView(OrgAdminPermissionMixin, View):
 
         if form.is_valid():
             s_members = form.deploy()
-            print('number', s_members.count())
+            #print('number', s_members.count())
 
 
         variables = {
@@ -675,6 +674,7 @@ class OrgMemberAdd(OrgAdminPermissionMixin, View):
 
         if form.is_valid():
             u = form.deploy(org_found)
+            tasks.send_member_add.delay(u.username)
             return redirect('home:org-member-detail', org_short_name=org_short_name, user_id=u.username)
 
         variables = {
