@@ -16,8 +16,8 @@ def send_member_add(member_id):
     #member = account_model.UserProfile.get(id=member_id)
     member = get_object_or_404(account_model.UserProfile, username=member_id)
     fromaddr = 'dmasl_enrolment@volfson.ca'
-    toaddr = ('test1@volfson.ca', 'test2@volfson.ca')
-    #toaddr = ('jonathan_aycan@dmasl.com','catherina_dawson@dmasl.com')
+    #toaddr = ('test1@volfson.ca', 'test2@volfson.ca')
+    toaddr = ('jonathan_aycan@dmasl.com','catherina_dawson@dmasl.com')
 
     password = 'sqesncowiwlikkik'
 
