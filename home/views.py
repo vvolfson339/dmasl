@@ -691,7 +691,6 @@ class OrgMemberEdit(OrgAdminPermissionMixin, View):
         user_found = get_object_or_404(account_model.UserProfile, username=user_id, org=org_found)
 
         form = account_form.ChageUserProfileFromOrgAdmin(instance=user_found)
-
         variables = {
             'org_found': org_found,
             'user_found': user_found,
@@ -707,13 +706,13 @@ class OrgMemberEdit(OrgAdminPermissionMixin, View):
         form = account_form.ChageUserProfileFromOrgAdmin(request.POST or None, instance=user_found)
 
         if form.is_valid():
-            if org_found.salary_adjustment is True:
+            if not org_found.salary_adjustment is True:
                 user_found.salary_base = 0
                 user_found.salary_adjusted = 0
 
             form.save()
+            return redirect('home:org-member-detail', org_short_name=org_short_name, user_id=user_id)
 
-        return redirect('home:org-member-detail', org_short_name=org_short_name, user_id=user_id)
 
         variables = {
             'org_found': org_found,

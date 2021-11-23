@@ -4,6 +4,7 @@ from django.contrib.auth.hashers import make_password
 from decimal import *
 import re
 from django.utils.translation import gettext as _
+from django.core.validators import validate_email
 
 from . import models
 
@@ -228,22 +229,22 @@ class AddOrganization(forms.Form):
 #edit org
 class EditOrgForm(forms.ModelForm):
     org_url             = forms.URLField(max_length=255, required=False, widget=forms.URLInput(attrs={'class': 'validate'}))
-    org_full_name       = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
-    contract_holder     = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
-    class_type          = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
-    policy_num          = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
-    policy_agency       = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
-    date_fiscal_start   = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate datepicker'}))
-    date_fiscal_end     = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate datepicker'}))
-    num_pay_periods     = forms.FloatField(required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
-    enrolment_period    = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
+    org_full_name       = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'class': 'validate'}))
+    contract_holder     = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'class': 'validate'}))
+    class_type          = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'class': 'validate'}))
+    policy_num          = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'class': 'validate'}))
+    policy_agency       = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'class': 'validate'}))
+    date_fiscal_start   = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'class': 'validate datepicker'}))
+    date_fiscal_end     = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'class': 'validate datepicker'}))
+    num_pay_periods     = forms.FloatField(required=True, widget=forms.TextInput(attrs={'class': 'validate'}))
+    enrolment_period    = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'class': 'validate'}))
 
     logo                = forms.ImageField(required=False, widget=forms.FileInput)
     admin_email         = forms.EmailField(required=False)
     misc_1              = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'validate'}))
-    text_block_1        = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
-    text_block_2        = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
-    text_block_3        = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
+    text_block_1        = forms.CharField( required=True, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
+    text_block_2        = forms.CharField( required=True, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
+    text_block_3        = forms.CharField( required=True, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
     text_block_4        = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
 
 
@@ -283,8 +284,7 @@ class EditOrgForm(forms.ModelForm):
 class AddUserForm(forms.Form):
     username = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'validate', }))
     email = forms.EmailField(required=False)
-    # password1 = forms.CharField(max_length=20, required=False, widget=forms.PasswordInput(attrs={'class': 'validate', 'id': 'password1'}))
-    # password2 = forms.CharField(max_length=20, required=False, widget=forms.PasswordInput(attrs={'class': 'validate', 'id': 'password2'}))
+
     password1 = forms.CharField(max_length=20, required=True, widget=forms.TextInput(attrs={'class': 'validate', }))
     password2 = forms.CharField(max_length=20, required=True, widget=forms.TextInput(attrs={'class': 'validate', }))
 
@@ -294,11 +294,11 @@ class AddUserForm(forms.Form):
 
     effective_date = forms.DateField(required=True, widget=forms.TextInput(attrs={'class': 'validate datepicker'}))
 
-    salary_base = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
-    salary_adjusted = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
-    hsa_annual_credits = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
-    hsa_optional = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
-    hsa_remaining = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
+    salary_base = forms.DecimalField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
+    salary_adjusted = forms.DecimalField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
+    hsa_annual_credits = forms.DecimalField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
+    hsa_optional = forms.DecimalField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
+    hsa_remaining = forms.DecimalField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
 
     additional_info = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
 
@@ -322,33 +322,42 @@ class AddUserForm(forms.Form):
 
         if len(username) < 1:
             raise forms.ValidationError('User ID cannot be blank!')
+        elif not re.match('^[A-Za-z]{2}',username):
+            raise forms.ValidationError('User ID must be prefixed with two letters!')
+        elif models.UserProfile.objects.filter(username=username).exists():
+            raise forms.ValidationError('User ID already exists')
+        elif len(password1) < 6:
+            raise forms.ValidationError("Password must be at least 6 characters long!")
+        elif password1 != password2:
+            raise forms.ValidationError("Passwords do not match!")
+        elif not isinstance(hsa_annual_credits, (int, Decimal)):
+            raise forms.ValidationError('Total Benefit Credits amount is not valid!')
+        elif hsa_annual_credits < 0:
+            raise forms.ValidationError('Total Benefit Credits amount cannot be negative!')
+        elif hsa_annual_credits is not None and not re.match(r'\d+(?:[.]\d{1,2})?$', str(hsa_annual_credits)):
+             raise forms.ValidationError('Total Benefit Credits amount is not valid!')
         else:
-            if not re.match('^[A-Za-z]{2}',username):
-                raise forms.ValidationError('User ID must be prefixed with two letters!')
+            pass
+
+
+        if salary_base is None and salary_adjusted is None:
+            pass
+        else:
+            if not isinstance(salary_base, (int, float, Decimal)):
+                raise forms.ValidationError('Job Rate amount is not valid!')
+            elif not re.match(r'\d+(?:[.]\d{1,2})?$', str(salary_base)):
+                raise forms.ValidationError('Job Rate amount is not valid!')
+            elif salary_base < 0:
+                raise forms.ValidationError('Job Rate amount cannot be negative!')
+            elif not isinstance(salary_adjusted, (int, float, Decimal)):
+                raise forms.ValidationError('Taxable Earnings amount is not valid!')
+            elif not re.match(r'\d+(?:[.]\d{1,2})?$', str(salary_adjusted)):
+                raise forms.ValidationError('Taxable Earnings amount is not valid!')
+            elif salary_adjusted < 0:
+                raise forms.ValidationError('Taxable Earnings cannot be negative!')
             else:
-                username_exists = models.UserProfile.objects.filter(username=username).exists()
-                if username_exists:
-                    raise forms.ValidationError('User ID already exists')
-                else:
-                    if len(password1) < 6:
-                        raise forms.ValidationError("Password must be at least 6 characters long!")
-                    else:
-                        if password1 != password2:
-                            raise forms.ValidationError("Passwords do not match!")
-                        else:
-                            check_number = isinstance(salary_base, (int, float, Decimal)) or salary_base is None
-                            if not check_number:
-                                raise forms.ValidationError('Job Rate amount is not a valid number!')
-                            else:
-                                if salary_base is not None and salary_base < 0:
-                                    raise forms.ValidationError('Job Rate amount cannot be negative!')
-                                else:
-                                    check_number = isinstance(hsa_annual_credits, (int, float))
-                                    if not check_number:
-                                        raise forms.ValidationError('Total Benefit Credits amount is not valid!')
-                                    else:
-                                        if hsa_annual_credits < 0:
-                                            raise forms.ValidationError('Total Benefit Credits amount is not valid!')
+                pass
+
 
     def deploy(self, org):
         username = self.cleaned_data.get('username')
@@ -423,11 +432,11 @@ class ChageUserProfile(forms.ModelForm):
     last_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
     middle_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
     effective_date = forms.DateField(required=False, widget=forms.TextInput(attrs={'class': 'validate datepicker'}))
-    salary_base = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
-    salary_adjusted = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
-    hsa_annual_credits = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
-    hsa_optional = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
-    hsa_remaining = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
+    salary_base = forms.DecimalField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
+    salary_adjusted = forms.DecimalField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
+    hsa_annual_credits = forms.DecimalField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
+    hsa_optional = forms.DecimalField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
+    hsa_remaining = forms.DecimalField(required=False, max_digits=8, decimal_places=2, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
 
     additional_info = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
 
@@ -447,45 +456,47 @@ class ChageUserProfile(forms.ModelForm):
 
         additional_info = self.cleaned_data.get('additional_info')
 
-        check_number = isinstance(salary_base, (int, float, Decimal))
-        if not check_number or salary_base is None:
-            raise forms.ValidationError('Job Rate amount is not valid!')
+        #*** start -- Form validation -- start ***
+
+        if not isinstance(hsa_annual_credits, (int, Decimal)):
+            raise forms.ValidationError('Total Benefit Credits amount is not valid!')
+        elif hsa_annual_credits < 0:
+            raise forms.ValidationError('Total Benefit Credits amount is not valid!')
+        elif hsa_annual_credits is not None and not re.match(r'\d+(?:[.]\d{1,2})?$', str(hsa_annual_credits)):
+             raise forms.ValidationError('Total Benefit Credits amount is not valid!')
+        elif not isinstance(hsa_optional, (int, Decimal)):
+            raise forms.ValidationError('HSA Selected amount is not valid!')
+        elif hsa_optional < 0:
+            raise forms.ValidationError('HSA Slected amount cannot be negative!')
+        elif not re.match(r'\d+(?:[.]\d{1,2})?$', str(hsa_optional)):
+             raise forms.ValidationError('HSA Selected amount is not valid!')
+        elif not isinstance(hsa_remaining, (int, Decimal)):
+            raise forms.ValidationError('Benefit Credits Remaining amount is not valid!')
+        elif hsa_remaining < 0:
+            raise forms.ValidationError('Benefit Credits Remaining cannot be negative!')
+        elif not re.match(r'\d+(?:[.]\d{1,2})?$', str(hsa_remaining)):
+             raise forms.ValidationError('Benefit Credits Remaining amount is not valid!')
         else:
-            if salary_base < 0:
+            pass
+
+
+        if salary_base is None and salary_adjusted is None:
+            pass
+        else:
+            if not isinstance(salary_base, (int, float, Decimal)):
                 raise forms.ValidationError('Job Rate amount is not valid!')
+            elif not re.match(r'\d+(?:[.]\d{1,2})?$', str(salary_base)):
+                raise forms.ValidationError('Job Rate amount is not valid!')
+            elif salary_base < 0:
+                raise forms.ValidationError('Job Rate amount cannot be negative!')
+            elif not isinstance(salary_adjusted, (int, float, Decimal)):
+                raise forms.ValidationError('Taxable Earnings amount is not valid!')
+            elif not re.match(r'\d+(?:[.]\d{1,2})?$', str(salary_adjusted)):
+                raise forms.ValidationError('Taxable Earnings amount is not valid!')
+            elif salary_adjusted < 0:
+                raise forms.ValidationError('Taxable Earnings cannot be negative!')
             else:
-                check_number = isinstance(salary_adjusted, (int, float, Decimal))
-                if not check_number or salary_adjusted is None:
-                    raise forms.ValidationError('Taxable Earnings amount is not valid!')
-                else:
-                    if salary_adjusted < 0:
-                        raise forms.ValidationError('Taxable Earnings amount is not valid!')
-
-                    else:
-                        check_number = isinstance(hsa_annual_credits, (int, float))
-
-                        if not check_number:
-                            raise forms.ValidationError('HSA Base Credit amount is not valid!')
-                        else:
-                            if hsa_annual_credits < 0:
-                                raise forms.ValidationError('HSA Base Credit amount is not valid!')
-
-                            else:
-                                check_number = isinstance(hsa_optional, (int, float, Decimal))
-
-                                if not check_number:
-                                    raise forms.ValidationError('HSA Optinal amount is not valid!')
-                                else:
-                                    if hsa_optional < 0:
-                                        raise forms.ValidationError('HSA Optinal amount is not valid!')
-                                    else:
-                                        check_number = isinstance(hsa_remaining, (int, float))
-
-                                        if not check_number:
-                                            raise forms.ValidationError('HSA Remaining amount is not valid!')
-                                        else:
-                                            if hsa_remaining < 0:
-                                                raise forms.ValidationError('HSA Remaining amount is not valid!')
+                pass
 
 
     class Meta:
@@ -501,11 +512,12 @@ class ChageUserProfileFromOrgAdmin(forms.ModelForm):
     last_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
     middle_name = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'validate', }))
     effective_date = forms.DateField(required=False, widget=forms.TextInput(attrs={'class': 'validate datepicker'}))
-    salary_base = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
-    salary_adjusted = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
-    hsa_annual_credits = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
-    hsa_optional = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
-    hsa_remaining = forms.FloatField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
+    salary_base = forms.DecimalField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
+    salary_adjusted = forms.DecimalField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
+    hsa_annual_credits = forms.DecimalField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
+    hsa_optional = forms.DecimalField(required=False, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
+    hsa_remaining = forms.DecimalField(required=False, max_digits=8, decimal_places=2, initial=0, widget=forms.TextInput(attrs={'class': 'validate', }))
+
 
     additional_info = forms.CharField( required=False, max_length=350, widget=forms.Textarea(attrs={'class': 'validate materialize-textarea', 'data-length': '350', }))
 
@@ -524,52 +536,49 @@ class ChageUserProfileFromOrgAdmin(forms.ModelForm):
         hsa_remaining = self.cleaned_data.get('hsa_remaining')
         additional_info = self.cleaned_data.get('additional_info')
 
+        #*** start -- Form validation -- start ***
+
+        if not isinstance(hsa_annual_credits, (int, Decimal)):
+            raise forms.ValidationError('Total Benefit Credits amount is not valid!')
+        elif hsa_annual_credits < 0:
+            raise forms.ValidationError('Total Benefit Credits amount is not valid!')
+        elif hsa_annual_credits is not None and not re.match(r'\d+(?:[.]\d{1,2})?$', str(hsa_annual_credits)):
+             raise forms.ValidationError('Total Benefit Credits amount is not valid!')
+        elif not isinstance(hsa_optional, (int, Decimal)):
+            raise forms.ValidationError('HSA Selected amount is not valid!')
+        elif hsa_optional < 0:
+            raise forms.ValidationError('HSA Slected amount cannot be negative!')
+        elif not re.match(r'\d+(?:[.]\d{1,2})?$', str(hsa_optional)):
+             raise forms.ValidationError('HSA Selected amount is not valid!')
+        elif not isinstance(hsa_remaining, (int, Decimal)):
+            raise forms.ValidationError('Benefit Credits Remaining amount is not valid!')
+        elif hsa_remaining < 0:
+            raise forms.ValidationError('Benefit Credits Remaining cannot be negative!')
+        elif not re.match(r'\d+(?:[.]\d{1,2})?$', str(hsa_remaining)):
+             raise forms.ValidationError('Benefit Credits Remaining amount is not valid!')
+        else:
+            pass
+
 
         if salary_base is None and salary_adjusted is None:
             pass
         else:
-            check_number = isinstance(salary_base, (int, float, Decimal))
-            if not check_number and salary_base is not None:
-                raise forms.ValidationError(
-                _('Job Rate is not valid! Input value is %s') % salary_base)
+            if not isinstance(salary_base, (int, float, Decimal)):
+                raise forms.ValidationError('Job Rate amount is not valid!')
+            elif not re.match(r'\d+(?:[.]\d{1,2})?$', str(salary_base)):
+                raise forms.ValidationError('Job Rate amount is not valid!')
+            elif salary_base < 0:
+                raise forms.ValidationError('Job Rate amount cannot be negative!')
+            elif not isinstance(salary_adjusted, (int, float, Decimal)):
+                raise forms.ValidationError('Taxable Earnings amount is not valid!')
+            elif not re.match(r'\d+(?:[.]\d{1,2})?$', str(salary_adjusted)):
+                raise forms.ValidationError('Taxable Earnings amount is not valid!')
+            elif salary_adjusted < 0:
+                raise forms.ValidationError('Taxable Earnings cannot be negative!')
             else:
-                if effective_date is None or effective_date is null:
-                    pass
-                else:
-                    chek_date = isinstance(effective_date, (DateField))
-                    if not check_date:
-                        raise forms.ValidationError('Please enter a valid effective date. It must be in YYYY-MM-DD format!')
-                    else:
-                        if salary_base < 0:
-                            raise forms.ValidationError('Job Rate is not valid!')
-                        else:
-                            check_number = isinstance(salary_adjusted, (int, float, Decimal))
-                            if not check_number:
-                                raise forms.ValidationError('Taxable Earnings amount is not valid!')
-                            else:
-                                if salary_adjusted < 0:
-                                    raise forms.ValidationError('Taxable Earnings amount is not valid!')
-                                else:
-                                    check_number = isinstance(hsa_annual_credits, (int, float))
-                                    if not check_number:
-                                        raise forms.ValidationError('HSA Base Credit amount is not valid!')
-                                    else:
-                                        if hsa_annual_credits < 0:
-                                            raise forms.ValidationError('HSA Base Credit amount is not valid!')
-                                        else:
-                                            check_number = isinstance(hsa_optional, (int, float, Decimal))
-                                            if not check_number:
-                                                raise forms.ValidationError('HSA Optinal amount is not valid!')
-                                            else:
-                                                if hsa_optional < 0:
-                                                    raise forms.ValidationError('HSA Optinal amount is not valid!')
-                                                else:
-                                                    check_number = isinstance(hsa_remaining, (int, float))
-                                                    if not check_number:
-                                                        raise forms.ValidationError('HSA Remaining amount is not valid!')
-                                                    else:
-                                                        if hsa_remaining < 0:
-                                                            raise forms.ValidationError('HSA Remaining amount is not valid!')
+                pass
+
+     #*** end -- Form validation -- end ***
 
     class Meta:
         model = models.UserProfile

@@ -567,7 +567,6 @@ class EditMember(StaffPermission, View):
 
         variables = {
             'member': member,
-
             'form': form,
         }
 
@@ -580,12 +579,14 @@ class EditMember(StaffPermission, View):
         form = account_form.ChageUserProfile(request.POST or None, instance=member)
 
         if form.is_valid():
+            # if not org_found.salary_adjustment is True:
+            #     user_found.salary_base = 0
+            #     user_found.salary_adjusted = 0
             form.save()
             return redirect('staff:detail-member', user_id=user_id)
 
         variables = {
             'member': member,
-
             'form': form,
         }
 

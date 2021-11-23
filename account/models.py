@@ -82,14 +82,14 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
 
     #new field added in July 2021
     effective_date = models.DateField(null=True, blank=True)
-    
+
     salary_base = models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)
 
     salary_adjusted = models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)
 
-    hsa_annual_credits = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
-    hsa_optional = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
-    hsa_remaining = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    hsa_annual_credits = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    hsa_optional = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    hsa_remaining = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
 
     opt_out_bool = models.BooleanField(default=False)
 
