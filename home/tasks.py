@@ -77,7 +77,7 @@ def send_new_member_detail(member_id):
     #toaddr = ('test1@volfson.ca', 'test2@volfson.ca')
     toaddr = ('jonathan_aycan@dmasl.com','catherina_dawson@dmasl.com')
 
-    password = 'sqesncowiwlikkik'
+    password = '6DlWJjLyzU1@&MR10g'
 
     msg = MIMEMultipart()
 
