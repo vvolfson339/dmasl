@@ -81,7 +81,7 @@ def send_new_member_detail(member_id):
 
     msg = MIMEMultipart()
 
-    msg['Subject'] = "New Member Enrolment Sumbission from {}".format(member.org.org_short_name)
+    msg['Subject'] = "New Member Enrolment Submission from {}".format(member.org.org_short_name)
     msg['From'] = fromaddr
     msg['To'] = ", ".join(toaddr)
 
