@@ -313,7 +313,7 @@ class EnrolmentForm4(LoginRequiredMixin, View):
 
         if request.POST.get('next') == 'next':
             if member.submitted:
-                pass
+                tasks.send_updated_member_detail.delay(member.username)
             else:
                 if not member.effective_date is None:
                     tasks.send_new_member_detail.delay(member.username)
